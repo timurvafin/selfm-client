@@ -1,0 +1,62 @@
+@import 'include';
+
+.plan {
+  display : flex;
+  height  : 100vh;
+}
+
+.sidebar {
+  width            : 16em;
+  padding          : 1em;
+  border-right     : 1px solid #e0e0e0;
+  background-color : #f9f9f9;
+
+  display : flex;
+  flex-direction : column;
+}
+
+.workspace {
+  flex    : 1;
+  padding : 1em 3em 1em;
+  overflow-y : auto;
+}
+
+.sidebar__projects {
+  margin : 1em 0;
+}
+
+.sidebar__actions {
+  margin-top : auto;
+}
+
+.sidebar__action {
+  @include clickable();
+
+  span {
+    vertical-align : middle;
+  }
+  
+  i {
+    margin-right : .5em;
+  }
+}
+
+.sidebar__project {
+  @include unselectable();
+  text-decoration : none;
+  display : block;
+
+  transition      : all .2s;
+
+  cursor          : pointer;
+  color           : #555;
+  padding         : .4em;
+  margin          : .5em 0;
+  border-radius   : 2px;
+
+  @include overflow-dots();
+}
+
+.sidebar__project--selected {
+  background-color : rgba(235, 230, 241, 0.64);
+}

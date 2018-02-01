@@ -1,0 +1,10 @@
+@import 'include';
+
+.action {
+  @include clickable();
+
+  > * {
+    vertical-align : middle;
+    display : inline-block;
+  }
+}

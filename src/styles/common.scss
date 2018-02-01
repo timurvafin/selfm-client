@@ -1,0 +1,25 @@
+@import 'include';
+@import 'normalize';
+@import 'icons';
+
+body {
+  margin         : 0;
+  padding        : 0;
+
+  //background     : linear-gradient(to right, #3f4c6b, #606c88);
+
+  //background-image : url(https://www.toptal.com/designers/subtlepatterns/patterns/concrete-texture.png);
+
+  font-family    : $ff_base;
+  font-smoothing : antialiased;
+  font-weight : 300;
+  font-size : 15px;
+}
+
+*, *::before, *::after {
+  box-sizing : border-box;
+}
+
+#app {
+  //padding          : 1em;
+}

@@ -1,0 +1,10 @@
+@import 'include';
+
+.textfield {
+  width : 100%;
+}
+
+.textfield--multiline {
+  resize: none;
+  overflow : hidden;
+}

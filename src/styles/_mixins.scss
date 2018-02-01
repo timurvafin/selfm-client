@@ -1,0 +1,19 @@
+@import 'vars';
+
+@mixin unselectable() {
+  user-select : none;
+}
+
+@mixin clickable($unselectable: true) {
+  cursor : pointer;
+
+  @if ($unselectable) {
+    @include unselectable();
+  }
+}
+
+@mixin overflow-dots() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space : nowrap;
+}
