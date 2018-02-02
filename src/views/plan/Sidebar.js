@@ -1,6 +1,5 @@
 import React from 'react'
 import cs from 'classnames'
-import {NavLink} from 'react-router-dom'
 import Icon from 'src/components/Icon'
 
 class ProjectLink extends React.Component {

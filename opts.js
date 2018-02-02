@@ -1,7 +1,7 @@
 var path = require('path');
 
 /**
- * Общий данные для сборщиков
+ * Общие данные для сборщиков
  */
 module.exports = {
     path: {
