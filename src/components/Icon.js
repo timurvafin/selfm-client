@@ -8,5 +8,5 @@ export default function Icon(props) {
         ['icon--hover-' + hoverClr]: !!hoverClr
     }, className)
 
-    return <i onClick={onClick} className={cls} title={title}></i>
+    return <i onClick={onClick} className={cls} title={title} />
 }

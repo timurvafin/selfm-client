@@ -4,15 +4,13 @@ import Icon from './Icon'
 
 import './action.scss'
 
-export default class extends React.Component {
-    render() {
-        const cls = cs('action', this.props.className)
-        const iconCls = cs('action__icon', this.props.iconClassName)
+export default function Action(props) {
+    const cls     = cs('action', props.className)
+    const iconCls = cs('action__icon', props.iconClassName)
 
-        const icon = this.props.icon ? <Icon className={iconCls} name={this.props.icon} /> : ''
+    const icon = props.icon ? <Icon className={iconCls} name={props.icon}/> : ''
 
-        return <div className={cls} onClick={this.props.action} >
-                {icon} <span className="action__name">{this.props.name}</span>
-        </div>
-    }
+    return <div className={cls} onClick={props.action}>
+        {icon} <span className="action__name">{props.name}</span>
+    </div>
 }

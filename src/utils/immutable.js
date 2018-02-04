@@ -1,4 +1,4 @@
-import {List, Map, OrderedMap, fromJS} from 'immutable'
+import { OrderedMap, fromJS } from 'immutable'
 
 export function updateListItem(items, field, fieldValue, fields, mergeFields = true) {
     return map(items, prevFields => {
@@ -15,13 +15,9 @@ export const updateListItemById = (items, id, fields, mergeFields = true) => {
 }
 
 export function map(collection, updater, mergeFields = true) {
-    const _updater = typeof updater === 'function' ? updater : v => updater
+    const _updater = typeof updater === 'function' ? updater : () => updater
 
     return collection.map(item => mergeFields ? item.merge(_updater(item)) : _updater(item))
-}
-
-export function makeMap(list, field) {
-    return list.reduce((map, v) => map.set(v[field], fromJS(v)), Map())
 }
 
 export function makeOrderedMap(list, field) {
@@ -29,19 +25,19 @@ export function makeOrderedMap(list, field) {
 }
 
 /*
-export function findInArray(items, fieldName, fieldValue) {
-    for (var i = 0 i < items.length
-    i++
-)
-    {
-        if (items[i][fieldName] === fieldValue) {
-            return items[i][fieldName]
-        }
-    }
+ export function findInArray(items, fieldName, fieldValue) {
+ for (var i = 0 i < items.length
+ i++
+ )
+ {
+ if (items[i][fieldName] === fieldValue) {
+ return items[i][fieldName]
+ }
+ }
 
-    return null
-}
+ return null
+ }
 
-export function merge(...objects) {
-    return Object.assign({}, ...objects)
-}*/
+ export function merge(...objects) {
+ return Object.assign({}, ...objects)
+ }*/

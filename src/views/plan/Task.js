@@ -5,10 +5,10 @@ import Icon from 'src/components/Icon'
 import TextField from 'src/components/TextField'
 import Checkbox from 'src/components/Checkbox'
 import TodoList from './TodoList'
-import {ENTER_KEY} from 'src/utils/common'
+//import {ENTER_KEY} from 'src/utils/common'
 import {wrapOnKeyDown} from 'src/utils/component'
 
-export default class extends React.Component {
+export default class Task extends React.Component {
     onRemoveClick(e) {
         e.stopPropagation()
 
@@ -19,9 +19,8 @@ export default class extends React.Component {
         this.props.update({[field]: value})
     }
 
-    onInputChange(name, value, e) {
+    onInputChange(name, value) {
         const prevValue = this.props[name]
-        const {update} = this.props
 
         if (prevValue !== value) {
             this.update(name, value)
@@ -52,8 +51,8 @@ export default class extends React.Component {
     }
 
     render() {
-        const {toggle, setEditable, select, update, open, unselect, todoActions} = this.props
-        const {index, id, todos, caption, completed, notes, editable, isOpen, selected, isNew} = this.props
+        const {open, todoActions} = this.props
+        const {id, todos, caption, completed, notes, editable, isOpen, selected, isNew} = this.props
                              
         const classNames = classnames('task', {
             ['task--completed']: completed,
@@ -116,4 +115,3 @@ export default class extends React.Component {
         </div>
     }
 }
-

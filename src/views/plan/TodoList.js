@@ -1,9 +1,8 @@
 import React from 'react'
 import TextField from 'src/components/TextField'
 import Checkbox from 'src/components/Checkbox'
-import {ESQ_KEY, BACKSPACE_KEY} from 'src/constants'
-import {List} from 'immutable'
-import _ from 'lodash/fp'
+import { BACKSPACE_KEY } from 'src/constants'
+import { List } from 'immutable'
 import cs from 'classnames'
 
 class TodoItem extends React.Component {
@@ -14,10 +13,10 @@ class TodoItem extends React.Component {
     }
 
     render() {
-        const {fields, update, remove, create} = this.props
-        const id = fields.get('id')
+        const { fields, update, create } = this.props
+        const id  = fields.get('id')
         const cls = cs('todo', {
-            ['todo--done'] : fields.get('completed')
+            ['todo--done']: fields.get('completed')
         })
 
         return <div className={cls}>
@@ -38,9 +37,9 @@ class TodoItem extends React.Component {
     }
 }
 
-export default class extends React.Component {
+export default class TodoList extends React.Component {
     render() {
-        const {todos, actions} = this.props
+        const { todos, actions } = this.props
 
         const todoItems = (todos || List()).map((todo, index) => {
             return <TodoItem

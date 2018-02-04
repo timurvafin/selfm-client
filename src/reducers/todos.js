@@ -1,13 +1,12 @@
 import * as Actions from '../actions/todos'
-import {updateListItemById, map, makeOrderedMap} from '../utils/immutable'
-import _ from 'lodash/fp'
-import {List, Map, fromJS} from 'immutable'
+import { makeOrderedMap } from '../utils/immutable'
+import { fromJS } from 'immutable'
 
-const defaultTaskFields = Map({
-    caption: '',
-    open: false,
-    selected: false,
-})
+/*const defaultTaskFields = Map({
+ caption: '',
+ open: false,
+ selected: false,
+ })*/
 
 export default function (todos, action) {
     switch (action.type) {
@@ -20,7 +19,7 @@ export default function (todos, action) {
         case Actions.TODOS_REMOVE:
             return todos.delete(action.id)
         /*case Actions.TODOS_TOGGLE:
-            return todos.updateIn([action.fields.parent_id, 'todos'], task => task.merge(Map({completed: action.complete})))*/
+         return todos.updateIn([action.fields.parent_id, 'todos'], task => task.merge(Map({completed: action.complete})))*/
         default:
             return todos
     }

@@ -1,9 +1,7 @@
 import React from 'react'
 import TaskListItem from './Task'
-import DraggableList from 'react-draggable-list'
-import _ from 'lodash/fp'
 
-export default class extends React.Component {
+export default class TaskList extends React.Component {
     render() {
         const {tasks, actions, todoActions} = this.props
 

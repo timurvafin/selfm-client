@@ -1,9 +1,9 @@
-import {takeEvery, put, call, select} from 'redux-saga/effects'
+import { takeEvery, put, call, select } from 'redux-saga/effects'
 import * as UI from '../actions/todos'
-import {TASKS_RECEIVE} from '../actions/tasks'
-import {createEntity} from './common'
+import { TASKS_RECEIVE } from '../actions/tasks'
+import { createEntity } from './common'
 import * as Api from '../service/api'
-import {Map} from 'immutable'
+import { Map } from 'immutable'
 
 function* remove(id) {
     yield call(Api.remove, id)
@@ -20,9 +20,11 @@ function* update({id, fields}) {
     const todo  = state.get('todos').get(id)
 
     if (todo.get('_new')) {
-        const newTodo = yield call(Api.add, todo.delete('_new').delete('id').merge(Map(fields)).toJS())
+        /*const newTodo = */
+        yield call(Api.add, todo.delete('_new').delete('id').merge(Map(fields)).toJS())
     } else {
-        const updatedTodo = yield call(Api.update, id, fields)
+        /*const updatedTodo = */
+        yield call(Api.update, id, fields)
     }
 }
 

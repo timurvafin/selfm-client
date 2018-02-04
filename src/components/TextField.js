@@ -1,10 +1,9 @@
 import React from 'react'
 import cs from 'classnames'
-import {ENTER_KEY} from 'src/constants'
-import {wrapOnKeyDown} from 'src/utils/component'
+import { wrapOnKeyDown } from 'src/utils/component'
 import _ from 'lodash/fp'
 import TextArea from 'react-textarea-autosize'
-import {ESC_KEY} from 'src/constants'
+import { ESC_KEY } from 'src/constants'
 
 import './textfield.scss'
 
@@ -19,7 +18,7 @@ export default class extends React.Component {
 
     componentDidMount() {
         if (this.props.autoFocus) {
-            this.el.focus();
+            this.el.focus()
         }
     }
 
@@ -89,7 +88,7 @@ export default class extends React.Component {
             'textfield--multiline': props.multiline
         })
 
-        const {onEnter, onValueChange, onBlur, onEsc, onKeyDown} = this.props
+        const {onEnter, onBlur, onEsc, onKeyDown} = this.props
 
         const commonProps = _.merge({
             className: cls,

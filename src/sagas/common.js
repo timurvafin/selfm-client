@@ -1,5 +1,5 @@
-import {randomString} from 'src/utils/common'
-import {takeEvery, put, call} from 'redux-saga/effects'
+import { randomString } from 'src/utils/common'
+import { put } from 'redux-saga/effects'
 
 export function* createEntity(addActionCreator, action) {
     const tempId = randomString()

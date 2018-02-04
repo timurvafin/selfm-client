@@ -17,14 +17,13 @@ class ProjectLink extends React.Component {
     }
 }
 
-export default class extends React.Component {
+export default class Sidebar extends React.Component {
     render() {
         const {projects, projectActions} = this.props
 
         return <div className="sidebar">
             <div className="sidebar__projects">
                 { projects.map((project) => {
-                    console.log(project.get('id'))
                     return <ProjectLink key={project.get('id')} onClick={projectActions.open.bind(null, project.get('id'))} project={project}/>
                 }).toList().toJS() }
             </div>

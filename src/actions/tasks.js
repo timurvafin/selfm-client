@@ -32,7 +32,7 @@ export function toggle(id, complete) {
     }
 }
 
-export function updateSucceeded(id, task) {
+/*export function updateSucceeded(id, task) {
     return {
         type: UPDATE_SUCCEEDED,
         id,
@@ -45,7 +45,7 @@ export function updateFailed(id, error) {
         type: UPDATE_FAILED,
         error
     }
-}
+}*/
 
 export function remove(id) {
     return {

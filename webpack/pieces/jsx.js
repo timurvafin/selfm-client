@@ -15,16 +15,18 @@ module.exports = opts => {
             },
         },
         module: {
-            rules: [{
-                test: /\.jsx?$/,
-                include: [
-                    opts.path.src
-                ],
-                exclude: [
-                    opts.path.node_modules
-                ],
-                loader: "babel-loader",
-            }]
+            rules: [
+                {
+                    test: /\.jsx?$/,
+                    include: [opts.path.src],
+                    exclude: [opts.path.node_modules],
+                    loader: "babel-loader",
+                }, {
+                    test: /\.js$/,
+                    exclude: /node_modules/,
+                    use: ['eslint-loader']
+                }
+            ]
         }
     };
 }

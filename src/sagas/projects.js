@@ -1,9 +1,9 @@
 import * as Api from '../service/api'
-import {takeEvery, put, call, select} from 'redux-saga/effects'
+import { takeEvery, put, call, select } from 'redux-saga/effects'
 import * as UI from '../actions/projects'
-import {receive as receiveTasks} from '../actions/tasks'
-import {createEntity} from './common'
-import {Map} from 'immutable'
+import { receive as receiveTasks } from '../actions/tasks'
+import { createEntity } from './common'
+import { Map } from 'immutable'
 
 function* load() {
     const projects = yield call(Api.loadProjects)
@@ -25,10 +25,10 @@ function* update(action) {
 
     if (project.get('_new')) {
         const fieldsToAdd = project.delete('_new').delete('id').merge(Map(fields)).toJS()
-        const newProject = yield call(Api.add, fieldsToAdd)
+        /*const newProject  = */yield call(Api.add, fieldsToAdd)
         //yield put(UI.updateSucceeded(id, newProject))
     } else {
-        const updatedProject = yield call(Api.update, id, fields)
+        /*const updatedProject = */yield call(Api.update, id, fields)
         //yield put(UI.updateSucceeded(id, updatedProject))
     }
 }

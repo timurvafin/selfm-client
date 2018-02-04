@@ -2,7 +2,6 @@ import * as Api from '../service/api'
 import {takeEvery, put, call, select} from 'redux-saga/effects'
 import {randomString} from 'src/utils/common'
 import * as UI from '../actions/tasks'
-import {createEntity} from './common'
 import {Map} from 'immutable'
 
 function* create(action) {
@@ -22,10 +21,10 @@ function* update({id, fields}) {
     const task  = state.get('tasks').get(id)
 
     if (task.get('_new')) {
-        const newTask = yield call(Api.add, task.delete('_new').delete('id').merge(Map(fields)).toJS())
+        /*const newTask = */yield call(Api.add, task.delete('_new').delete('id').merge(Map(fields)).toJS())
         //yield put(UI.updateSucceeded(id, newTask))
     } else {
-        const updatedTask = yield call(Api.update, id, fields)
+        /*const updatedTask = */yield call(Api.update, id, fields)
         //yield put(UI.updateSucceeded(id, updatedTask))
     }
 }

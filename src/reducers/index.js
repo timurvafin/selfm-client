@@ -1,5 +1,4 @@
-import {List, Map, OrderedMap} from 'immutable'
-import {combineReducers} from 'redux'
+import {Map, OrderedMap} from 'immutable'
 import todoReducer from './todos'
 import tasksReducer from './tasks'
 import projectsReducer from './projects'

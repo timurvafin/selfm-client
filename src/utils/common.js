@@ -1,4 +1,4 @@
-export function updateInArray(items, field, fieldValue, fields, doMerge = true) {
+/*export function updateInArray(items, field, fieldValue, fields, doMerge = true) {
     return items.map(item => {
         if (item[field] !== fieldValue) {
             return item
@@ -32,7 +32,7 @@ export function findInArray(items, fieldName, fieldValue) {
 
 export function onEnterKeyDown(e, cb) {
 
-}
+}*/
 
 export function randomString() {
     return Math.random().toString(36).slice(2)

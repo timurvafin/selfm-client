@@ -1,14 +1,13 @@
 import React from 'react'
 import TaskList from './TaskList'
-import {ENTER_KEY} from 'src/utils/common'
 import TextField from 'src/components/TextField'
 import Checkbox from 'src/components/Checkbox'
 import Action from 'src/components/Action'
-import PropTypes from 'prop-types'
+//import PropTypes from 'prop-types'
 
 import './project.scss'
 
-export default class extends React.Component {
+export default class Project extends React.Component {
     update(field, value) {
         this.props.update({
             [field]: value,
@@ -16,7 +15,7 @@ export default class extends React.Component {
     }
 
     render() {
-        const {fields, children, taskActions, todoActions} = this.props
+        const {fields, tasks, taskActions, todoActions} = this.props
 
         return <div className="project">
             <div className="project__row project__row--caption">
@@ -45,7 +44,7 @@ export default class extends React.Component {
             </div>
 
             <div className="project__row">
-                <TaskList actions={taskActions} todoActions={todoActions} tasks={children}/>
+                <TaskList actions={taskActions} todoActions={todoActions} tasks={tasks}/>
             </div>
 
             <div className="project__row project__row--actions">
