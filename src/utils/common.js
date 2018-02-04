@@ -5,29 +5,29 @@ export function updateInArray(items, field, fieldValue, fields, doMerge = true) 
         }
 
         if (typeof fields === 'function') {
-            fields = fields(item);
+            fields = fields(item)
         }
 
         return doMerge ? merge(item, fields) : fields
-    });
+    })
 }
 
 export function updateItems(items, cb, doMerge = true) {
-    return items.map(item => doMerge ? merge(item, cb(item)) : cb(item));
+    return items.map(item => doMerge ? merge(item, cb(item)) : cb(item))
 }
 
 export const updateById = (items, id, fields, doMerge = true) => {
-    return updateInArray(items, 'id', id, fields, doMerge);
+    return updateInArray(items, 'id', id, fields, doMerge)
 }
 
 export function findInArray(items, fieldName, fieldValue) {
     for (var i = 0; i < items.length; i++) {
         if (items[i][fieldName] === fieldValue) {
-            return items[i][fieldName];
+            return items[i][fieldName]
         }
     }
 
-    return null;
+    return null
 }
 
 export function onEnterKeyDown(e, cb) {
@@ -42,4 +42,4 @@ export function merge(...objects) {
     return Object.assign({}, ...objects)
 }
 
-export const ENTER_KEY = 13;
+export const ENTER_KEY = 13

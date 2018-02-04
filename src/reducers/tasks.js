@@ -1,52 +1,45 @@
-import * as Actions from 'src/actions/tasks'
-import {updateById, merge, randomString, updateItems} from 'src/utils/common'
+import * as Actions from '../actions/tasks'
+import * as TodoActions from '../actions/todos'
+import {updateListItemById, map, makeOrderedMap} from '../utils/immutable'
 import _ from 'lodash/fp'
+import {List, Map, fromJS} from 'immutable'
 
-export default function (tasks = {}, action = null) {
+const defaultTaskFields = Map({
+    caption: '',
+    open: false,
+    selected: false,
+})
+
+export default function (tasks = Map({}), action) {
     switch (action.type) {
-        case Actions.RECEIVE_TASKS:
-            return merge(tasks, _.keyBy('id')(action.tasks));
-        case Actions.ADD_TASK:
-            return merge(tasks, merge({id: randomString()}, action.fields));
-        case Actions.UPDATE_TASK:
-            const newTasks = _.assign(tasks)({})
-            const newTask  = merge(newTasks[action.id], action.fields)
-
-            return merge(newTasks, {[action.id]: newTask});
-        case Actions.REMOVE_TASK:
-            return tasks.filter(task => task.id !== action.id);
-        case Actions.TOGGLE_TASK:
-            return updateById(tasks, action.id, task => {return {completed: !task.completed}});
-        case Actions.REORDER_TASKS:
-            return tasks;
-
-        case Actions.CREATE_TODO:
-            const todo = {caption: '', tempId: randomString(), completed: false};
-
-            return _.update(action.parentId)(task => {
-                return merge(task, {
-                    todos: [
-                        ...task.todos,
-                        todo
-                    ]
-                });
-            })(tasks);
+        case Actions.TASKS_RECEIVE:
+            return tasks.merge(makeOrderedMap(action.tasks, 'id').map(task => task.delete('todos')))
+        case Actions.TASKS_ADD:
+            const newFields = defaultTaskFields.merge(Map(action.fields))    
+            
+            return tasks.set(action.fields.id, newFields)
+        case Actions.TASKS_UPDATE:
+            return tasks.update(action.id, task => task.merge(Map(action.fields)))
+        case Actions.UPDATE_SUCCEEDED:
+            return tasks.update(action.id, task => Map(action.task))
+        case Actions.TASKS_REMOVE:
+            return tasks.delete(action.id)
+        case Actions.TASKS_TOGGLE:
+            return tasks.update(action.id, task => task.merge(Map({completed: action.complete})))
+        case Actions.TASKS_REORDER:
+            return tasks
         // view
-        case Actions.SELECT_TASK:
-            return _.mapValues(task => {
-                return merge(task, {
-                    selected: action.id === task.id && action.select,
-                    open: action.id === task.id && !action.select ? false : task.open
-                })
-            })(tasks);
-        case Actions.OPEN_TASK:
-            return _.mapValues(task => {
-                return merge(task, {
-                    open: action.id === task.id,
-                })
-            })(tasks);
+        case Actions.TASKS_SELECT:
+            return map(tasks, task => Map({
+                selected: action.id === task.get('id') && action.select,
+                open: action.id === task.get('id') && !action.select ? false : task.get('open')
+            }), true)
+        case Actions.TASKS_OPEN:
+            return map(tasks, task => Map({
+                open: action.id === task.get('id'),
+            }), true)
         case Actions.SET_EDITABLE:
-            return updateById(tasks, action.id, {editable: action.editable});
+            return map(tasks, task => Map({editable: action.editable}), true)
         default:
             return tasks
     }

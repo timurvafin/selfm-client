@@ -1,32 +1,36 @@
 import React from 'react'
-import TextArea from 'react-textarea-autosize'
 import TaskList from './TaskList'
 import {ENTER_KEY} from 'src/utils/common'
 import TextField from 'src/components/TextField'
 import Checkbox from 'src/components/Checkbox'
 import Action from 'src/components/Action'
+import PropTypes from 'prop-types'
 
 import './project.scss'
 
 export default class extends React.Component {
-    updateProject(field, value) {
-        this.props.update(this.props.id, {
+    update(field, value) {
+        this.props.update({
             [field]: value,
         })
     }
 
     render() {
-        const {caption, notes, children, addTask} = this.props;
+        const {fields, children, taskActions, todoActions} = this.props
 
         return <div className="project">
             <div className="project__row project__row--caption">
-                <Checkbox defaultChecked={true} className="project__checkbox"/>
+                <Checkbox
+                    checked={fields.get('completed')}
+                    onValueChange={this.update.bind(this, 'completed')}
+                    className="project__checkbox"
+                />
 
                 <TextField
                     placeholder="Название"
-                    onValueChange={this.updateProject.bind(this, 'caption')}
+                    onValueChange={this.update.bind(this, 'caption')}
                     className="project__name"
-                    text={caption}
+                    text={fields.get('caption')}
                 />
             </div>
 
@@ -34,18 +38,18 @@ export default class extends React.Component {
                 <TextField
                     multiline={true}
                     placeholder="Заметки"
-                    onValueChange={this.updateProject.bind(this, 'notes')}
+                    onValueChange={this.update.bind(this, 'notes')}
                     className="project__notes"
-                    text={notes}
+                    text={fields.get('notes')}
                 />
             </div>
 
             <div className="project__row">
-                <TaskList {...this.props} tasks={children}/>
+                <TaskList actions={taskActions} todoActions={todoActions} tasks={children}/>
             </div>
 
             <div className="project__row project__row--actions">
-                <Action action={addTask} className="project__action" icon="plus" name="Новая задача"/>
+                <Action action={taskActions.create.bind(null, fields.get('id'))} className="project__action" icon="plus" name="Новая задача"/>
             </div>
         </div>
     }

@@ -2,7 +2,7 @@ var path = require('path')
 
 module.exports = opts => {
     return {
-        entry: [opts.path.js_entry],
+        entry: ['babel-polyfill', opts.path.js_entry],
         output: {
             filename: opts.js_filename,
             path: opts.path.output,

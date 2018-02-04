@@ -5,41 +5,43 @@ import _ from 'lodash/fp'
 
 export default class extends React.Component {
     render() {
-        const {tasks} = this.props;
+        const {tasks, actions, todoActions} = this.props
 
         const taskDataList = tasks.map((task, index) => {
+            const taskId = task.get('id')
+            
             const props = {
                 index,
-                completed: task.completed,
-                caption: task.caption,
-                editable: task.editable,
-                isOpen: task.open,
-                selected: task.selected,
-                notes: task.notes,
-                todos: task.todos,
-                createTodo: this.props.createTodo.bind(null, task.id),
-                setEditable: this.props.updateTask.bind(null, task.id, {editable: !task.editable}, false),
-                toggle: this.props.updateTask.bind(null, task.id, {completed: !task.completed}),
-                remove: this.props.removeTask.bind(null, task.id),
-                update: this.props.updateTask.bind(null, task.id),
-                select: this.props.selectTask.bind(null, task.id, true),
-                unselect: this.props.selectTask.bind(null, task.id, false),
-                open: this.props.openTask.bind(null, task.id),
-            };
+                id: taskId,
+                completed: task.get('completed'),
+                caption: task.get('caption'),
+                editable: task.get('editable'),
+                isOpen: task.get('open'),
+                isNew: task.get('_new'),
+                selected: task.get('selected'),
+                notes: task.get('notes'),
+                todos: task.get('todos'),
+                
+                setEditable: actions.update.bind(null, taskId, {editable: !task.get('editable')}, false),
+                toggle: actions.toggle.bind(null, taskId),
+                remove: actions.remove.bind(null, taskId),
+                update: actions.update.bind(null, taskId),
+                select: actions.select.bind(null, taskId, true),
+                unselect: actions.select.bind(null, taskId, false),
+                open: task.get('open') ? null : actions.open.bind(null, taskId),
+                
+                todoActions: {
+                    create: todoActions.create.bind(null, taskId),
+                    update: todoActions.update,
+                    remove: todoActions.remove,
+                }
+            }
 
             return <TaskListItem key={index} {...props}/>
-        });
+        }).toJS()
 
-        return <div className="task-list" ref={cont => this.container=cont}>
+        return <div className="task-list">
             {taskDataList}
-            {/*<DraggableList
-                itemKey="index"
-                padding={0}
-                template={TaskListItem}
-                list={taskDataList}
-                onMoveEnd={newList => this.props.reorder(newTasks)}
-                container={() => this.container}
-                />*/}
-        </div>;
+        </div>
     }
 }

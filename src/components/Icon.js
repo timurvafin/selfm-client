@@ -1,12 +1,12 @@
 import React from 'react'
 import cs from 'classnames'
 
-export default class extends React.Component {
-    render() {
-        const cls = cs('icon', 'icon--' + this.props.name, {
-            ['icon--hover-' + this.props.hoverClr]: !!this.props.hoverClr
-        }, this.props.className);
+export default function Icon(props) {
+    const {name, title, onClick, hoverClr, className} = props
 
-        return <i onClick={this.props.onClick} className={cls}></i>
-    }
+    const cls = cs('icon', 'icon--' + name, {
+        ['icon--hover-' + hoverClr]: !!hoverClr
+    }, className)
+
+    return <i onClick={onClick} className={cls} title={title}></i>
 }

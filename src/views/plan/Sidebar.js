@@ -4,32 +4,33 @@ import Icon from 'src/components/Icon'
 
 class ProjectLink extends React.Component {
     render() {
-        const {project, onClick} = this.props;
+        const {project, onClick} = this.props
 
         const classname = cs('sidebar__project', {
-            ['sidebar__project--selected']: project.selected
-        });
+            ['sidebar__project--selected']: project.get('selected')
+        })
 
-        return <div onClick={onClick}  to={'/tm/project/' + project.id} key={project.id} className={classname}>
-            <div className="sidebar__project__icon">{project.icon}</div>
-            <div className="sidebar__project__name">{project.caption || project.placeholder}</div>
+        return <div onClick={onClick}  to={'/tm/project/' + project.get('id')} key={project.get('id')} className={classname}>
+            <div className="sidebar__project__icon">{project.get('icon')}</div>
+            <div className="sidebar__project__name">{project.get('caption') || project.get('placeholder')}</div>
         </div>
     }
 }
 
 export default class extends React.Component {
     render() {
-        const {projects, createProject} = this.props;
+        const {projects, projectActions} = this.props
 
         return <div className="sidebar">
             <div className="sidebar__projects">
-                { projects.map(project => {
-                    return <ProjectLink key={project.id} onClick={this.props.openProject.bind(null, project.id)} project={project}/>
-                })}
+                { projects.map((project) => {
+                    console.log(project.get('id'))
+                    return <ProjectLink key={project.get('id')} onClick={projectActions.open.bind(null, project.get('id'))} project={project}/>
+                }).toList().toJS() }
             </div>
 
             <div className="sidebar__actions">
-                <div onClick={createProject} className="sidebar__action sidebar__action--add">
+                <div onClick={projectActions.create} className="sidebar__action sidebar__action--add">
                     <Icon name="plus"/>
                     <span>Новый проект</span>
                 </div>

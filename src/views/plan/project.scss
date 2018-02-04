@@ -9,11 +9,11 @@
 }
 
 .project__row--caption {
-  display : flex;
+  display     : flex;
   align-items : center;
 
   .project__name {
-    flex: 1;
+    flex : 1;
   }
 }
 
@@ -22,7 +22,7 @@
 }
 
 .project__checkbox {
-  @include checkbox($blue, 1em, $border_clr : $blue, $round: true);
+  @include checkbox($blue, 1em, $border_clr : $blue, $round : true);
 }
 
 .project__name, .project__notes {
@@ -39,7 +39,7 @@
 }
 
 .project__notes {
-  width   : 100%;
+  width       : 100%;
   resize      : none;
   font-size   : 14px;
   color       : #666;
@@ -70,18 +70,18 @@ $checkbox_clr : #4caf50;
   padding-left : 1.8em;
 }
 
-.task__row + .task__row {
-  margin-top : 1em;
-}
-
 .task__row--caption {
   padding-left : 0;
-  display : flex;
-  align-items : center;
+  display      : flex;
+  align-items  : center;
 }
 
 .task__row--details {
   display : none;
+}
+
+.task__row--controls {
+
 }
 
 .task__checkbox {
@@ -117,22 +117,30 @@ $checkbox_clr : #4caf50;
 }
 
 .todo {
-  padding : .2em 0;
+  padding       : .2em 0;
   border-bottom : 1px solid #e0e0e0;
-  display : flex;
-  align-items : center;
+  display       : flex;
+  align-items   : center;
 
   &:last-child {
-    border-color: transparent;
+    border-color : transparent;
+  }
+}
+
+.todo--done {
+  opacity: .3;
+
+  .todo__caption {
+    text-decoration : line-through;
   }
 }
 
 .todo__caption {
-  border : 0;
-  background : none;
-  color: #666;
+  border      : 0;
+  background  : none;
+  color       : #666;
   font-weight : 300;
-  outline: none;
+  outline     : none;
 }
 
 .todo__checkbox {
@@ -185,10 +193,33 @@ $completed_task_opacity : .5;
   }
 }
 
+.task:not(.task--open) {
+  display : flex;
+  align-items : center;
+
+  .task__row--caption {
+    flex: 1;
+  }
+
+  .task__row--controls {
+    opacity : 0;
+    transition: all .2s;
+  }
+
+  &:hover .task__row--controls {
+    opacity : 1;
+  }
+}
+
 .task--open {
   padding    : 1em;
   box-shadow : 0 0 8px #e0e0e0;
   margin     : 1em 0;
+  display    : block;
+
+  .task__row + .task__row {
+    margin-top : 1em;
+  }
 
   .task__row--details {
     display : block;

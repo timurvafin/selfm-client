@@ -1,7 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import * as TaskActions from 'src/actions/tasks'
+import {bindActionCreators} from 'redux'
 import * as ProjectActions from 'src/actions/projects'
+import * as TaskActions from 'src/actions/tasks'
+import * as TodoActions from 'src/actions/todos'
 import Sidebar from './Sidebar'
 import WorkSpace from './WorkSpace'
 
@@ -9,9 +11,9 @@ import './style.scss'
 
 class PlanView extends React.Component {
     componentDidMount() {
-        const {loadProjects} = this.props;
+        const {load} = this.props.projectActions
 
-        loadProjects();
+        load()
     }
 
     render() {
@@ -23,25 +25,29 @@ class PlanView extends React.Component {
 }
 
 function mapStateToProps(state) {
+    const allTodos = state.get('todos')
+
     return {
-        tasks: state.tasks || {},
-        projects: state.projects || [],
-    };
+        tasks: state.get('tasks').map(task => {
+            const todos = allTodos.filter(todo => todo.get('parent_id') === task.get('id'))
+
+            return task.set('todos', todos.toList())
+        }),
+        projects: state.get('projects'),
+    }
 }
 
-export default connect(mapStateToProps, {
-    selectTask: TaskActions.select,
-    openTask: TaskActions.open,
-    createTask: TaskActions.create,
-    createTodo: TaskActions.createTodo,
-    removeTask: TaskActions.remove,
-    updateTask: TaskActions.update,
-    reorder: TaskActions.reorder,
-    loadTasks: TaskActions.load,
-    loadProjects: ProjectActions.load,
-    setProjectSelected: ProjectActions.setSelected,
-    openProject: ProjectActions.open,
-    updateProject: ProjectActions.update,
-    createProject: ProjectActions.create
-})(PlanView)
+function mapDispatchToProps(dispatch) {
+    const projectActions = bindActionCreators(ProjectActions, dispatch)
+    const taskActions    = bindActionCreators(TaskActions, dispatch)
+    const todoActions    = bindActionCreators(TodoActions, dispatch)
+
+    return {
+        projectActions,
+        taskActions,
+        todoActions
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PlanView)
 

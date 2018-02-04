@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
-import TextArea from 'react-textarea-autosize'
+//import TextArea from 'react-textarea-autosize'
 import Icon from 'src/components/Icon'
 import TextField from 'src/components/TextField'
 import Checkbox from 'src/components/Checkbox'
@@ -10,45 +10,57 @@ import {wrapOnKeyDown} from 'src/utils/component'
 
 export default class extends React.Component {
     onRemoveClick(e) {
-        e.stopPropagation();
+        e.stopPropagation()
 
-        this.props.remove();
+        this.props.remove()
+    }
+    
+    update(field, value) {
+        this.props.update({[field]: value})
     }
 
     onInputChange(name, value, e) {
-        const prevValue = this.props[name];
-        const {update} = this.props;
+        const prevValue = this.props[name]
+        const {update} = this.props
 
         if (prevValue !== value) {
-            update({[name]: value})
+            this.update(name, value)
         }
     }
 
     focus() {
-        this.taskNode.focus();
+        this.taskNode.focus()
     }
 
     onBlur(e) {
-        const currentTarget = e.currentTarget;
+        const currentTarget = e.currentTarget
 
         // хак, иначе при фокусе внутренних элементов снималось выделение с родиетеля
         setTimeout(() => {
             if (!currentTarget.contains(document.activeElement)) {
-                this.props.unselect();
+                this.props.unselect()
             }
-        }, 0);
+        }, 0)
+    }
+
+    wrapStopPropagation(fn) {
+        return function (e) {
+            e.stopPropagation()
+
+            fn(e)
+        }
     }
 
     render() {
-        const {toggle, setEditable, select, open, unselect, createTodo} = this.props;
-        const {index, id, todos, caption, completed, notes, editable, isOpen, selected} = this.props;
-
+        const {toggle, setEditable, select, update, open, unselect, todoActions} = this.props
+        const {index, id, todos, caption, completed, notes, editable, isOpen, selected, isNew} = this.props
+                             
         const classNames = classnames('task', {
             ['task--completed']: completed,
             ['task--editable']: editable,
             ['task--open']: isOpen,
             ['task--selected']: selected,
-        });
+        })
 
         return <div
             tabIndex={0}
@@ -61,7 +73,8 @@ export default class extends React.Component {
 
             <div className="task__row task__row--caption">
                 <Checkbox
-                    onChange={toggle}
+                    onClick={e => e.stopPropagation()}
+                    onValueChange={this.update.bind(this, 'completed')}
                     readOnly={!isOpen}
                     tabIndex={-1}
                     className="task__checkbox"
@@ -73,6 +86,7 @@ export default class extends React.Component {
                     readOnly={!isOpen}
                     tabIndex={-1}
                     className="task__caption"
+                    autoFocus={isNew}
                     onValueChange={this.onInputChange.bind(this, 'caption')}
                 />
             </div>
@@ -88,16 +102,15 @@ export default class extends React.Component {
             </div>
 
             <div className="task__row task__row--details">
-                <TodoList todos={todos} createTodo={createTodo}
-                />
+                <TodoList todos={todos} actions={todoActions} createTodo={todoActions.create.bind(null, id)}/>
             </div>
 
-            <div className="task__row task__row--details">
+            <div className="task__row task__row--controls">
                 <div className="task__controls">
-                    <Icon name="layout-list-thumb" hoverClr="blue" onClick={createTodo}/>
-                    <Icon name="calendar" hoverClr="orange"/>
-                    <Icon name="tag" hoverClr="yellow"/>
-                    <Icon name="close" hoverClr="red" onClick={this.onRemoveClick.bind(this)}/>
+                    <Icon name="layout-list-thumb" hoverClr="blue" onClick={todoActions.create.bind(null, id)} title="Add todo"/>
+                    <Icon name="calendar" hoverClr="orange" title="Calendar"/>
+                    <Icon name="tag" hoverClr="yellow" title="Tag"/>
+                    <Icon name="close" hoverClr="red" onClick={this.wrapStopPropagation(this.onRemoveClick.bind(this))} title="Remove"/>
                 </div>
             </div>
         </div>
