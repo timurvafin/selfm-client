@@ -1,6 +1,7 @@
 import React from 'react'
 import cs from 'classnames'
-import Icon from 'src/components/Icon'
+import Action from 'src/components/action'
+import RadialProgressBar from 'src/components/radial-progress-bar'
 
 class ProjectLink extends React.Component {
     render() {
@@ -11,6 +12,8 @@ class ProjectLink extends React.Component {
         })
 
         return <div onClick={onClick}  to={'/tm/project/' + project.get('id')} key={project.get('id')} className={classname}>
+            <RadialProgressBar size="15" progress={project.get('progress')} color="#aaa" name="project-progress-bar"/>
+
             <div className="sidebar__project__icon">{project.get('icon')}</div>
             <div className="sidebar__project__name">{project.get('caption') || project.get('placeholder')}</div>
         </div>
@@ -29,10 +32,7 @@ export default class Sidebar extends React.Component {
             </div>
 
             <div className="sidebar__actions">
-                <div onClick={projectActions.create} className="sidebar__action sidebar__action--add">
-                    <Icon name="plus"/>
-                    <span>Новый проект</span>
-                </div>
+                <Action name="Новый проект" icon="plus" action={projectActions.create} className="sidebar__action sidebar__action--add" />
             </div>
         </div>
     }

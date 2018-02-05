@@ -1,12 +1,13 @@
 import React from 'react'
 import {Route} from 'react-router'
-import PlanView from './views/plan'
-
 import './styles/common.scss'
+import PlanView from './views/plan'
+import Header from './views/header'
 
 export default class Routes extends React.Component {
     render() {
-        return <div>
+        return <div id="app">
+            <Header />
             <Route path="/" component={PlanView}/>
         </div>
     }

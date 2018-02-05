@@ -11,9 +11,18 @@ body {
   //background-image : url(https://www.toptal.com/designers/subtlepatterns/patterns/concrete-texture.png);
 
   font-family    : $ff_base;
+  color          : $clr_base;
   font-smoothing : antialiased;
-  font-weight : 300;
-  font-size : 15px;
+  font-weight    : 300;
+  font-size      : 15px;
+}
+
+#app {
+  background-color : #f9f9f9;
+  padding          : 0 0 1em 0;
+  min-height       : 100vh;
+  display          : flex;
+  flex-direction   : column;
 }
 
 *, *::before, *::after {

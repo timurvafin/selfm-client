@@ -13,7 +13,7 @@ function openProject(projects, id) {
     })
 }
 
-export default function (projects, action) {
+export default function (projects, tasks, action) {
     switch (action.type) {
         case Actions.PROJECTS_RECEIVE:
             return makeOrderedMap(action.projects, 'id')

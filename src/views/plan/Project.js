@@ -1,8 +1,9 @@
 import React from 'react'
 import TaskList from './TaskList'
-import TextField from 'src/components/TextField'
-import Checkbox from 'src/components/Checkbox'
-import Action from 'src/components/Action'
+import TextField from 'src/components/textfield'
+//import Checkbox from 'src/components/Checkbox'
+import Action from 'src/components/action'
+import RadialProgressBar from 'src/components/radial-progress-bar'
 //import PropTypes from 'prop-types'
 
 import './project.scss'
@@ -19,11 +20,7 @@ export default class Project extends React.Component {
 
         return <div className="project">
             <div className="project__row project__row--caption">
-                <Checkbox
-                    checked={fields.get('completed')}
-                    onValueChange={this.update.bind(this, 'completed')}
-                    className="project__checkbox"
-                />
+                <RadialProgressBar size="20" progress={fields.get('progress')} color="#cd3d82" bg="#fafafa" name="project-progress-bar"/>
 
                 <TextField
                     placeholder="Название"

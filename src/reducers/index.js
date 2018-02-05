@@ -1,4 +1,4 @@
-import {Map, OrderedMap} from 'immutable'
+import { Map, OrderedMap } from 'immutable'
 import todoReducer from './todos'
 import tasksReducer from './tasks'
 import projectsReducer from './projects'
@@ -10,9 +10,13 @@ const initialState = Map({
 })
 
 export default function (state = initialState, action) {
+    const todos    = todoReducer(state.get('todos'), action)
+    const tasks    = tasksReducer(state.get('tasks'), todos, action)
+    const projects = projectsReducer(state.get('projects'), tasks, action)
+
     return Map({
-        projects: projectsReducer(state.get('projects'), action),
-        tasks: tasksReducer(state.get('tasks'), action),
-        todos: todoReducer(state.get('todos'), action)
+        todos,
+        tasks,
+        projects
     })
 }

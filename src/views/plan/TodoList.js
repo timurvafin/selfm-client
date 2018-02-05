@@ -1,6 +1,6 @@
 import React from 'react'
-import TextField from 'src/components/TextField'
-import Checkbox from 'src/components/Checkbox'
+import TextField from 'src/components/textfield'
+import Checkbox from 'src/components/checkbox'
 import { BACKSPACE_KEY } from 'src/constants'
 import { List } from 'immutable'
 import cs from 'classnames'

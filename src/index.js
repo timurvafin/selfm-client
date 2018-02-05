@@ -14,5 +14,5 @@ ReactDOM.render(
             <Routes/>
         </ConnectedRouter>
     </Provider>,
-    document.getElementById('app')
+    document.getElementById('root')
 )

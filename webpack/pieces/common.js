@@ -8,7 +8,7 @@ module.exports = opts => {
             new webpack.HotModuleReplacementPlugin(),
         ],
         devServer: {
-            hot: true, // Tell the dev-server we're using HMR
+            hot: true, 
             contentBase: opts.path.output,
             publicPath: opts.path.public
         },
