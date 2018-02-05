@@ -1,0 +1,15 @@
+@import 'include';
+
+.radial-progress-bar {
+  display      : block;
+  position     : relative;
+  margin-right : .4em;
+}
+
+.rpb__svg__sector {
+  //transition: all .2s;
+}
+
+.rpb__svg__outline {
+  fill : transparent;
+}
