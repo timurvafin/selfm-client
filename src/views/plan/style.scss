@@ -66,6 +66,10 @@
   @include overflow-dots();
 }
 
+.sidebar__project__progress-bar {
+  margin-right : .4em;
+}
+
 .sidebar__project--selected {
   background-color : rgba(235, 230, 241, 0.64);
 }

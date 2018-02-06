@@ -9,7 +9,7 @@ function* load() {
     const projects = yield call(Api.loadProjects)
 
     yield put(UI.receive(projects))
-    yield put(UI.open(100))
+    yield put(UI.open(101))
 }
 
 function* open(action) {
@@ -33,9 +33,14 @@ function* update(action) {
     }
 }
 
+function* remove(id) {
+    yield call(Api.remove, id)
+}
+
 export default function*() {
     yield takeEvery(UI.PROJECTS_LOAD, load)
     yield takeEvery(UI.PROJECTS_CREATE, createEntity, UI.add)
     yield takeEvery(UI.PROJECTS_OPEN, open)
     yield takeEvery(UI.PROJECTS_UPDATE, update)
+    yield takeEvery(UI.PROJECTS_REMOVE, remove)
 }

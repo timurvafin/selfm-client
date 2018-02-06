@@ -106,10 +106,10 @@ export default class Task extends React.Component {
 
             <div className="task__row task__row--controls">
                 <div className="task__controls">
-                    <Action icon="layout-list-thumb" hoverClr="blue" action={todoActions.create.bind(null, id)} title="Add todo"/>
+                    <Action icon="list-items" hoverClr="blue" action={todoActions.create.bind(null, id)} title="Add todo"/>
                     <Action icon="calendar" hoverClr="orange" title="Calendar"/>
                     <Action icon="tag" hoverClr="yellow" title="Tag"/>
-                    <Action icon="close" hoverClr="red" action={this.wrapStopPropagation(this.onRemoveClick.bind(this))} title="Remove"/>
+                    <Action icon="remove" hoverClr="red" action={this.wrapStopPropagation(this.onRemoveClick.bind(this))} title="Remove"/>
                 </div>
             </div>
         </div>

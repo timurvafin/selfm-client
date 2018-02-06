@@ -12,7 +12,12 @@ class ProjectLink extends React.Component {
         })
 
         return <div onClick={onClick}  to={'/tm/project/' + project.get('id')} key={project.get('id')} className={classname}>
-            <RadialProgressBar size="15" progress={project.get('progress')} color="#aaa" name="project-progress-bar"/>
+            <RadialProgressBar 
+                size="15" 
+                progress={project.get('progress')} 
+                color="#aaa" 
+                className="sidebar__project__progress-bar"
+            />
 
             <div className="sidebar__project__icon">{project.get('icon')}</div>
             <div className="sidebar__project__name">{project.get('caption') || project.get('placeholder')}</div>

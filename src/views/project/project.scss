@@ -17,14 +17,40 @@
   display     : flex;
   align-items : center;
   margin-top : 1rem;
-
-  .project__name {
-    flex : 1;
-  }
 }
 
 .project__row--actions {
 
+}
+
+.project__progress-bar {
+  margin-right : .7rem;
+}
+
+.project__name {
+  margin-right : .7rem;
+  font-size   : 1.5em;
+  font-weight : 500;
+  border-bottom : 1px solid transparent;
+}
+
+.project__name--textfield {
+  padding : 0;
+  border-bottom : 1px solid $lgray;
+}
+
+.project__name, .project__notes {
+  display : block;
+  border  : 0;
+  outline : none;
+}
+
+.project__notes {
+  width       : 100%;
+  resize      : none;
+  font-size   : 14px;
+  font-weight : 300;
+  line-height : 1.4;
 }
 
 .project__action {
@@ -42,32 +68,7 @@
   }
 }
 
-.project__checkbox {
-  @include checkbox($blue, 1em, $border_clr : $blue, $round : true);
-}
-
-.project__name, .project__notes {
-  display : block;
-  border  : 0;
-  outline : none;
-}
-
-.project__name {
-  font-size   : 1.5em;
-  font-weight : 500;
-}
-
-.project__notes {
-  width       : 100%;
-  resize      : none;
-  font-size   : 14px;
-  font-weight : 300;
-  line-height : 1.4;
-}
-
 /* ------------ tasks ------------ */
-$checkbox_clr : #4caf50;
-
 .task-list {
   margin : 2em 0;
 }
@@ -104,9 +105,9 @@ $checkbox_clr : #4caf50;
 
 .task__checkbox {
   width     : .5em;
-  font-size : 1.2em;
+  font-size : 1.1em;
 
-  @include checkbox($checkbox_clr, 1em, $bg_clr : #fff);
+  @include checkbox($lgray, 1em, $bg_clr : #fff, $border_width: 1px, $border_clr: $lgray);
 }
 
 .task__caption {
@@ -207,7 +208,7 @@ $completed_task_opacity : .5;
   background-color : #fafafa;
 
   .task__checkbox {
-    @include checkbox($checkbox_clr, 1em, $bg_clr : #f5f5f5, $border_clr : #ddd);
+    @include checkbox($lgray, 1em, $bg_clr : #f5f5f5, $border_width: 1px, $border_clr : $lgray);
   }
 }
 

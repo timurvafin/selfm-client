@@ -1,8 +1,8 @@
 export const PROJECTS_CREATE  = 'projects/create'
 export const PROJECTS_ADD     = 'projects/add'
 export const PROJECTS_UPDATE  = 'projects/update'
-export const PROJECTS_TOGGLE   = 'projects/toggle'
-//export const PROJECTS_REMOVE  = 'projects/remove'
+export const PROJECTS_TOGGLE  = 'projects/toggle'
+export const PROJECTS_REMOVE  = 'projects/remove'
 export const PROJECTS_OPEN    = 'projects/open'
 export const PROJECTS_LOAD    = 'projects/load'
 export const PROJECTS_RECEIVE = 'projects/receive'
@@ -53,6 +53,13 @@ export function toggle(id, complete) {
         type: PROJECTS_TOGGLE,
         id,
         complete
+    }
+}
+
+export function remove(id) {
+    return {
+        type: PROJECTS_REMOVE,
+        id,
     }
 }
 

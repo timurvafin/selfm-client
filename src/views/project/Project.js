@@ -1,14 +1,16 @@
-import React from 'react'
+import React, {Component} from 'react'
 import TaskList from './TaskList'
+import EditableField from 'src/components/textfield/editable'
 import TextField from 'src/components/textfield'
 //import Checkbox from 'src/components/Checkbox'
 import Action from 'src/components/action'
 import RadialProgressBar from 'src/components/radial-progress-bar'
 //import PropTypes from 'prop-types'
+import ProjectMenu from './ProjectMenu'
 
 import './project.scss'
 
-export default class Project extends React.Component {
+export default class Project extends Component {
     update(field, value) {
         this.props.update({
             [field]: value,
@@ -16,18 +18,35 @@ export default class Project extends React.Component {
     }
 
     render() {
-        const {fields, tasks, taskActions, todoActions} = this.props
+        const {remove, fields, tasks, taskActions, todoActions} = this.props
+
+        const menuItems = [
+            {action: '', name: 'Complete', icon: 'add'},
+            {action: '', name: 'Copy', icon: 'copy'},
+            {action: '', name: 'Add task', icon: 'add'},
+            {action: remove, name: 'Remove', icon: 'remove', className: 'project__action--remove'},
+        ]
 
         return <div className="project">
             <div className="project__row project__row--caption">
-                <RadialProgressBar size="20" progress={fields.get('progress')} color="#cd3d82" bg="#fafafa" name="project-progress-bar"/>
-
-                <TextField
-                    placeholder="Название"
-                    onValueChange={this.update.bind(this, 'caption')}
-                    className="project__name"
-                    text={fields.get('caption')}
+                <RadialProgressBar 
+                    className="project__progress-bar"
+                    size="20" 
+                    progress={fields.get('progress')} 
+                    color="#cd3d82" 
+                    bg="#fafafa" 
                 />
+
+                <EditableField
+                    placeholder="Название"
+                    textFieldClass="project__name project__name--textfield"
+                    captionClass="project__name"
+                    onValueChange={this.update.bind(this, 'caption')}
+                    text={fields.get('caption')}
+                    edit={fields.get('_new')}
+                />
+
+                <ProjectMenu items={menuItems} />
             </div>
 
             <div className="project__row">

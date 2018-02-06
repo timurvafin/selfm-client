@@ -146,8 +146,10 @@ i.icon--reload:before {
   content : "\e619";
 }
 
-i.icon--plus:before {
-  content : "\e61a";
+i.icon--plus, i.icon--add {
+  &:before {
+    content : "\e61a";
+  }
 }
 
 i.icon--pin:before {
@@ -322,8 +324,10 @@ i.icon--comment-alt:before {
   content : "\e645";
 }
 
-i.icon--close:before {
-  content : "\e646";
+i.icon--close, i.icon--delete, i.icon--remove, i.icon--x {
+  &:before {
+    content : "\e646";
+  }
 }
 
 i.icon--clip:before {
@@ -946,7 +950,7 @@ i.icon--more:before {
   content : "\e6e1";
 }
 
-i.icon--more-alt:before {
+i.icon--dots:before {
   content : "\e6e2";
 }
 
@@ -1074,8 +1078,10 @@ i.icon--layout-media-center:before {
   content : "\e701";
 }
 
-i.icon--layout-list-thumb:before {
-  content : "\e702";
+i.icon--layout-list-thumb, i.icon--list-items {
+  &:before {
+    content : "\e702";
+  }
 }
 
 i.icon--layout-list-thumb-alt:before {

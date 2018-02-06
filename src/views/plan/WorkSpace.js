@@ -1,7 +1,7 @@
 import React from 'react'
 import {OrderedMap} from 'immutable'
 import {connect} from 'react-redux'
-import Project from './Project'
+import Project from '../project/Project'
 
 class WorkSpace extends React.Component {
     render() {
@@ -14,6 +14,7 @@ class WorkSpace extends React.Component {
                 tasks={children}
                 taskActions={taskActions}
                 todoActions={todoActions}
+                remove={projectActions.remove.bind(null, project.get('id'))}
                 update={projectActions.update.bind(null, project.get('id'))}
                 toggle={projectActions.toggle.bind(null, project.get('id'))}
             /> : ''

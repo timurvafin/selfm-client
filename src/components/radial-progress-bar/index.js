@@ -94,8 +94,8 @@ class RadialProgressBar extends React.Component {
     }
 
     render() {
-        const {size, name, progress, color} = this.props
-        const cls = cs('radial-progress-bar', name)
+        const {size, className, progress, color} = this.props
+        const cls = cs(className, 'radial-progress-bar')
 
         const parentR          = size / 2
         const center           = parentR

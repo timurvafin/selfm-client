@@ -3,10 +3,10 @@
 .action {
   @include clickable();
 
-  display : inline-flex;
+  display     : inline-flex;
   align-items : center;
 
-  .icon {
-    margin-right : .5em;
+  .action__icon + .action__name {
+    margin-left : .5em;
   }
 }

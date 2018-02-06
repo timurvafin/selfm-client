@@ -19,6 +19,7 @@ export default class extends React.Component {
     componentDidMount() {
         if (this.props.autoFocus) {
             this.el.focus()
+            this.el.setSelectionRange(this.el.value.length, this.el.value.length)
         }
     }
 
