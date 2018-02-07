@@ -37,11 +37,11 @@ export default class EditableCaption extends React.Component {
     }
 
     renderCaption() {
-        return <div className={this.props.captionClass} onClick={this.onClick}>{this.props.text}</div>
+        return <div className={this.props.captionClass || this.props.className} onClick={this.onClick}>{this.props.text}</div>
     }
 
     renderTextField() {
-        const {textFieldClass} = this.props
+        const textFieldClass = this.props.textFieldClass || this.props.className
         const props = _.omit(this.props, ['onEdit', 'edit', 'captionClass', 'textFieldClass'])
 
         return <TextField autoFocus className={textFieldClass} onBlur={this.onBlur} {...props}/>
