@@ -2,15 +2,35 @@ import React from 'react'
 import TaskListItem from './Task'
 
 export default class TaskList extends React.Component {
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            ids: props.tasks.map(task => task.get('id'))
+        }
+        
+        this.moveTask = this.moveTask.bind(this)
+    }
+
+    componentWillReceiveProps(props) {
+        this.setState({ids: props.tasks.map(task => task.get('id'))})
+    }
+
+    moveTask(fromIndex, toIndex) {
+        const fromId = this.state.ids.get(fromIndex)
+
+        this.setState({ids: this.state.ids.delete(fromIndex).insert(toIndex, fromId)})
+    }
+
     render() {
         const {tasks, actions, todoActions} = this.props
 
-        const taskDataList = tasks.map((task, index) => {
-            const taskId = task.get('id')
+        const taskDataList = this.state.ids.map((id, index) => {
+            const task = tasks.find(task => task.get('id') === id)
             
             const props = {
                 index,
-                id: taskId,
+                id,
                 completed: task.get('completed'),
                 caption: task.get('caption'),
                 editable: task.get('editable'),
@@ -20,22 +40,22 @@ export default class TaskList extends React.Component {
                 notes: task.get('notes'),
                 todos: task.get('todos'),
                 
-                setEditable: actions.update.bind(null, taskId, {editable: !task.get('editable')}, false),
-                toggle: actions.toggle.bind(null, taskId),
-                remove: actions.remove.bind(null, taskId),
-                update: actions.update.bind(null, taskId),
-                select: actions.select.bind(null, taskId, true),
-                unselect: actions.select.bind(null, taskId, false),
-                open: task.get('open') ? null : actions.open.bind(null, taskId),
+                setEditable: actions.update.bind(null, id, {editable: !task.get('editable')}, false),
+                toggle: actions.toggle.bind(null, id),
+                remove: actions.remove.bind(null, id),
+                update: actions.update.bind(null, id),
+                select: actions.select.bind(null, id, true),
+                unselect: actions.select.bind(null, id, false),
+                open: task.get('open') ? null : actions.open.bind(null, id),
                 
                 todoActions: {
-                    create: todoActions.create.bind(null, taskId),
+                    create: todoActions.create.bind(null, id),
                     update: todoActions.update,
                     remove: todoActions.remove,
                 }
             }
 
-            return <TaskListItem key={index} {...props}/>
+            return <TaskListItem key={id} move={this.moveTask} {...props}/>
         }).toJS()
 
         return <div className="task-list">

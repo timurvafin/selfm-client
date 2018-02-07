@@ -2,16 +2,31 @@ import React from 'react'
 import cs from 'classnames'
 import Action from 'src/components/action'
 import RadialProgressBar from 'src/components/radial-progress-bar'
+import { DropTarget } from 'react-dnd'
 
+const projectTarget = {
+    drop(props) {
+    }
+}
+
+function collect(connect, monitor) {
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver()
+    }
+}
+
+@DropTarget('TASK', projectTarget, collect)
 class ProjectLink extends React.Component {
     render() {
+        const {connectDropTarget, isOver} = this.props
         const {project, onClick} = this.props
 
         const classname = cs('sidebar__project', {
             ['sidebar__project--selected']: project.get('selected')
         })
 
-        return <div onClick={onClick}  to={'/tm/project/' + project.get('id')} key={project.get('id')} className={classname}>
+        return connectDropTarget(<div onClick={onClick} className={classname} style={{background: isOver ? 'red' : ''}}>
             <RadialProgressBar 
                 size="15" 
                 progress={project.get('progress')} 
@@ -21,7 +36,7 @@ class ProjectLink extends React.Component {
 
             <div className="sidebar__project__icon">{project.get('icon')}</div>
             <div className="sidebar__project__name">{project.get('caption') || project.get('placeholder')}</div>
-        </div>
+        </div>)
     }
 }
 

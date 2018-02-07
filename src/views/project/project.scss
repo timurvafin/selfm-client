@@ -75,6 +75,7 @@
 /* ---------------- 2. TASKS ---------------- */
 /* ------------------------------------------ */
 $completed_task_opacity : .5;
+$hover_bc: #fafafa;
 
 %checkbox {
   width : .5em;
@@ -87,7 +88,7 @@ $completed_task_opacity : .5;
 
   &:checked {
     &:before {
-      border-width: 2px;
+      border-width : 2px;
       border-color : $clr_accent;
     }
 
@@ -182,6 +183,17 @@ $completed_task_opacity : .5;
   }
 }
 
+.task__drag-placeholder {
+  display          : none;
+  background-color : $hover_bc;
+  height           : 100%;
+  position         : absolute;
+  left             : 0;
+  top              : 0;
+  z-index          : 2;
+  width            : 100%;
+}
+
 /* -------------- 2.2 TASK STATES -------------- */
 .task--completed {
   .task__caption {
@@ -191,8 +203,18 @@ $completed_task_opacity : .5;
   }
 }
 
-.task:hover:not(.task--open) {
-  background-color : #fafafa;
+.task--dragging {
+  position : relative;
+  //border: 2px solid cornflowerblue;
+  display  : block;
+
+  .task__drag-placeholder {
+    display : block;
+  }
+}
+
+.task:hover:not(.task--open).task--can-drag {
+  background-color : $hover_bc;
 
   .task__checkbox {
     //@include checkbox($lgray, 1em, $bg_clr : #f5f5f5, $border_width: 1px, $border_clr : $lgray);
