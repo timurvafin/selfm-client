@@ -40,8 +40,8 @@ export default class ProjectMenu extends Component {
     renderItems(items) {
         return items.map((item, key) => {
             return <li key={key} className="popup-menu__item">
-                {item === 'divider' ?
-                    <div className="popup-menu--divider"></div> :
+                {item === 'divider' ? 
+                    <div className="popup-menu--divider"></div> : 
                     <Action {...item} />
                 }
             </li>

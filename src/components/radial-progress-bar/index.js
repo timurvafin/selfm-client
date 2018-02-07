@@ -6,19 +6,25 @@ class AnimatedSector extends React.Component {
     constructor(props) {
         super(props)
 
-        this.thetaDelta = 5
-        this.state      = {
+        this.state = {
             angle: props.angle
         }
     }
 
+    getDelta(diff) {
+        return Math.max(5, Math.floor(diff / 18))
+    }
+
     componentWillReceiveProps(props) {
+        const diff  = Math.abs(this.state.angle - props.angle)
+        const delta = this.getDelta(diff)
+
         const animate = () => {
-            const stop      = Math.abs(this.state.angle - props.angle) < this.thetaDelta
+            const stop      = Math.abs(this.state.angle - props.angle) < delta
             const direction = this.state.angle <= props.angle ? 1 : -1
 
             if (!stop) {
-                const nextAngle = this.state.angle + this.thetaDelta * direction
+                const nextAngle = Math.floor((this.state.angle + delta * direction) / delta) * delta
                 this.setState({angle: nextAngle})
                 this.rafId = requestAnimationFrame(animate)
             }
@@ -67,32 +73,6 @@ class AnimatedSector extends React.Component {
 }
 
 class RadialProgressBar extends React.Component {
-    step(angleOffset, endAngle, time, endTime) {
-        const now        = new Date().valueOf()
-        const timeOffset = endTime - now
-
-        if (timeOffset <= 0) {
-            this.changeAngle(endAngle)
-        } else {
-            const angle = endAngle - (angleOffset * timeOffset / time)
-
-            this.changeAngle(angle)
-            requestAnimationFrame(() => this.step(angleOffset, endAngle, time, endTime))
-        }
-    }
-
-    animateTo(angle, time = 300) {
-        if (angle > 360) {
-            angle = angle % 360
-        }
-
-        const startTime   = new Date().valueOf()
-        const endTime     = startTime + time
-        const angleOffset = angle - this.options.angle
-
-        requestAnimationFrame(() => this.step(angleOffset, angle, time, endTime))
-    }
-
     render() {
         const {size, className, progress, color} = this.props
         const cls = cs(className, 'radial-progress-bar')
@@ -128,12 +108,9 @@ class RadialProgressBar extends React.Component {
                     y0={outerStrokeWidth + innerMargin}
                     color={color}
                 />
-
             </svg>
         </span>
     }
 }
 
 export default RadialProgressBar
-
-//export default rotate(RadialProgressBar, 360, 1)

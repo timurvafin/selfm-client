@@ -1,10 +1,13 @@
 @import 'include';
 @import 'components/checkbox';
 
+/* ------------------------------------------ */
+/* --------------- 1. PROJECT --------------- */
+/* ------------------------------------------ */
 .project {
   input, textarea {
     @include placeholder() {
-      color: #ccc;
+      color : #ccc;
     }
   }
 }
@@ -16,7 +19,7 @@
 .project__row--caption {
   display     : flex;
   align-items : center;
-  margin-top : 1rem;
+  margin-top  : 1rem;
 }
 
 .project__row--actions {
@@ -28,14 +31,15 @@
 }
 
 .project__name {
-  margin-right : .7rem;
-  font-size   : 1.5em;
-  font-weight : 500;
+  margin-right  : .7rem;
+  font-size     : 1.5em;
+  font-weight   : 500;
   border-bottom : 1px solid transparent;
+  font-family   : $ff_title;
 }
 
 .project__name--textfield {
-  padding : 0;
+  padding       : 0;
   border-bottom : 1px solid $lgray;
 }
 
@@ -48,8 +52,7 @@
 .project__notes {
   width       : 100%;
   resize      : none;
-  font-size   : 14px;
-  font-weight : 300;
+  font-size   : 13px;
   line-height : 1.4;
 }
 
@@ -57,8 +60,8 @@
   color : $clr_accent;
 
   .action__icon {
-    font-weight  : bold;
-    font-size    : 85%;
+    font-weight : bold;
+    font-size   : 85%;
   }
 
   &:hover {
@@ -68,7 +71,30 @@
   }
 }
 
-/* ------------ tasks ------------ */
+/* ------------------------------------------ */
+/* ---------------- 2. TASKS ---------------- */
+/* ------------------------------------------ */
+$completed_task_opacity : .5;
+
+%checkbox {
+  width : .5em;
+
+  @include checkbox($lgray, .9em, $bg_clr : #fff, $border_width : 1px, $border_clr : $lgray);
+
+  &:before {
+    border-radius : 3px;
+  }
+
+  &:checked {
+    &:before {
+      border-width: 2px;
+      border-color : $clr_accent;
+    }
+
+    opacity : $completed_task_opacity;
+  }
+}
+
 .task-list {
   margin : 2em 0;
 }
@@ -86,7 +112,7 @@
 }
 
 .task__row {
-  padding-left : 1.8em;
+  padding-left : 1.5em;
 }
 
 .task__row--caption {
@@ -104,17 +130,16 @@
 }
 
 .task__checkbox {
-  width     : .5em;
-  font-size : 1.1em;
-
-  @include checkbox($lgray, 1em, $bg_clr : #fff, $border_width: 1px, $border_clr: $lgray);
+  @extend %checkbox;
 }
 
 .task__caption {
   @include unselectable();
 
-  font-size        : inherit;
+  font-size        : 14px;
   transition       : all .2s;
+  font-family      : 'Open Sans', sans-serif;
+  font-weight      : 500;
 
   outline          : none;
   cursor           : pointer;
@@ -128,42 +153,12 @@
   border      : 0;
   outline     : none;
   resize      : none;
-  font-weight : 300;
-  font-size   : 14px;
   background  : none;
   color       : #333;
   width       : 100%;
-}
-
-.todo {
-  padding       : .2em 0;
-  border-bottom : 1px solid #e0e0e0;
-  display       : flex;
-  align-items   : center;
-
-  &:last-child {
-    border-color : transparent;
-  }
-}
-
-.todo--done {
-  opacity: .3;
-
-  .todo__caption {
-    text-decoration : line-through;
-  }
-}
-
-.todo__caption {
-  border      : 0;
-  background  : none;
-  color       : #666;
-  font-weight : 300;
-  outline     : none;
-}
-
-.todo__checkbox {
-  margin-right : .5em;
+  font-size   : 13px;
+  line-height : 1.4;
+  padding     : 0;
 }
 
 .task__controls {
@@ -187,20 +182,12 @@
   }
 }
 
-.task--editable .task__drag {
-  display : block;
-}
-
-$completed_task_opacity : .5;
-
+/* -------------- 2.2 TASK STATES -------------- */
 .task--completed {
-  .task__checkbox {
-    opacity : $completed_task_opacity;
-  }
-
   .task__caption {
     text-decoration : line-through;
     opacity         : $completed_task_opacity;
+    font-weight     : normal;
   }
 }
 
@@ -208,21 +195,21 @@ $completed_task_opacity : .5;
   background-color : #fafafa;
 
   .task__checkbox {
-    @include checkbox($lgray, 1em, $bg_clr : #f5f5f5, $border_width: 1px, $border_clr : $lgray);
+    //@include checkbox($lgray, 1em, $bg_clr : #f5f5f5, $border_width: 1px, $border_clr : $lgray);
   }
 }
 
 .task:not(.task--open) {
-  display : flex;
+  display     : flex;
   align-items : center;
 
   .task__row--caption {
-    flex: 1;
+    flex : 1;
   }
 
   .task__row--controls {
-    opacity : 0;
-    transition: all .2s;
+    opacity    : 0;
+    transition : all .2s;
   }
 
   &:hover .task__row--controls {
@@ -231,10 +218,11 @@ $completed_task_opacity : .5;
 }
 
 .task--open {
-  padding    : 1em;
-  box-shadow : 0 0 8px #e0e0e0;
-  margin     : 1em 0;
-  display    : block;
+  padding          : 1em;
+  box-shadow       : 0 0 8px #e0e0e0;
+  margin           : 1em 0;
+  display          : block;
+  background-color : #fff;
 
   .task__row + .task__row {
     margin-top : 1em;
@@ -255,4 +243,38 @@ $completed_task_opacity : .5;
 
 .task:not(.task--completed) .task__checkbox:hover:before {
   background-color : #f5f5f5;
+}
+
+/* ------------------------------------------ */
+/* ---------------- 2. TODOS ---------------- */
+/* ------------------------------------------ */
+.todo {
+  padding       : .2em 0;
+  border-bottom : 1px solid #e0e0e0;
+  display       : flex;
+  align-items   : center;
+
+  &:last-child {
+    border-color : transparent;
+  }
+}
+
+.todo--done {
+  opacity : .3;
+
+  .todo__caption {
+    text-decoration : line-through;
+  }
+}
+
+.todo__checkbox {
+  @extend %checkbox
+}
+
+.todo__caption {
+  border      : 0;
+  background  : none;
+  color       : #666;
+  font-weight : 300;
+  outline     : none;
 }

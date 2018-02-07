@@ -1,11 +1,9 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import TaskList from './TaskList'
 import EditableField from 'src/components/textfield/editable'
 import TextField from 'src/components/textfield'
-//import Checkbox from 'src/components/Checkbox'
 import Action from 'src/components/action'
 import RadialProgressBar from 'src/components/radial-progress-bar'
-//import PropTypes from 'prop-types'
 import ProjectMenu from './ProjectMenu'
 
 import './project.scss'
@@ -19,22 +17,22 @@ export default class Project extends Component {
 
     render() {
         const {remove, fields, tasks, taskActions, todoActions} = this.props
+        const addTask = taskActions.create.bind(null, fields.get('id'))
 
         const menuItems = [
-            {action: '', name: 'Complete', icon: 'add'},
-            {action: '', name: 'Copy', icon: 'copy'},
-            {action: '', name: 'Add task', icon: 'add'},
+            {action: '', name: 'Complete', icon: 'check'},
+            {action: addTask, name: 'Add task', icon: 'add'},
             {action: remove, name: 'Remove', icon: 'remove', className: 'project__action--remove'},
         ]
 
         return <div className="project">
             <div className="project__row project__row--caption">
-                <RadialProgressBar 
+                <RadialProgressBar
                     className="project__progress-bar"
-                    size="20" 
-                    progress={fields.get('progress')} 
-                    color="#cd3d82" 
-                    bg="#fafafa" 
+                    size="20"
+                    progress={fields.get('progress')}
+                    color="#cd3d82"
+                    bg="#fafafa"
                 />
 
                 <EditableField
@@ -64,7 +62,7 @@ export default class Project extends Component {
             </div>
 
             <div className="project__row project__row--actions">
-                <Action action={taskActions.create.bind(null, fields.get('id'))} className="project__action" icon="plus" name="Новая задача"/>
+                <Action action={addTask} className="project__action" icon="plus" name="Новая задача"/>
             </div>
         </div>
     }

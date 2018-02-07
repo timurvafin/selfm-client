@@ -1,9 +1,10 @@
 import {ENTER_KEY, ESC_KEY} from 'src/constants'
 
-export function wrapPreventDefault(cb) {
+export function preventDefaultAnd(fn) {
     return function (e) {
+        e.preventDefault()
 
-        cb(e)
+        fn(e)
     }
 }
 
@@ -22,3 +23,11 @@ export function wrapOnKeyDown(onKeyDown, onEnter, onEsc) {
         }
     }
 }
+
+export function stopPropagationAnd(fn) {
+    return function (e) {
+        e.stopPropagation()
+        
+        fn(e)
+    }
+} 
