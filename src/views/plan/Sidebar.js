@@ -23,10 +23,11 @@ class ProjectLink extends React.Component {
         const {project, onClick} = this.props
 
         const classname = cs('sidebar__project', {
-            ['sidebar__project--selected']: project.get('selected')
+            ['sidebar__project--selected']: project.get('selected'),
+            ['sidebar__project--task-over']: isOver,
         })
 
-        return connectDropTarget(<div onClick={onClick} className={classname} style={{background: isOver ? 'red' : ''}}>
+        return connectDropTarget(<div onClick={onClick} className={classname} >
             <RadialProgressBar 
                 size="15" 
                 progress={project.get('progress')} 

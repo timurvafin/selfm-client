@@ -7,81 +7,15 @@ import Checkbox from 'src/components/checkbox'
 import TodoList from './TodoList'
 import onClickOutside from 'react-onclickoutside'
 import EditableField from 'src/components/textfield/editable'
-import { DragSource, DropTarget } from 'react-dnd'
-import { findDOMNode } from 'react-dom'
 
-const taskSource = {
-    beginDrag(props) {
-        console.log(props)
-        return {
-            id: props.id,
-            index: props.index
-        }
-    }
-}
-
-function collect(connect, monitor) {
-    return {
-        connectDragSource: connect.dragSource(),
-        connectDragPreview: connect.dragPreview(),
-        isDragging: monitor.isDragging(),
-        canDrag: monitor.canDrag()
-    }
-}
-
-const taskTarget = {
-    hover(props, monitor, component) {
-        const dragIndex  = monitor.getItem().index
-        const hoverIndex = props.index
-
-        // Don't replace items with themselves
-        if (dragIndex === hoverIndex) {
-            return
-        }
-
-        // Determine rectangle on screen
-        const hoverBoundingRect = findDOMNode(component).getBoundingClientRect()
-
-        // Get vertical middle
-        const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
-
-        // Determine mouse position
-        const clientOffset = monitor.getClientOffset()
-
-        // Get pixels to the top
-        const hoverClientY = clientOffset.y - hoverBoundingRect.top
-
-        // Only perform the move when the mouse has crossed half of the items height
-        // When dragging downwards, only move when the cursor is below 50%
-        // When dragging upwards, only move when the cursor is above 50%
-
-        // Dragging downwards
-        if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-            return
-        }
-
-        // Dragging upwards
-        if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-            return
-        }
-
-        // Time to actually perform the action
-        props.move(dragIndex, hoverIndex)
-
-        // Note: we're mutating the monitor item here!
-        // Generally it's better to avoid mutations,
-        // but it's good here for the sake of performance
-        // to avoid expensive index searches.
-        monitor.getItem().index = hoverIndex
-    },
-}
-
-@DropTarget('TASK', taskTarget, connect => ({
-    connectDropTarget: connect.dropTarget(),
-}))
-@DragSource('TASK', taskSource, collect)
 @onClickOutside
 class Task extends React.Component {
+    constructor(props) {
+        super(props)
+
+        this.onClick = this.setOpen.bind(this, true)
+    }
+
     update(field, value) {
         this.props.update({[field]: value})
     }
@@ -94,17 +28,23 @@ class Task extends React.Component {
         }
     }
 
+    setOpen(open = true) {
+        if (this.props.isOpen !== open) {
+            this.props.setOpen(open)
+        }
+    }
+
     // for HOC onClickOutside
     handleClickOutside() {
         if (this.props.isOpen) {
-            this.props.unselect()
+            this.setOpen(false)
         }
     }
 
     renderCaptionRow() {
         const {isOpen, completed, caption, isNew, toggle, connectDragPreview} = this.props
 
-        return (
+        return connectDragPreview(
             <div className="task__row task__row--caption">
                 <Checkbox
                     onClick={e => e.stopPropagation()}
@@ -127,8 +67,8 @@ class Task extends React.Component {
     }
 
     render() {
-        const {connectDragSource, isDragging, canDrag, connectDropTarget} = this.props
-        const {open, remove, todoActions} = this.props
+        const {connectDragSource, isDragging, canDrag, connectDropTarget, style} = this.props
+        const {remove, todoActions} = this.props
         const {id, todos, completed, notes, editable, isOpen, selected} = this.props
 
         const classNames = classnames('task', {
@@ -140,7 +80,7 @@ class Task extends React.Component {
             ['task--can-drag']: canDrag,
         })
                     
-        return connectDragSource(connectDropTarget(<div className={classNames} onClick={open}>
+        return connectDragSource(connectDropTarget(<div className={classNames} onClick={this.onClick} style={style}>
             {this.renderCaptionRow()}
 
             <div className="task__row task__row--details">

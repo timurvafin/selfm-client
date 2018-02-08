@@ -24,7 +24,7 @@ export default class Project extends Component {
             {action: addTask, name: 'Add task', icon: 'add'},
             {action: remove, name: 'Remove', icon: 'remove', className: 'project__action--remove'},
         ]
-
+        
         return <div className="project">
             <div className="project__row project__row--caption">
                 <RadialProgressBar

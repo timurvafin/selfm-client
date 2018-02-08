@@ -1,6 +1,6 @@
 import * as Actions from '../actions/projects'
 import { fromJS, Map } from 'immutable'
-import { map, makeOrderedMap } from '../utils/immutable'
+import { map } from '../utils/immutable'
 
 function openProject(projects, id) {
     return map(projects, p => {
@@ -16,7 +16,7 @@ function openProject(projects, id) {
 export default function (projects, tasks, action) {
     switch (action.type) {
         case Actions.PROJECTS_RECEIVE:
-            return makeOrderedMap(action.projects, 'id')
+            return projects.merge(action.payload)
         case Actions.PROJECTS_UPDATE:
             return projects.update(action.id, project => project.merge(Map(action.fields)))
         case Actions.PROJECTS_REMOVE:

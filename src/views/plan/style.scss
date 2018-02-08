@@ -16,17 +16,17 @@
 }
 
 .workspace {
-  flex       : 1;
-  padding    : 1em 1.5em 1em;
-  overflow-y : auto;
-  max-width  : 41em;
+  flex             : 1;
+  padding          : 1em 1.5em 1em;
+  overflow-y       : auto;
+  max-width        : 41em;
   background-color : #fff;
-  border: 1px solid #eee;
-  box-shadow: 0 0 1px #e0e0e0;
+  border           : 1px solid #eee;
+  box-shadow       : 0 0 1px #e0e0e0;
 }
 
 .sidebar__projects {
-  margin : 1em 0;
+  margin      : 1em 0;
   font-family : $ff_title;
 }
 
@@ -63,13 +63,18 @@
   color           : #555;
   padding         : .4em;
   margin          : .5em 0;
-  border-radius   : 2px;
+  border-radius   : 3px;
+  border          : 2px solid transparent;
 
   @include overflow-dots();
 }
 
 .sidebar__project__progress-bar {
   margin-right : .4em;
+}
+
+.sidebar__project--task-over {
+  border-color : $clr_accent;
 }
 
 .sidebar__project--selected {

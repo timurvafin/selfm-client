@@ -3,7 +3,7 @@ export const TODOS_ADD     = 'todos/add'
 export const TODOS_REMOVE  = 'todos/remove'
 export const TODOS_UPDATE  = 'todos/update'
 export const TODOS_TOGGLE  = 'todos/toggle'
-//export const TODOS_RECEIVE = 'todos/receive'
+export const TODOS_RECEIVE = 'todos/receive'
 
 export function create(parentId) {
     return {
@@ -39,5 +39,12 @@ export function remove(id) {
     return {
         type: TODOS_REMOVE,
         id
+    }
+}
+
+export function receive(payload) {
+    return {
+        type: TODOS_RECEIVE,
+        payload
     }
 }

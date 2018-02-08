@@ -1,13 +1,23 @@
-export const TASKS_LOAD    = 'tasks/load'
-export const TASKS_RECEIVE = 'tasks/receive'
-export const TASKS_CREATE  = 'tasks/create'
-export const TASKS_ADD     = 'tasks/add'
-export const TASKS_UPDATE  = 'tasks/update'
-export const TASKS_TOGGLE  = 'tasks/toggle'
-export const TASKS_REMOVE  = 'tasks/remove'
-export const TASKS_REORDER = 'tasks/reorder'
-export const TASKS_SELECT  = 'tasks/select'
-export const TASKS_OPEN    = 'tasks/open'
+export const TASKS_LOAD     = 'tasks/load'
+export const TASKS_RECEIVE  = 'tasks/receive'
+export const TASKS_CREATE   = 'tasks/create'
+export const TASKS_ADD      = 'tasks/add'
+export const TASKS_UPDATE   = 'tasks/update'
+export const TASKS_TOGGLE   = 'tasks/toggle'
+export const TASKS_REMOVE   = 'tasks/remove'
+export const TASKS_REORDER  = 'tasks/reorder'
+export const TASKS_SELECT   = 'tasks/select'
+export const TASKS_SET_OPEN = 'tasks/open'
+
+export const TASKS_LOADED = 'tasks/loaded'
+
+
+export function loaded(payload) {
+    return {
+        type: TASKS_LOADED,
+        payload
+    }
+} 
 
 export function create(parentId) {
     return {
@@ -32,21 +42,6 @@ export function toggle(id, complete) {
     }
 }
 
-/*export function updateSucceeded(id, task) {
-    return {
-        type: UPDATE_SUCCEEDED,
-        id,
-        task
-    }
-}
-
-export function updateFailed(id, error) {
-    return {
-        type: UPDATE_FAILED,
-        error
-    }
-}*/
-
 export function remove(id) {
     return {
         type: TASKS_REMOVE,
@@ -60,24 +55,24 @@ export function load() {
     }
 }
 
-export function add(fields) {
+export function add(payload) {
     return {
         type: TASKS_ADD,
-        fields,
+        payload,
     }
 }
 
-export function receive(tasks) {
+export function receive(payload) {
     return {
         type: TASKS_RECEIVE,
-        tasks,
+        payload,
     }
 }
 
-export function reorder(ids) {
+export function reorder(order) {
     return {
         type: TASKS_REORDER,
-        ids
+        order
     }
 }
 
@@ -89,9 +84,10 @@ export function select(id, select = true) {
     }
 }
 
-export function open(id) {
+export function setOpen(id, open = true) {
     return {
-        type: TASKS_OPEN,
-        id
+        type: TASKS_SET_OPEN,
+        id,
+        open
     }
 }

@@ -5,6 +5,7 @@ export const PROJECTS_TOGGLE  = 'projects/toggle'
 export const PROJECTS_REMOVE  = 'projects/remove'
 export const PROJECTS_OPEN    = 'projects/open'
 export const PROJECTS_LOAD    = 'projects/load'
+export const PROJECTS_LOADED    = 'projects/loaded'
 export const PROJECTS_RECEIVE = 'projects/receive'
 
 export function create() {
@@ -26,10 +27,17 @@ export function load() {
     }
 }
 
-export function receive(projects) {
+export function loaded(payload) {
+    return {
+        type: PROJECTS_LOADED,
+        payload
+    }
+}
+
+export function receive(payload) {
     return {
         type: PROJECTS_RECEIVE,
-        projects,
+        payload,
     }
 }
 
