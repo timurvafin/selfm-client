@@ -1,40 +1,11 @@
-import React from "react"
-import cs from "classnames"
-import "./radial-progress-bar.scss"
+import React from 'react'
+import cs from 'classnames'
+import './radial-progress-bar.scss'
+import { Motion, spring } from 'react-motion'
 
-class AnimatedSector extends React.Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            angle: props.angle
-        }
-    }
-
+class Sector extends React.Component {
     getDelta(diff) {
         return Math.max(5, Math.floor(diff / 18))
-    }
-
-    componentWillReceiveProps(props) {
-        const diff  = Math.abs(this.state.angle - props.angle)
-        const delta = this.getDelta(diff)
-
-        const animate = () => {
-            const stop      = Math.abs(this.state.angle - props.angle) < delta
-            const direction = this.state.angle <= props.angle ? 1 : -1
-
-            if (!stop) {
-                const nextAngle = Math.floor((this.state.angle + delta * direction) / delta) * delta
-                this.setState({angle: nextAngle})
-                this.rafId = requestAnimationFrame(animate)
-            }
-        }
-
-        this.rafId = requestAnimationFrame(animate)
-    }
-
-    componentWillUnmount() {
-        cancelAnimationFrame(this.rafId)
     }
 
     getDimensions(r, center, angle, y0) {
@@ -64,15 +35,27 @@ class AnimatedSector extends React.Component {
     }
 
     render() {
-        const {radius, center, y0, color, className} = this.props
+        const {radius, center, y0, color, angle, className} = this.props
+        const d = this.getDimensions(radius, center, angle, y0)
 
-        const d = this.getDimensions(radius, center, this.state.angle, y0)
-
-        return <path className={className} fill={color} d={d}/>
+        return <path className={className} fill={color} d={d} />
     }
 }
 
 class RadialProgressBar extends React.Component {
+    renderSector(center, radius, angle, y0, color) {
+        return (
+            <Sector
+                className="rpb__svg__sector"
+                radius={radius}
+                center={center}
+                angle={angle}
+                y0={y0}
+                color={color}
+            />
+        )
+    }
+
     render() {
         const {size, className, progress, color} = this.props
         const cls = cs(className, 'radial-progress-bar')
@@ -85,12 +68,17 @@ class RadialProgressBar extends React.Component {
         const innerR           = parentR - innerMargin - outerStrokeWidth
 
         const angle = progress * 360 / 100
-        //const d = this.getSectorDimensions(innerR, center, progress * 360 / 100, outerStrokeWidth + innerMargin)
+        const y0 = outerStrokeWidth + innerMargin
 
-        return <span className={cls}>
-            <svg width={size} height={size} version="1.1" viewBox={`0 0 ${size} ${size}`}
-                 xmlns="http://www.w3.org/2000/svg">
-
+        return <span className={cls} style={{width: size + 'px', height: size + 'px'}}>
+            <svg
+                className="rpb__svg"
+                width={size}
+                height={size}
+                version="1.1"
+                viewBox={`0 0 ${size} ${size}`}
+                xmlns="http://www.w3.org/2000/svg"
+            >
                 <circle
                     className="rpb__svg__outline"
                     cx={center}
@@ -100,14 +88,10 @@ class RadialProgressBar extends React.Component {
                     strokeWidth={outerStrokeWidth}
                 />
 
-                <AnimatedSector
-                    className="rpb__svg__sector"
-                    radius={innerR}
-                    center={center}
-                    angle={angle}
-                    y0={outerStrokeWidth + innerMargin}
-                    color={color}
-                />
+                <Motion defaultStyle={{angle: 0}} style={{angle: spring(angle, {stiffness: 260, damping: 26, precision: 5})}}>
+                    {style => this.renderSector(center, innerR, style.angle, y0, color)}
+                </Motion>
+
             </svg>
         </span>
     }
