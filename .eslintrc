@@ -14,7 +14,8 @@
     "no-unused-vars": 1,
     "semi": ["warn", "never"],
     "react/prop-types": 0,
-    "no-console": 0
+    "no-console": 0,
+    "react/no-find-dom-node": 1
   },
   "parser": "babel-eslint",
   "parserOptions": {

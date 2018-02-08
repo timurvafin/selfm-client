@@ -6,23 +6,10 @@ import * as TaskActions from 'src/actions/tasks'
 import * as TodoActions from 'src/actions/todos'
 import Sidebar from './Sidebar'
 import WorkSpace from './WorkSpace'
+import { DragDropContext } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 import './style.scss'
-
-class PlanView extends React.Component {
-    componentDidMount() {
-        const {load} = this.props.projectActions
-
-        load()
-    }
-
-    render() {
-        return <div className="plan">
-            <Sidebar {...this.props}/>
-            <WorkSpace {...this.props}/>
-        </div>
-    }
-}
 
 const todosProgress = todos => {
     return todos && todos.size > 0 ? (todos.filter(todo => todo.get('completed')).size / todos.size) : 0
@@ -42,7 +29,7 @@ function mapStateToProps(state) {
             const progress = calcProgress(task, task.get('completed', todos))
 
             return task.set('todos', todos.toList()).set('progress', progress)
-        }),
+        }).toList(),
         projects: state.get('projects').map(project => {
             const tasks = allTasks.filter(task => task.get('parent_id') === project.get('id'))
             const progress = tasks.size <= 0 ? 0 : (tasks.reduce((sum, task) => {
@@ -66,5 +53,22 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PlanView)
+@connect(mapStateToProps, mapDispatchToProps)
+@DragDropContext(HTML5Backend)
+class PlanView extends React.Component {
+    componentDidMount() {
+        const {load} = this.props.projectActions
+
+        load()
+    }
+
+    render() {
+        return <div className="plan">
+            <Sidebar {...this.props}/>
+            <WorkSpace {...this.props}/>
+        </div>
+    }
+}
+
+export default PlanView
 

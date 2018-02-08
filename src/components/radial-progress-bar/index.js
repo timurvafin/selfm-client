@@ -67,8 +67,10 @@ class RadialProgressBar extends React.Component {
         const innerMargin      = 2
         const innerR           = parentR - innerMargin - outerStrokeWidth
 
-        const angle = progress * 360 / 100
-        const y0 = outerStrokeWidth + innerMargin
+        const angle       = progress * 360 / 100
+        const y0          = outerStrokeWidth + innerMargin
+        const motionStyle = {angle: spring(angle, {stiffness: 260, damping: 26, precision: 5})}
+
 
         return <span className={cls} style={{width: size + 'px', height: size + 'px'}}>
             <svg
@@ -88,7 +90,7 @@ class RadialProgressBar extends React.Component {
                     strokeWidth={outerStrokeWidth}
                 />
 
-                <Motion defaultStyle={{angle: 0}} style={{angle: spring(angle, {stiffness: 260, damping: 26, precision: 5})}}>
+                <Motion defaultStyle={{angle: 0}} style={motionStyle}>
                     {style => this.renderSector(center, innerR, style.angle, y0, color)}
                 </Motion>
 

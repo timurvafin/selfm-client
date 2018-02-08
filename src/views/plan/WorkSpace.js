@@ -29,7 +29,7 @@ function mapStateToProps(state, props) {
 
     return {
         project,
-        children: children.toList()
+        children: children.toList().sortBy(item => item.get('order'))
     }
 }
 
