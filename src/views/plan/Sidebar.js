@@ -5,7 +5,8 @@ import RadialProgressBar from 'src/components/radial-progress-bar'
 import { DropTarget } from 'react-dnd'
 
 const projectTarget = {
-    drop(props) {
+    drop(props, monitor) {
+        props.moveTask(monitor.getItem().id, props.project.get('id'))
     }
 }
 
@@ -43,12 +44,12 @@ class ProjectLink extends React.Component {
 
 export default class Sidebar extends React.Component {
     render() {
-        const {projects, projectActions} = this.props
+        const {projects, projectActions, taskActions} = this.props
 
         return <div className="sidebar">
             <div className="sidebar__projects">
                 { projects.map((project) => {
-                    return <ProjectLink key={project.get('id')} onClick={projectActions.open.bind(null, project.get('id'))} project={project}/>
+                    return <ProjectLink moveTask={taskActions.move} key={project.get('id')} onClick={projectActions.open.bind(null, project.get('id'))} project={project}/>
                 }).toList().toJS() }
             </div>
 

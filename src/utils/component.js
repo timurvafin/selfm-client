@@ -8,7 +8,7 @@ export function preventDefaultAnd(fn) {
     }
 }
 
-export function wrapOnKeyDown(onKeyDown, onEnter, onEsc) {
+export function makeKeyDownHandler(onKeyDown, onEnter, onEsc) {
     return function (e) {
         if (onKeyDown) {
             onKeyDown(e.keyCode, e)
@@ -24,10 +24,25 @@ export function wrapOnKeyDown(onKeyDown, onEnter, onEsc) {
     }
 }
 
+export function concatHandlers(...handlers) {
+    return function (e) {
+        handlers.forEach(h => h(e))
+    }
+} 
+
 export function stopPropagationAnd(fn) {
     return function (e) {
         e.stopPropagation()
         
         fn(e)
     }
-} 
+}
+
+export function moveCaretTo(inputEl, pos) {
+    if (!inputEl) {
+        return
+    }
+
+    const _pos = (pos >= 0 ? pos : inputEl.value.length + pos) + 1
+    inputEl.setSelectionRange(_pos, _pos)
+}

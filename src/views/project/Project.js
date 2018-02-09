@@ -41,7 +41,7 @@ export default class Project extends Component {
                     captionClass="project__name"
                     onValueChange={this.update.bind(this, 'caption')}
                     text={fields.get('caption')}
-                    edit={fields.get('_new')}
+                    edit={fields.get('isNew')}
                 />
 
                 <ProjectMenu items={menuItems} />

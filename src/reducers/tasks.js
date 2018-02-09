@@ -21,9 +21,7 @@ export default function (tasks, todos, action) {
         case Actions.TASKS_REMOVE:
             return tasks.delete(action.id)
         case Actions.TASKS_TOGGLE:
-            return tasks.update(action.id, task => task.merge(Map({
-                completed: action.complete,
-            })))
+            return tasks.update(action.id, task => task.set('completed', action.complete))
         // view
         case Actions.TASKS_SET_OPEN:
             return map(tasks, task => Map({

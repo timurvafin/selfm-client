@@ -1,4 +1,5 @@
 export const TASKS_LOAD     = 'tasks/load'
+export const TASKS_MOVE     = 'tasks/move'
 export const TASKS_RECEIVE  = 'tasks/receive'
 export const TASKS_CREATE   = 'tasks/create'
 export const TASKS_ADD      = 'tasks/add'
@@ -11,13 +12,19 @@ export const TASKS_SET_OPEN = 'tasks/open'
 
 export const TASKS_LOADED = 'tasks/loaded'
 
+export function load(parentId) {
+    return {
+        type: TASKS_LOAD,
+        parentId
+    }
+}
 
 export function loaded(payload) {
     return {
         type: TASKS_LOADED,
         payload
     }
-} 
+}
 
 export function create(parentId) {
     return {
@@ -49,18 +56,20 @@ export function remove(id) {
     }
 }
 
-export function load() {
-    return {
-        type: TASKS_LOAD
-    }
-}
-
 export function add(payload) {
     return {
         type: TASKS_ADD,
         payload,
     }
 }
+
+export function move(id, parentId) {
+    return {
+        type: TASKS_MOVE,
+        id, 
+        parentId
+    }
+} 
 
 export function receive(payload) {
     return {

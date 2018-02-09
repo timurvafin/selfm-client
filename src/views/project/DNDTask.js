@@ -17,6 +17,9 @@ const taskSource = {
             id: props.id,
             index: props.index
         }
+    },
+    canDrag(props) {
+        return !props.isOpen
     }
 }
 

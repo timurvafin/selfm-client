@@ -59,7 +59,7 @@ export default class TaskList extends React.Component {
                 caption: task.get('caption'),
                 editable: task.get('editable'),
                 isOpen: task.get('open'),
-                isNew: task.get('_new'),
+                isNew: task.get('isNew'),
                 selected: task.get('selected'),
                 notes: task.get('notes'),
                 todos: task.get('todos'),

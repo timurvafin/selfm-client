@@ -93,7 +93,6 @@ class RadialProgressBar extends React.Component {
                 <Motion defaultStyle={{angle: 0}} style={motionStyle}>
                     {style => this.renderSector(center, innerR, style.angle, y0, color)}
                 </Motion>
-
             </svg>
         </span>
     }

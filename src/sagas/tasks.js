@@ -2,25 +2,32 @@ import * as Api from '../service/api'
 import { takeEvery, put, call, select } from 'redux-saga/effects'
 import { randomString } from 'src/utils/common'
 import * as UI from '../actions/tasks'
-import { TASKS_LOADED } from '../actions/tasks'
-import { Map } from 'immutable'
-import { makeOrderedMap } from '../utils/immutable'
+import { TASKS_LOADED, TASKS_LOAD, loaded } from '../actions/tasks'
+import * as TodosUI from '../actions/todos'
+import { Map, List } from 'immutable'
+import { toOrderedMap } from '../utils/immutable'
 
 const toTaskEntity = (task) => {
     return task.delete('todos')
 }
 
 function fetchTodos(tasks) {
-    const todosAr = tasks.reduce((result, task) => [...result, ...task.get('todos')], [])
+    const todoList = tasks.reduce((result, task) => result.concat(task.get('todos')), List())
+    
+    return todoList.reduce((map, todo) => map.set(todo.get('id'), todo), Map())
+}
 
-    return makeOrderedMap(todosAr, 'id')
+function* load(action) {
+    const tasks = yield call(Api.loadTasks, action.parentId)
+
+    yield put(loaded(tasks))
 }
 
 function* receive({payload}) {
-    const entities = makeOrderedMap(payload, 'id')
+    const entities = toOrderedMap(payload, 'id')
     const todos    = fetchTodos(entities)
 
-    yield put(UI.receive(todos))
+    yield put(TodosUI.receive(todos))
     yield put(UI.receive(entities.map(toTaskEntity)))
 }
 
@@ -31,7 +38,7 @@ function* create(action) {
         id: tempId,
         parent_id: action.parentId,
         completed: false,
-        _new: true
+        isNew: true
     }))
 
     yield put(UI.open(tempId))
@@ -41,8 +48,8 @@ function* update({id, fields}) {
     const state = yield select()
     const task  = state.get('tasks').get(id)
 
-    if (task.get('_new')) {
-        yield call(Api.add, task.delete('_new').delete('id').merge(Map(fields)).toJS())
+    if (task.get('isNew')) {
+        yield call(Api.add, task.delete('isNew').delete('id').merge(Map(fields)).toJS())
     } else {
         yield call(Api.update, id, fields)
     }
@@ -69,8 +76,18 @@ function* remove(id) {
     yield call(Api.remove, id)
 }
 
+function* move({id, parentId}) {
+    const state  = yield select()
+    const targetChildren = state.get('tasks').filter(task => task.get('parent_id') === parentId)
+    const order = targetChildren.size > 0 ? (targetChildren.maxBy(task => task.order).get('order') + 1) : 1
+
+    yield put(UI.update(id, {parent_id: parentId, order}))
+}
+
 export default function* tasksSaga() {
+    yield takeEvery(TASKS_LOAD, load)
     yield takeEvery(TASKS_LOADED, receive)
+    yield takeEvery(UI.TASKS_MOVE, move)
     yield takeEvery(UI.TASKS_CREATE, create)
     yield takeEvery(UI.TASKS_UPDATE, update)
     yield takeEvery(UI.TASKS_TOGGLE, toggle)

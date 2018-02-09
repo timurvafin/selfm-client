@@ -104,7 +104,7 @@ $hover_bc : #fafafa;
   @include clickable();
 
   max-width     : 40em;
-  transition    : background-color .2s;
+  transition    : background-color .2s, padding .2s;
   border-radius : 3px;
   padding       : .5em;
 

@@ -6,7 +6,7 @@ export function* createEntity(addActionCreator, action) {
 
     yield put(addActionCreator({
         id: tempId,
-        _new: true,
+        isNew: true,
         parent_id: action.parentId
     }))
 }

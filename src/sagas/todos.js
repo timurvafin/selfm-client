@@ -1,10 +1,8 @@
-import { takeEvery, call, select, put } from 'redux-saga/effects'
+import { takeEvery, call, select } from 'redux-saga/effects'
 import * as UI from '../actions/todos'
-import { TASKS_RECEIVE } from '../actions/tasks'
 import { createEntity } from './common'
 import * as Api from '../service/api'
 import { Map } from 'immutable'
-import { makeOrderedMap } from '../utils/immutable'
 
 function* remove(id) {
     yield call(Api.remove, id)
@@ -14,9 +12,9 @@ function* update({id, fields}) {
     const state = yield select()
     const todo  = state.get('todos').get(id)
 
-    if (todo.get('_new')) {
+    if (todo.get('isNew')) {
         /*const newTodo = */
-        yield call(Api.add, todo.delete('_new').delete('id').merge(Map(fields)).toJS())
+        yield call(Api.add, todo.delete('isNew').delete('id').merge(Map(fields)).toJS())
     } else {
         /*const updatedTodo = */
         yield call(Api.update, id, fields)

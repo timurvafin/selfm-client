@@ -2,19 +2,20 @@ import React from 'react'
 import TextField from 'src/components/textfield'
 import Checkbox from 'src/components/checkbox'
 import { BACKSPACE_KEY } from 'src/constants'
-import { List } from 'immutable'
+import { List, Map } from 'immutable'
+import { moveCaretTo } from 'src/utils/component'
 import cs from 'classnames'
 
 class TodoItem extends React.Component {
-    onKeyDown(todoId, keyCode, e) {
+    onKeyDown(keyCode, e) {
         if (keyCode === BACKSPACE_KEY && !e.target.value) {
-            this.props.remove(todoId)
+            e.preventDefault()
+            this.props.remove()
         }
     }
 
     render() {
-        const { fields, update, create } = this.props
-        const id  = fields.get('id')
+        const {fields, update, create} = this.props
         const cls = cs('todo', {
             ['todo--done']: fields.get('completed')
         })
@@ -27,25 +28,53 @@ class TodoItem extends React.Component {
             />
 
             <TextField
-                autoFocus={fields.get('_new')}
+                bindRef={this.props.textFieldRef}
+                autoFocus={fields.get('isNew')}
                 className="todo__caption"
                 onValueChange={caption => update({caption})}
                 onEnter={create}
-                onKeyDown={this.onKeyDown.bind(this, id)}
-                text={fields.get('caption') || ''}/>
+                onKeyDown={this.onKeyDown.bind(this)}
+                text={fields.get('caption')}
+            />
         </div>
     }
 }
 
 export default class TodoList extends React.Component {
+    constructor(props) {
+        super(props)
+
+        this.childrenNodes = Map()
+    }
+
+    // ui sideeffects
+    remove(todoId) {
+        const todos  = this.props.todos
+        const key    = todos.findKey(todo => todo.get('id') === todoId)
+        const prevId = key > 0 ? todos.get(key - 1).get('id') : null
+
+        this.childrenNodes.delete(todoId)
+
+        if (prevId) {
+            const prevEl = this.childrenNodes.get(prevId)
+            prevEl.focus()
+            moveCaretTo(prevEl, -1)
+        }
+
+        this.props.actions.remove(todoId)
+    }
+
     render() {
-        const { todos, actions } = this.props
+        const {todos, actions} = this.props
 
         const todoItems = (todos || List()).map((todo, index) => {
+            const id = todo.get('id')
+
             return <TodoItem
+                textFieldRef={el => this.childrenNodes = this.childrenNodes.set(id, el)}
                 create={actions.create}
-                update={actions.update.bind(null, todo.get('id'))}
-                remove={actions.remove.bind(null, todo.get('id'))}
+                update={actions.update.bind(null, id)}
+                remove={this.remove.bind(this, id)}
                 key={index}
                 fields={todo}
             />

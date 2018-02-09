@@ -20,8 +20,8 @@ export function map(collection, updater, mergeFields = true) {
     return collection.map(item => mergeFields ? item.merge(_updater(item)) : _updater(item))
 }
 
-export function makeOrderedMap(list, field) {
-    return list.reduce((map, v) => map.set(v[field], fromJS(v)), OrderedMap())
+export function toOrderedMap(jsArray, field) {
+    return jsArray.reduce((map, v) => map.set(v[field], fromJS(v)), OrderedMap())
 }
 
 /*

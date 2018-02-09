@@ -1,29 +1,27 @@
 import * as Api from '../service/api'
 import { takeEvery, put, call, select } from 'redux-saga/effects'
 import * as UI from '../actions/projects'
-import { PROJECTS_LOAD, PROJECTS_LOADED} from '../actions/projects'
-import { loaded as tasksLoaded } from '../actions/tasks'
+import { PROJECTS_LOAD, PROJECTS_LOADED, loaded} from '../actions/projects'
+import { load as loadTasks } from '../actions/tasks'
 import { createEntity } from './common'
 import { Map } from 'immutable'
-import { makeOrderedMap } from '../utils/immutable'
+import { toOrderedMap } from '../utils/immutable'
 
 function* load() {
     const projects = yield call(Api.loadProjects)
 
-    yield put(UI.loaded(projects))
+    yield put(loaded(projects))
     yield put(UI.open(101))
 }
 
 function* receive({payload}) {
-    const projects = makeOrderedMap(payload, 'id')
+    const projects = toOrderedMap(payload, 'id')
 
     yield put(UI.receive(projects))
 }
 
 function* open(action) {
-    const tasks = yield call(Api.loadTasks, action.id)
-
-    yield put(tasksLoaded(tasks))
+    yield put(loadTasks(action.id))
 }
 
 function* update(action) {
@@ -31,8 +29,8 @@ function* update(action) {
     const state   = yield select()
     const project = state.get('projects').find(project => project.get('id') === id)
 
-    if (project.get('_new')) {
-        const fieldsToAdd = project.delete('_new').delete('id').merge(Map(fields)).toJS()
+    if (project.get('isNew')) {
+        const fieldsToAdd = project.delete('isNew').delete('id').merge(Map(fields)).toJS()
         /*const newProject  = */yield call(Api.add, fieldsToAdd)
         //yield put(UI.updateSucceeded(id, newProject))
     } else {
