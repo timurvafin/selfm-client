@@ -1,0 +1,12 @@
+@import 'include';
+
+.action {
+  @include clickable();
+
+  display: inline-flex;
+  align-items: center;
+
+  .action__icon + .action__name {
+    margin-left: .5em;
+  }
+}

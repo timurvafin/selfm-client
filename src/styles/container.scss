@@ -5,7 +5,7 @@ $checkbox_clr: #4caf50;
 
 .tm {
   //background : #fff;
-  position   : relative;
+  position: relative;
   /*box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
   0 25px 50px 0 rgba(0, 0, 0, 0.1);*/
 }
@@ -15,21 +15,21 @@ $checkbox_clr: #4caf50;
 }
 
 .tm__input {
-  font-family  : $ff_base;
-  font-weight  : 300;
+  font-family: $ff_base;
+  font-weight: 300;
 
-  outline      : none;
-  width        : 100%;
-  font-size    : 1.5em;
-  padding      : .6em;
-  border-width : 0 0 1px 0;
-  text-indent  : .3em;
+  outline: none;
+  width: 100%;
+  font-size: 1.5em;
+  padding: .6em;
+  border-width: 0 0 1px 0;
+  text-indent: .3em;
 }
 
 @mixin placeholder() {
-  font-style  : italic;
-  font-weight : 300;
-  color       : #e3e2e3;
+  font-style: italic;
+  font-weight: 300;
+  color: #e3e2e3;
 }
 
 .tm input::-webkit-input-placeholder {

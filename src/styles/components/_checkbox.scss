@@ -1,57 +1,57 @@
 @import 'include';
 
 @mixin checkbox($clr: $clr_accent, $size: 1em, $border_clr: #f2f2f2, $bg_clr: #fff, $border_width: 2px, $round: false) {
-  outline  : none;
-  position : relative;
+  outline: none;
+  position: relative;
   //top: rem(-6);
-  margin   : 0 .8em 0 0;
-  height   : .9em;
-  cursor   : pointer;
+  margin: 0 .9em 0 0;
+  height: .9em;
+  cursor: pointer;
 
   &:before {
-    transition : all .1s ease-in-out;
+    transition: all .1s ease-in-out;
 
-    content    : "";
+    content: "";
 
-    position   : absolute;
-    left       : 0;
-    z-index    : 1;
+    position: absolute;
+    left: 0;
+    z-index: 1;
 
-    width      : $size;
-    height     : $size;
+    width: $size;
+    height: $size;
 
-    border     : $border_width solid $border_clr;
+    border: $border_width solid $border_clr;
 
     @if ($round) {
-      border-radius : 50%;
+      border-radius: 50%;
     }
   }
 
   &:checked {
     &:before {
-      transform          : rotate(-45deg);
-      border-radius      : 0;
+      transform: rotate(-45deg);
+      border-radius: 0;
 
-      height             : .5em;
+      height: .5em;
 
-      border-color       : $clr;
-      border-top-style   : none;
-      border-right-style : none;
+      border-color: $clr;
+      border-top-style: none;
+      border-right-style: none;
     }
   }
 
   &:after {
-    content    : "";
+    content: "";
 
-    position   : absolute;
+    position: absolute;
     //top        : rem(-2);
-    left       : 0;
+    left: 0;
 
-    width      : $size;
-    height     : $size;
+    width: $size;
+    height: $size;
 
-    background : $bg_clr;
+    background: $bg_clr;
 
-    cursor     : pointer;
+    cursor: pointer;
   }
 }
