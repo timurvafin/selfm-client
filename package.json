@@ -40,6 +40,10 @@
   },
   "dependencies": {
     "@types/react-dnd": "^3.0.2",
+    "@vx/glyph": "0.0.192",
+    "@vx/gradient": "0.0.192",
+    "@vx/point": "0.0.192",
+    "@vx/shape": "0.0.192",
     "classnames": "^2.2.6",
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.15",

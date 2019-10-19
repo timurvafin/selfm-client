@@ -31,6 +31,7 @@
     &:before {
       transform: rotate(-45deg);
       border-radius: 0;
+      border-width: 2px;
 
       height: .5em;
 
@@ -54,4 +55,8 @@
 
     cursor: pointer;
   }
+}
+
+.checkbox {
+  @include checkbox($clr_accent, .9em, $bg_clr: #fff, $border_width: 1px, $border_clr: $lgray);
 }

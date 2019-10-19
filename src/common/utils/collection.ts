@@ -25,6 +25,13 @@ export const updateById = (collection, id, updater, merge = true) => {
   return updateBy(collection, predicate, updater, merge);
 };
 
+export const uniqueById = (array) => {
+  const entries = array.map(item => [item.id, item]);
+  const map = new Map(entries);
+
+  return [...map.values()];
+};
+
 export const unique = (array) => array.filter((item, i) => array[i] === item);
 
 export const removeById = (collection, id) => {

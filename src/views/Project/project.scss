@@ -1,5 +1,4 @@
 @import 'include';
-@import 'components/checkbox.scss';
 
 /* ------------------------------------------ */
 /* --------------- 1. PROJECT --------------- */
@@ -23,7 +22,7 @@
 }
 
 .project__row--actions {
-
+  padding: 0 .5em;
 }
 
 .project__progress-bar {
@@ -80,33 +79,27 @@ $hover_bc: #fafafa;
 %checkbox {
   width: .5em;
 
-  @include checkbox($lgray, .9em, $bg_clr: #fff, $border_width: 1px, $border_clr: $lgray);
-
   &:before {
     border-radius: 3px;
   }
 
   &:checked {
-    &:before {
-      border-width: 2px;
-      border-color: $clr_accent;
-    }
-
     opacity: $completed_task_opacity;
   }
 }
 
 .task-list {
-  margin: 2em 0;
+  margin: 2em -.5em;
 }
 
 .task {
   @include clickable();
 
   max-width: 40em;
-  transition: background-color .2s, padding .2s;
+  transition: background-color .2s, padding .2s, margin .2s;
+  transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
   border-radius: 3px;
-  padding: 0 .5em;
+  padding: 0 1em;
 
   outline: none;
   font-size: 15px;
@@ -195,8 +188,55 @@ $hover_bc: #fafafa;
 }
 
 /* -------------- 2.2 TASK STATES -------------- */
+.strikethrough {
+  display: inline-block;
+  position: relative;
+  transition: all 0.5s cubic-bezier(.55, 0, .1, 1);
+}
+
+@mixin strikethrough() {
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 2px;
+    /* box-shadow: 0 1px rgba(255, 255, 255, 0.6); */
+    margin-top: -0.6em;
+    background: #393939;
+    transform-origin: center left;
+    animation: strikethrough 1s 0.5s cubic-bezier(0.55, 0, 0.1, 1) 1;
+    transition: transform 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+  }
+
+
+  /* Little hover effect */
+
+  &:hover {
+    color: rgba(200,0,0,1);
+    background: rgba(255, 189, 182, 0.3);
+  }
+
+  &:hover:after {
+    transform: scaleX(0);
+    transform-origin: center right;
+  }
+
+  @keyframes strikethrough {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+
 .task--completed {
   .task__caption {
+    // @include strikethrough();
     text-decoration: line-through;
     opacity: $completed_task_opacity;
     font-weight: normal;
