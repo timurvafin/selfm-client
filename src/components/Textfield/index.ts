@@ -1,5 +1,5 @@
 import TextField from './TextField';
-import Editable from './Editable';
+import Editable from './EditableTextField';
 
 
 export {

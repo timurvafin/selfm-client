@@ -6,7 +6,7 @@
   display: inline-flex;
   align-items: center;
 
-  .action__icon + .action__name {
-    margin-left: .5em;
+  * + .action__name {
+    margin-left: .3em;
   }
 }

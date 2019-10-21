@@ -6,7 +6,7 @@ import { TodosState } from '../reducers/todos';
 
 interface BaseUIModel {
   isOpen: boolean;
-  isSelected: boolean;
+  // isSelected: boolean;
   progress: number;
 }
 
@@ -71,23 +71,35 @@ export const todoSelector = createSelector(
   }
 );
 
-const toUIProjectModel = (state: State, project: ProjectModel) => {
-  const tasks = project.id ? tasksSelector(state, project.id) : [];
+export const projectSelector = createSelector(
+  (state: State) => state.projects.entities,
+  (state: State) => state.projects.ui,
+  (state: State) => state.tasks.entities,
+  (_, id) => id,
+  (projectEntities, projectsUI, taskEntities, id) => {
+    const project = projectEntities.find(p => p.id === id);
 
-  return {
+    if (!project) {
+      return null;
+    }
+
+    return {
+      ...project,
+      isOpen: project.id === projectsUI.openId,
+      progress: calculateProgress(project, taskEntities.filter(task => task.parentId === id)),
+    };
+  }
+);
+
+export const projectsSelector = createSelector(
+  (state: State) => state.projects.entities,
+  (state: State) => state.projects.ui,
+  (state: State) => state.tasks.entities,
+  (projectEntities, projectsUI, taskEntities) => projectEntities.map((project) => ({
     ...project,
-    isOpen: project.id === projectOpenIdSelector(state),
-    isSelected: project.id === projectOpenIdSelector(state),
-    progress: calculateProgress(project, tasks),
-  };
-}
-
-export const projectSelector = (state: State, id: number): ProjectUIModel => {
-  const project = state.projects.entities.find(p => p.id === id);
-
-  return toUIProjectModel(state, project);
-};
-
-export const projectsSelector = (state: State): Array<ProjectUIModel> => state.projects.entities.map((project) => toUIProjectModel(state, project));
+    isOpen: project.id === projectsUI.openId,
+    progress: calculateProgress(project, taskEntities.filter(task => task.parentId === project.id)),
+  }))
+);
 
 

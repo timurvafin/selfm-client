@@ -1,15 +1,10 @@
 @import 'include';
 @import 'normalize';
-@import 'icons';
 
 body {
   margin: 0;
   padding: 0;
-
-  //background     : linear-gradient(to right, #3f4c6b, #606c88);
-
-  //background-image : url(https://www.toptal.com/designers/subtlepatterns/patterns/concrete-texture.png);
-
+  background-color: #574f9a;
   font-family: $ff_base;
   color: $clr_base;
   font-smoothing: antialiased;
@@ -23,17 +18,16 @@ input, textarea {
 }
 
 #app {
-  background-color: $app_bg;
-  padding: 0 0 1em 0;
-  min-height: 100vh;
+  max-width: 900px;
+  margin: 1em auto;
+  border-radius: 3px;
+  overflow: hidden;
+  height: 600px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 0px 10px #00000054;
 }
 
 *, *::before, *::after {
   box-sizing: border-box;
-}
-
-#app {
-  //padding          : 1em;
 }
