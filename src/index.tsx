@@ -5,15 +5,14 @@ import store from './store/store';
 // import Routes from './routes';
 // import { ConnectedRouter } from 'react-router-redux';
 // import createHistory from 'history/createHashHistory';
-import PlanView from './views/PlanView';
-import 'styles/common.scss';
+import App from './App';
 
 
 // const _history = createHistory();
 
 ReactDOM.render(
   <Provider store={store}>
-    <div id={'app'}><PlanView /></div>
+    <App />
   </Provider>,
   document.getElementById('root')
 );

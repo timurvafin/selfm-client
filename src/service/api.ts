@@ -9,7 +9,11 @@ export function makeUrl(action) {
 }
 
 export function list(parentId?: ID) {
-  return ajax.post(makeUrl('tm/list'), { parentId });
+  if (parentId !== undefined) {
+    return ajax.post(makeUrl('tm/list'), { parentId });
+  }
+
+  return ajax.get(makeUrl('tm/list'));
 }
 
 export function update(id, fields) {

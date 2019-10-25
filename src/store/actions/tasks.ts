@@ -14,7 +14,7 @@ export const TASKS_REORDER = 'tasks/reorder';
 export const TASKS_SET_SELECTED = 'tasks/select';
 export const TASKS_SET_OPEN = 'tasks/open';
 
-export function load(parentId) {
+export function load(parentId = undefined) {
   return {
     type: TASKS_LOAD,
     parentId,

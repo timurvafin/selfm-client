@@ -12,7 +12,7 @@ import { PlusIcon } from 'components/Icon';
 import { ID } from '../../common/types';
 
 
-const ProjectLink = ({ project, onClick, moveTask }: { onClick: any; project: any; moveTask: any }) => {
+const ProjectLink = ({ project, onSelect, moveTask }: { onSelect: any; project: any; moveTask: any }) => {
   const [{ isOver }, drop] = useDrop<{ id: ID; type: string }, {}, { isOver: boolean }>({
     accept: 'task',
     drop(taskItem) {
@@ -32,7 +32,7 @@ const ProjectLink = ({ project, onClick, moveTask }: { onClick: any; project: an
   return (
     <div
       ref={drop}
-      onClick={onClick}
+      onMouseDown={onSelect}
       className={classname}>
       <RadialProgressBar
         size="15"
@@ -66,7 +66,7 @@ const Sidebar = () => {
         {projects.map((project) => (
           <ProjectLink
             key={project.id}
-            onClick={() => actions.openProject(project.id)}
+            onSelect={() => actions.openProject(project.id)}
             project={project}
             moveTask={actions.moveTask}
           />
