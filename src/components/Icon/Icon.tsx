@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { HTMLProps } from 'react';
 import cs from 'classnames';
 import {
   FiPlus,
@@ -10,14 +10,13 @@ import {
   FiTag,
   FiCalendar,
   FiTrash,
+  FiHash,
 } from 'react-icons/fi';
 
 import './icon.scss';
 
 
-
-
-const asIcon = (FiIcon) => ({ className, ...props }: { className?: string }) => (
+const asIcon = (FiIcon): React.FC<HTMLProps<HTMLElement>> => ({ className, ...props }: { className?: string }) => (
   <FiIcon
     className={cs('icon', className)}
     {...props}
@@ -34,3 +33,4 @@ export const ListIcon = asIcon(FiList);
 export const TagIcon = asIcon(FiTag);
 export const CalendarIcon = asIcon(FiCalendar);
 export const TrashIcon = asIcon(FiTrash);
+export const HashIcon = asIcon(FiHash);

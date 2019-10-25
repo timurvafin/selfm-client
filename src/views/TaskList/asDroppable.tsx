@@ -3,12 +3,13 @@ import * as TaskActions from '../../store/actions/tasks';
 import { useDispatch, useSelector } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { State } from '../../store';
-import { tasksSelector, TaskUIModel } from '../../store/selectors';
+import { projectTasksSelector, TaskUIModel } from '../../store/selectors';
+import { Props } from './TaskList';
 
 
-const asDroppable = (TaskList: React.FC<{ projectId }>): React.FC<{ projectId: number }> => props => {
+const asDroppable = (TaskList: React.FC<Props>): React.FC<Props> => props => {
   const dispatch = useDispatch();
-  const tasks = useSelector<State, Array<TaskUIModel>>(state => tasksSelector(state, props.projectId));
+  const tasks = useSelector<State, Array<TaskUIModel>>(state => projectTasksSelector(state, props.projectId));
   const order = useMemo(() => tasks.map(task => task.id), [tasks]);
 
   const onDragEnd = useCallback(
@@ -37,7 +38,8 @@ const asDroppable = (TaskList: React.FC<{ projectId }>): React.FC<{ projectId: n
         {provided => (
           <div
             ref={provided.innerRef}
-            {...provided.droppableProps}>
+            {...provided.droppableProps}
+          >
             <TaskList {...props} />
             {provided.placeholder}
           </div>

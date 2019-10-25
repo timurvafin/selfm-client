@@ -1,12 +1,12 @@
-import { BaseModel, ProjectModel, State, TaskModel, TodoModel } from '../index';
+import { BaseModel, ProjectModel, SectionModel, State, TaskModel } from '../index';
 import { createSelector } from 'reselect';
-import { TasksState } from '../reducers/tasks';
-import { TodosState } from '../reducers/todos';
+import { ID } from '../../common/types';
+import { unique } from '../../common/utils/collection';
 
 
 interface BaseUIModel {
   isOpen: boolean;
-  // isSelected: boolean;
+  isSelected: boolean;
   progress: number;
 }
 
@@ -16,10 +16,7 @@ export interface ProjectUIModel extends ProjectModel, BaseUIModel {
 export interface TaskUIModel extends TaskModel, BaseModel {
 }
 
-export interface TodoUIModel extends TodoModel, BaseModel {
-}
-
-const calculateProgress = (entity: BaseModel, children: Array<BaseModel> = []) => {
+const calculateProgress = (entity: BaseModel, children: Array<{ completed: boolean }> = []) => {
   if (entity.completed) {
     return 1;
   }
@@ -31,43 +28,54 @@ const calculateProgress = (entity: BaseModel, children: Array<BaseModel> = []) =
   return children.filter(todo => todo.completed).length / children.length * 100;
 };
 
-export const projectOpenIdSelector = (state: State): number | undefined => {
+export const projectOpenIdSelector = (state: State): ID => {
   const openId = state.projects.ui.openId;
   const project = state.projects.entities.find(p => p.id === openId);
 
   return project ? openId : null;
 };
 
-export const tasksSelector = createSelector(
-  (state: State) => state.tasks,
+export const projectSelectedTagSelector = (state: State): string | undefined => state.projects.ui.selectedTag;
+
+export const projectTasksEntitiesSelector = createSelector(
+  (state: State) => state.tasks.entities,
   (_, projectId) => projectId,
-  (tasks: TasksState, projectId?: number): Array<TaskUIModel> => {
+  (_, __, sectionId) => sectionId,
+  (entities: Array<TaskModel>, projectId, sectionId) => {
     if (!projectId) {
       return [];
     }
 
-    const entities = tasks.entities.sort((a, b) => a.order - b.order);
+    return entities.filter(p => p.parentId === projectId && (p.sectionId == sectionId));
+  }
+);
 
-    return entities.filter(p => p.parentId === projectId).map(task => ({
+export const projectTasksSelector = createSelector(
+  projectTasksEntitiesSelector,
+  (state: State) => state.tasks.ui,
+  projectSelectedTagSelector,
+  (taskEntities: Array<TaskModel>, tasksUI, selectedProjectTag?: string): Array<TaskUIModel> => {
+    let entities = taskEntities.sort((a, b) => a.order - b.order);
+
+    if (selectedProjectTag) {
+      entities = entities.filter((task: TaskModel) => task.tags.includes(selectedProjectTag));
+    }
+
+    return entities.map(task => ({
       ...task,
-      isOpen: task.id === tasks.ui.openId,
-      isSelected: task.id === tasks.ui.selectedId,
-      progress: calculateProgress(task, task.todos),
+      isOpen: task.id === tasksUI.openId,
+      isSelected: task.id === tasksUI.selectedId,
+      progress: calculateProgress(task, task.todoList),
     }));
   }
 );
 
-export const todoSelector = createSelector(
-  (state: State) => state.todos,
-  (_, taskId) => taskId,
-  (todos: TodosState, taskId?: number): Array<TodoUIModel> => {
-    if (!taskId) {
-      return [];
-    }
+export const projectTagsSelector = createSelector(
+  projectTasksEntitiesSelector,
+  (tasks: Array<TaskModel>): Array<string> => {
+    const allTags = tasks.reduce((tags, task) => [...tags, ...task.tags], []);
 
-    const entities = todos.entities.sort((a, b) => a.order - b.order);
-
-    return entities.filter(p => p.parentId === taskId);
+    return unique(allTags);
   }
 );
 
@@ -83,9 +91,12 @@ export const projectSelector = createSelector(
       return null;
     }
 
+    const isOpen = project.id === projectsUI.openId;
+
     return {
       ...project,
-      isOpen: project.id === projectsUI.openId,
+      isOpen,
+      isSelected: isOpen,
       progress: calculateProgress(project, taskEntities.filter(task => task.parentId === id)),
     };
   }
@@ -98,8 +109,19 @@ export const projectsSelector = createSelector(
   (projectEntities, projectsUI, taskEntities) => projectEntities.map((project) => ({
     ...project,
     isOpen: project.id === projectsUI.openId,
+    isSelected: project.id === projectsUI.openId,
     progress: calculateProgress(project, taskEntities.filter(task => task.parentId === project.id)),
   }))
+);
+
+export const taskSectionsSelector = createSelector(
+  (state: State) => state.sections.entities,
+  (_, parentId) => parentId,
+  projectSelectedTagSelector,
+  (entities: Array<SectionModel>, parentId, selectedTag) => {
+
+    return entities.filter(p => p.parentId == parentId);
+  }
 );
 
 

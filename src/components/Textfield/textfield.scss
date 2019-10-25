@@ -2,9 +2,17 @@
 
 .textfield {
   width: 100%;
+  min-width: 0.5em;
 }
 
 .textfield--multiline {
   resize: none;
   overflow: hidden;
+}
+
+.textfield--transparent {
+  border: 0;
+  outline: none;
+  background: none;
+  padding: 0;
 }

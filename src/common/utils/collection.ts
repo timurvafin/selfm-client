@@ -32,10 +32,18 @@ export const uniqueById = (array) => {
   return [...map.values()];
 };
 
-export const unique = (array) => array.filter((item, i) => array[i] === item);
+export const unique = (array: Array<any>) => array.filter((item, i) => array[i] === item);
 
 export const removeById = (collection, id) => {
   const predicate = item => item.id !== id;
 
   return Array.isArray(collection) ? collection.filter(predicate) : filterObjectValues(collection, predicate);
 };
+
+export const isEmpty = (array: Array<any>) => {
+  if (!array) {
+    return true;
+  }
+
+  return array.length <= 0;
+}

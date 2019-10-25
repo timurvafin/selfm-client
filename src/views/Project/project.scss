@@ -21,8 +21,16 @@
   margin-top: 1rem;
 }
 
+.project__row--notes {
+  //  margin-left: 2em;
+}
+
 .project__row--actions {
   padding: 0 .5em;
+}
+
+.project__action {
+  margin-right: 1em;
 }
 
 .project__progress-bar {
@@ -68,4 +76,53 @@
       text-decoration: underline;
     }
   }
+}
+
+.project-tags {
+  display: flex;
+  align-items: center;
+  margin-top: 5em;
+  flex-wrap: wrap;
+}
+
+.project-tag {
+  @include clickable();
+
+  border-radius: 1em;
+  padding: .3em .5em;
+  margin-right: .5em;
+  color: $clr_lvl3;
+}
+
+.project-tag--selected {
+  background-color: $clr_lvl3;
+  color: #fff;
+}
+
+.task-section {
+
+}
+
+.task-section__header {
+  margin-bottom: 1em;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:after {
+    content: '';
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: -.5em;
+    height: 1px;
+    background-color: #f7f7f7;
+  }
+}
+
+.task-section__caption {
+  font-weight: bold;
+  color: $clr_accent;
+  font-size: 13px;
 }

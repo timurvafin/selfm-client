@@ -6,10 +6,10 @@ body {
   padding: 0;
   background-color: #574f9a;
   font-family: $ff_base;
-  color: $clr_base;
+  color: $clr_lvl1;
   font-smoothing: antialiased;
   font-weight: 300;
-  font-size: 15px;
+  font-size: $base_font_size;
 }
 
 input, textarea {

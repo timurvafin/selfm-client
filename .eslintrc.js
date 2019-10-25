@@ -41,7 +41,7 @@ module.exports =  {
     "react/jsx-indent": [2, 2],
     "react/jsx-first-prop-new-line": [1, "multiline"],
     "react/jsx-max-props-per-line": [1, { "maximum": 1 }],
-    "react/jsx-closing-bracket-location": [1, { selfClosing: "tag-aligned", nonEmpty: "after-props"}],
+    "react/jsx-closing-bracket-location": [1, { selfClosing: "tag-aligned", nonEmpty: "tag-aligned"}],
   },
   settings:  {
     react:  {

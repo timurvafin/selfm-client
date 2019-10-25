@@ -1,9 +1,9 @@
 @import 'include';
 
-@mixin checkbox($clr: $clr_accent, $size: 1em, $border_clr: #f2f2f2, $bg_clr: #fff, $border_width: 2px, $round: false) {
+@mixin checkbox($clr: $clr_accent, $size: 1em, $border_clr: #f2f2f2, $border_width: 2px, $round: false) {
+  -webkit-appearance: none;
   outline: none;
   position: relative;
-  //top: rem(-6);
   margin: 0 .9em 0 0;
   height: .9em;
   cursor: pointer;
@@ -45,18 +45,15 @@
     content: "";
 
     position: absolute;
-    //top        : rem(-2);
     left: 0;
 
     width: $size;
     height: $size;
-
-    background: $bg_clr;
 
     cursor: pointer;
   }
 }
 
 .checkbox {
-  @include checkbox($clr_accent, .9em, $bg_clr: #fff, $border_width: 1px, $border_clr: $lgray);
+  @include checkbox($clr_accent, .9em, $border_width: 1px, $border_clr: $lgray);
 }

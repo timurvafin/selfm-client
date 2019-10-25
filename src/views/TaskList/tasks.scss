@@ -5,24 +5,26 @@ $hover_bc: #fafafa;
 
 %checkbox {
   width: .5em;
+  flex-shrink: 0;
 
   &:before {
     border-radius: 3px;
   }
 
   &:checked {
-    opacity: $completed_task_opacity;
+    // opacity: $completed_task_opacity;
   }
 }
 
 .task-list {
-  padding: 2em 0;
+  margin: 0 -.5rem 3em;
 }
 
 .task-outer {
   display: flex;
   align-items: center;
   position: relative;
+  outline: none;
 
   .task {
     flex: 1;
@@ -45,14 +47,13 @@ $hover_bc: #fafafa;
 .task {
   @include clickable();
 
-  max-width: 40em;
   transition: background-color .2s, padding .2s, margin .2s;
   transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
   border-radius: 3px;
-  padding: 0 1em;
+  padding: 0 .5rem;
 
+  position: relative;
   outline: none;
-  font-size: 15px;
 }
 
 .task__row {
@@ -79,40 +80,26 @@ $hover_bc: #fafafa;
 
 .task__caption {
   @include unselectable();
-  @include overflow-dots();
 
-  font-size: 14px;
-  transition: all .2s;
-  font-family: 'Open Sans', sans-serif;
   font-weight: 400;
-
-  outline: none;
-  cursor: text;
-  max-width: 12em;
   line-height: 1.4;
-  border-width: 0;
-  background-color: transparent;
+  margin-right: 2em;
 }
 
 .task__notes {
   display: none;
 
-  border: 0;
-  outline: none;
-  resize: none;
-  background: none;
   color: #333;
   width: 100%;
   font-size: 13px;
   line-height: 1.4;
-  padding: 0;
 }
 
 .task__controls {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 0 1em;
+  padding-left: 1em;
 }
 
 .task__controls .action {
@@ -122,7 +109,7 @@ $hover_bc: #fafafa;
 
   color: #666;
   cursor: pointer;
-  margin: 0 .5em;
+  margin-left: 1em;
 
   &:hover {
     opacity: 1;
@@ -151,10 +138,6 @@ $hover_bc: #fafafa;
   }
 }
 
-.task {
-  position: relative;
-}
-
 .task--dragging {
   position: relative;
   //border: 2px solid cornflowerblue;
@@ -166,7 +149,7 @@ $hover_bc: #fafafa;
 }
 
 .task-list:not(.task-list--dragging) .task:hover:not(.task--open) {
-  background-color: $hover_bc;
+  // background-color: $hover_bc;
 
   .task__checkbox {
     //@include checkbox($lgray, 1em, $bg_clr : #f5f5f5, $border_width: 1px, $border_clr : $lgray);
@@ -180,6 +163,7 @@ $hover_bc: #fafafa;
 .task:not(.task--open) {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   .task__row--caption {
     flex: 1;
@@ -190,9 +174,13 @@ $hover_bc: #fafafa;
     transition: all .2s;
   }
 
-  &:hover .task__row--controls {
+  &:hover, &.task--selected .task__row--controls {
     opacity: 1;
   }
+}
+
+.task--selected {
+  background-color: #f7f7f7;
 }
 
 .task--open {
@@ -231,6 +219,7 @@ $hover_bc: #fafafa;
   border-bottom: 1px solid #e0e0e0;
   display: flex;
   align-items: center;
+  font-size: 13px;
 
   &:last-child {
     border-color: transparent;

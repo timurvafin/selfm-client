@@ -1,6 +1,8 @@
 /* ------------ colors ------------ */
 $clr_accent: #cd3d82;
-$clr_base: #393939;
+$clr_lvl1: #393939;
+$clr_lvl2: #555;
+$clr_lvl3: #aaa;
 $red: red;
 $blue: blue;
 $orange: orange;
@@ -9,9 +11,9 @@ $yellow: #ffe67a;
 $lgray: lightgray;
 
 /* ------------ sizes ------------ */
-
+$base_font_size: 13px;
 
 /* ------------ vars ------------ */
 $app_bg: #f7f5f9;
-$ff_base: 'Montserrat', sans-serif;
+$ff_base: 'Verdana', sans-serif;
 $ff_title: 'Encode Sans Expanded', sans-serif;

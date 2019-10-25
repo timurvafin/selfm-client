@@ -1,0 +1,44 @@
+@import 'include';
+
+.tags {
+  display: flex;
+  align-items: center;
+  cursor: text;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  @include unselectable();
+
+  cursor: default;
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-right: 1em;
+  padding: .5em 0;
+
+  &:hover:not(.tag--readonly) {
+    .tag__cross {
+      display: block;
+    }
+
+    .tag__hash {
+      display: none;
+    }
+  }
+}
+
+.tag__hash {
+  color: $clr_accent;
+}
+
+.tag__cross {
+  cursor: pointer;
+  display: none;
+}
+
+.tag__caption {
+  margin-left: .2em;
+  color: $clr_lvl2;
+}
