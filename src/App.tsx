@@ -1,9 +1,9 @@
 import React from 'react';
 import PlanView from './views/PlanView';
 import { useMountEffect } from './common/hooks';
-import * as SectionsActions from './store/actions/sections';
-import * as ProjectsActions from './store/actions/projects';
-import * as TasksActions from './store/actions/tasks';
+import { actions as SectionsActions } from 'store/models/section';
+import { actions as ProjectsActions } from 'store/models/project';
+import { actions as TasksActions } from 'store/models/task';
 import { useDispatch } from 'react-redux';
 
 import 'styles/common.scss';

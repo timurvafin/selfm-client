@@ -1,9 +1,9 @@
 import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { TaskUIModel } from '../../store/selectors';
+import { TaskUIEntity } from '../../store/selectors';
 
 
-const asDraggable = (Task: React.FC<{ task: TaskUIModel }>) => ({ task, index }) => (
+const asDraggable = (Task: React.FC<{ task: TaskUIEntity }>) => ({ task, index }) => (
   <Draggable
     draggableId={`${task.id}`}
     isDragDisabled={task.isOpen}

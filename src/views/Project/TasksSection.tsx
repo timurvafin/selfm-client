@@ -1,17 +1,16 @@
 import TaskList from '../TaskList';
 import React, { useCallback } from 'react';
-import { SectionModel } from '../../store';
 import { ID } from '../../common/types';
 import { stopPropagation } from '../../common/utils/component';
 import TextField from '../../components/Textfield';
 import { useDispatch } from 'react-redux';
-import * as SectionsActions from '../../store/actions/sections';
+import { actions as SectionsActions, SectionEntity } from 'store/models/section';
 import Menu from '../Menu';
 import { CrossIcon, PlusIcon } from '../../components/Icon';
-import * as TaskActions from '../../store/actions/tasks';
+import { actions as TaskActions } from 'store/models/task';
 
 
-const TasksSection = ({ projectId, section }: { projectId: ID; section: SectionModel }) => {
+const TasksSection = ({ projectId, section }: { projectId: ID; section: SectionEntity }) => {
   const dispatch = useDispatch();
   const update = useCallback((values) => {
     dispatch(SectionsActions.update(section.id, values));

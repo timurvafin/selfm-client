@@ -37,7 +37,7 @@ export const useAutoFocus = (autoFocus, node: HTMLInputElement | undefined) => {
   }, [autoFocus, node]);
 };
 
-export function useActions(actions, deps = null) {
+export function useActions(actions, deps = null): typeof actions {
   const dispatch = useDispatch();
   return useMemo(() => {
     if (Array.isArray(actions)) {

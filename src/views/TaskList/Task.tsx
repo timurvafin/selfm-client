@@ -5,16 +5,17 @@ import TextField from 'components/Textfield';
 import Checkbox from 'components/Checkbox';
 import TodoList from './TodoList';
 import { useDispatch } from 'react-redux';
-import * as TaskActions from 'store/actions/tasks';
+import { actions as TaskActions } from 'store/models/task';
 import { useOutsideClickHandler } from '../../common/hooks';
 import { stopPropagation } from '../../common/utils/component';
 import asDraggable from './asDraggable';
 import { CalendarIcon, ListIcon, TagIcon, TrashIcon } from '../../components/Icon';
 import Tags from './Tags';
 import { isEmpty } from '../../common/utils/collection';
+import { TaskUIEntity } from '../../store/selectors';
 
 
-const useActions = ({ id, isOpen, isSelected, completed }) => {
+const useActions = ({ id, isOpen, isSelected, completed }: TaskUIEntity) => {
   const dispatch = useDispatch();
 
   return {
@@ -39,17 +40,15 @@ const useActions = ({ id, isOpen, isSelected, completed }) => {
   };
 };
 
-const Task = ({
-  task,
-}) => {
-  const { completed, notes, editable, isOpen, isSelected, caption, isNew } = task;
+const Task = ({ task }: { task: TaskUIEntity }) => {
+  const { completed, notes, isOpen, isSelected, caption, isNew } = task;
 
   const actions = useActions(task);
 
   const classNames = classnames('task', {
     ['task--open']: isOpen,
     ['task--completed']: completed,
-    ['task--editable']: editable,
+    // ['task--editable']: editable,
     ['task--selected']: isSelected,
     ['task--dragging']: false,
     ['task--can-drag']: false,
@@ -126,9 +125,8 @@ const Task = ({
 
       <div className="task__row task__row--details">
         <TodoList
+          parentId={task.id}
           todoList={task.todoList}
-          onChange={(todoList) => actions.update({ todoList })}
-          create={actions.createTodo}
         />
       </div>
 

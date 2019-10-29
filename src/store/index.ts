@@ -1,48 +1,21 @@
-/* eslint-disable @typescript-eslint/no-empty-interface */
-import store from './store';
-import { TasksState } from './reducers/tasks';
-import { ProjectsState } from './reducers/projects';
-import { ID } from '../common/types';
-import { SectionsState } from './reducers/sections';
+import { applyMiddleware, compose, createStore } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import { reducer, RootState, sagas } from './models';
 
 
-export interface BaseModel {
-  id?: ID;
-  parentId?: ID;
-  sectionId?: ID;
-  caption: string;
-  notes: string;
-  order: number;
-  completed: boolean;
-  isNew?: boolean;
-}
+export { RootState };
+// @ts-ignore
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const sagaMiddleWare = createSagaMiddleware();
 
-export interface SectionModel {
-  id: ID;
-  parentId?: ID;
-  isNew?: boolean;
-  caption: string;
-}
+const middlewares = [
+  sagaMiddleWare,
+];
 
-export interface TodoModel {
-  id: ID;
-  caption: string;
-  completed: boolean;
-}
+const store = createStore(reducer, composeEnhancers(
+  applyMiddleware(...middlewares),
+));
 
-export interface TaskModel extends BaseModel {
-  todoList: Array<TodoModel>;
-  tags: Array<string>;
-}
-
-export interface ProjectModel extends BaseModel {
-  placeholder: string;
-}
-
-export interface State {
-  tasks: TasksState;
-  projects: ProjectsState;
-  sections: SectionsState;
-}
+sagaMiddleWare.run(sagas);
 
 export default store;

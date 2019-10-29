@@ -4,9 +4,8 @@ import Checkbox from 'components/Checkbox';
 import { KeyCode } from 'common/constants';
 import cs from 'classnames';
 import { useDispatch } from 'react-redux';
-import * as TaskActions from '../../store/actions/tasks';
-import { TodoModel } from '../../store';
-import { removeById, updateById } from '../../common/utils/collection';
+import { actions as TaskActions, TodoEntity } from 'store/models/task';
+import { ID } from '../../common/types';
 
 
 const TodoItem = ({ onRemove, onCreate, onUpdate, todo, autoFocus }) => {
@@ -50,25 +49,25 @@ const TodoItem = ({ onRemove, onCreate, onUpdate, todo, autoFocus }) => {
 };
 
 interface Props {
-  todoList: Array<TodoModel>;
-  onChange: (list: Array<TodoModel>) => void;
-  create: () => void;
+  parentId: ID;
+  todoList: Array<TodoEntity>;
 }
 
-const TodoList = ({ todoList, onChange, create }: Props) => {
+const TodoList = ({ todoList, parentId }: Props) => {
+  const dispatch = useDispatch();
   const [isAutoFocusEnabled, setAutoFocusEnabled] = useState(false);
 
   const actions = useMemo(
     () => ({
       create: () => {
         setAutoFocusEnabled(true);
-        create();
+        dispatch(TaskActions.createTodo(parentId));
       },
       update: (id, values) => {
-        onChange(updateById(todoList, id, values));
+        dispatch(TaskActions.updateTodo(parentId, id, values));
       },
       remove: (id) => {
-        onChange(removeById(todoList, id));
+        dispatch(TaskActions.removeTodo(parentId, id));
         setAutoFocusEnabled(true);
       },
     }),

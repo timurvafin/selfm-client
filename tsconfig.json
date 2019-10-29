@@ -9,9 +9,9 @@
     "allowJs": true,
     "sourceMap": true,
     "strict": false,
+    "strictNullChecks": false,
     "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
     "baseUrl": "src",
     "skipLibCheck": true
   },

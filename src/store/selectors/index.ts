@@ -1,47 +1,55 @@
-import { BaseModel, ProjectModel, SectionModel, State, TaskModel } from '../index';
+import { RootState } from '../models';
 import { createSelector } from 'reselect';
 import { ID } from '../../common/types';
 import { unique } from '../../common/utils/collection';
+import { ProjectEntity } from '../models/project';
+import { TaskEntity } from '../models/task';
+import { Completable, EntitiesArray, EntitiesMap } from '../models/common';
+import { SectionEntity } from '../models/section';
+import { List, Set } from 'immutable';
 
 
-interface BaseUIModel {
+interface BaseTaskUIEntity {
   isOpen: boolean;
   isSelected: boolean;
   progress: number;
 }
 
-export interface ProjectUIModel extends ProjectModel, BaseUIModel {
+export interface ProjectUIEntity extends ProjectEntity, BaseTaskUIEntity {
 }
 
-export interface TaskUIModel extends TaskModel, BaseModel {
+export interface TaskUIEntity extends TaskEntity, BaseTaskUIEntity {
 }
 
-const calculateProgress = (entity: BaseModel, children: Array<{ completed: boolean }> = []) => {
+const calculateProgress = (entity: Completable, children: List<Completable>) => {
   if (entity.completed) {
     return 1;
   }
 
-  if (children.length <= 0) {
+  if (!children || children.size <= 0) {
     return 0;
   }
 
-  return children.filter(todo => todo.completed).length / children.length * 100;
+  return children.filter(todo => todo.completed).size / children.size * 100;
 };
 
-export const projectOpenIdSelector = (state: State): ID => {
+export const projectOpenIdSelector = (state: RootState): ID => {
   const openId = state.projects.ui.openId;
   const project = state.projects.entities.find(p => p.id === openId);
 
   return project ? openId : null;
 };
 
-export const projectSelectedTagSelector = (state: State): string | undefined => state.projects.ui.selectedTag;
+export const projectSelectedTagSelector = (state: RootState): string | undefined => state.projects.ui.selectedTag;
 
-export const projectTasksEntitiesSelector = createSelector(
-  (state: State) => state.tasks.entities,
+/**
+ * Task entities by projectId and sectionId
+ */
+const projectTasksEntitiesSelector = createSelector(
+  (state: RootState) => state.tasks.entities,
   (_, projectId) => projectId,
   (_, __, sectionId) => sectionId,
-  (entities: Array<TaskModel>, projectId, sectionId) => {
+  (entities: EntitiesMap<TaskEntity>, projectId, sectionId) => {
     if (!projectId) {
       return [];
     }
@@ -52,37 +60,39 @@ export const projectTasksEntitiesSelector = createSelector(
 
 export const projectTasksSelector = createSelector(
   projectTasksEntitiesSelector,
-  (state: State) => state.tasks.ui,
+  (state: RootState) => state.tasks.ui,
   projectSelectedTagSelector,
-  (taskEntities: Array<TaskModel>, tasksUI, selectedProjectTag?: string): Array<TaskUIModel> => {
+  (taskEntities: EntitiesMap<TaskEntity>, tasksUI, selectedProjectTag?: string): EntitiesArray<TaskUIEntity> => {
     let entities = taskEntities.sort((a, b) => a.order - b.order);
 
     if (selectedProjectTag) {
-      entities = entities.filter((task: TaskModel) => task.tags.includes(selectedProjectTag));
+      entities = entities.filter((task: TaskEntity) => task.tags.includes(selectedProjectTag));
     }
 
-    return entities.map(task => ({
+    const uiEntities = entities.map(task => ({
       ...task,
       isOpen: task.id === tasksUI.openId,
       isSelected: task.id === tasksUI.selectedId,
-      progress: calculateProgress(task, task.todoList),
+      progress: calculateProgress(task, List(task.todoList)),
     }));
+
+    return [...uiEntities.values()];
   }
 );
 
 export const projectTagsSelector = createSelector(
   projectTasksEntitiesSelector,
-  (tasks: Array<TaskModel>): Array<string> => {
-    const allTags = tasks.reduce((tags, task) => [...tags, ...task.tags], []);
+  (tasks: EntitiesMap<TaskEntity>): Array<string> => {
+    const allTags = tasks.reduce((tags, task) => tags.union(task.tags), Set());
 
-    return unique(allTags);
+    return allTags.toArray();
   }
 );
 
 export const projectSelector = createSelector(
-  (state: State) => state.projects.entities,
-  (state: State) => state.projects.ui,
-  (state: State) => state.tasks.entities,
+  (state: RootState) => state.projects.entities,
+  (state: RootState) => state.projects.ui,
+  (state: RootState) => state.tasks.entities,
   (_, id) => id,
   (projectEntities, projectsUI, taskEntities, id) => {
     const project = projectEntities.find(p => p.id === id);
@@ -97,30 +107,34 @@ export const projectSelector = createSelector(
       ...project,
       isOpen,
       isSelected: isOpen,
-      progress: calculateProgress(project, taskEntities.filter(task => task.parentId === id)),
+      progress: calculateProgress(project, taskEntities.filter(task => task.parentId === id).toList()),
     };
   }
 );
 
 export const projectsSelector = createSelector(
-  (state: State) => state.projects.entities,
-  (state: State) => state.projects.ui,
-  (state: State) => state.tasks.entities,
-  (projectEntities, projectsUI, taskEntities) => projectEntities.map((project) => ({
-    ...project,
-    isOpen: project.id === projectsUI.openId,
-    isSelected: project.id === projectsUI.openId,
-    progress: calculateProgress(project, taskEntities.filter(task => task.parentId === project.id)),
-  }))
+  (state: RootState) => state.projects.entities,
+  (state: RootState) => state.projects.ui,
+  (state: RootState) => state.tasks.entities,
+  (projectEntities, projectsUI, taskEntities) => {
+    const projects = projectEntities.map((project) => ({
+      ...project,
+      isOpen: project.id === projectsUI.openId,
+      isSelected: project.id === projectsUI.openId,
+      progress: calculateProgress(project, taskEntities.filter(task => task.parentId === project.id).toList()),
+    }));
+
+    return [...projects.values()];
+  }
 );
 
 export const taskSectionsSelector = createSelector(
-  (state: State) => state.sections.entities,
+  (state: RootState) => state.sections.entities,
   (_, parentId) => parentId,
   projectSelectedTagSelector,
-  (entities: Array<SectionModel>, parentId, selectedTag) => {
-
-    return entities.filter(p => p.parentId == parentId);
+  (entities: EntitiesMap<SectionEntity>, parentId, selectedTag) => {
+    const sections = entities.filter(p => p.parentId == parentId);
+    return [...sections.values()];
   }
 );
 

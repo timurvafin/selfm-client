@@ -1,8 +1,8 @@
 import React from 'react';
 import cs from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
-import { State } from '../../store';
-import * as ProjectActions from 'store/actions/projects';
+import { RootState } from '../../store';
+import { actions as ProjectActions } from 'store/models/project';
 import { projectSelectedTagSelector, projectTagsSelector } from '../../store/selectors';
 import { isEmpty } from '../../common/utils/collection';
 
@@ -15,8 +15,8 @@ const ProjectTag = ({ tag, onSelect, isSelected }) => (
   );
 
 const ProjectTags = ({ projectId }) => {
-  const tags = useSelector<State, Array<string>>(state => projectTagsSelector(state, projectId));
-  const selectedTag = useSelector<State, string | null>(projectSelectedTagSelector);
+  const tags = useSelector<RootState, Array<string>>(state => projectTagsSelector(state, projectId));
+  const selectedTag = useSelector<RootState, string | null>(projectSelectedTagSelector);
 
   const dispatch = useDispatch();
   const selectTag = (tag) => dispatch(ProjectActions.selectTag(tag));

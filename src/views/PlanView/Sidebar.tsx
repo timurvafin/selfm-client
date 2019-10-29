@@ -4,9 +4,9 @@ import Action from 'components/Action';
 import RadialProgressBar from 'components/RadialProgressBar';
 import { useSelector } from 'react-redux';
 import { projectsSelector } from 'store/selectors';
-import * as ProjectActions from 'store/actions/projects';
-import * as TaskActions from 'store/actions/tasks';
-import { useActions, useMountEffect } from 'common/hooks';
+import { actions as ProjectActions } from 'store/models/project';
+import { actions as TaskActions } from 'store/models/task';
+import { useActions } from 'common/hooks';
 import { useDrop } from 'react-dnd';
 import { PlusIcon } from 'components/Icon';
 import { ID } from '../../common/types';
@@ -33,7 +33,8 @@ const ProjectLink = ({ project, onSelect, moveTask }: { onSelect: any; project: 
     <div
       ref={drop}
       onMouseDown={onSelect}
-      className={classname}>
+      className={classname}
+    >
       <RadialProgressBar
         size="15"
         progress={project.progress}
@@ -52,10 +53,6 @@ const Sidebar = () => {
     loadProjects: ProjectActions.load,
     openProject: ProjectActions.open,
     createProject: ProjectActions.create,
-  });
-
-  useMountEffect(() => {
-    actions.loadProjects();
   });
 
   const projects = useSelector(projectsSelector);

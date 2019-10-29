@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import store from './store/store';
+import store from './store';
 // import Routes from './routes';
 // import { ConnectedRouter } from 'react-router-redux';
 // import createHistory from 'history/createHashHistory';
