@@ -12,6 +12,10 @@ body {
   font-size: $base_font_size;
 }
 
+a {
+  text-decoration: none;
+}
+
 input, textarea {
   color: inherit;
   font-family: inherit;

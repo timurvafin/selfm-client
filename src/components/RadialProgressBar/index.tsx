@@ -40,7 +40,7 @@ const Sector = ({ radius, center, y0, color, angle, className }) => {
   );
 };
 
-const RadialProgressBar = ({ size, className, progress, color }) => {
+const RadialProgressBar = ({ size, className, progress, color }: { size: number; className?: string; progress: number; color: string }) => {
   const cls = cs(className, 'radial-progress-bar');
 
   const parentR = size / 2;

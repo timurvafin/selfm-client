@@ -7,3 +7,17 @@ export enum KeyCode {
   BACKSPACE = 8,
   ESCAPE = 27,
 }
+
+export enum WorkspaceTypes {
+  SHORTCUT = 'shortcut',
+  PROJECT = 'project',
+}
+
+export enum Shortcuts {
+  INBOX = 'Inbox',
+  TODAY = 'Today',
+  PLANS = 'Plans',
+  ANYTIME = 'Anytime',
+  SOMEDAY = 'Someday',
+  // TRASH = 'Trash',
+}

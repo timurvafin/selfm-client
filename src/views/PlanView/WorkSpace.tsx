@@ -1,21 +1,37 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store';
-import { projectOpenIdSelector } from 'store/selectors';
+import {
+  Switch,
+  Route
+} from "react-router-dom";
 
 import Project from '../Project';
-import { ID } from '../../common/types';
+import { Shortcuts } from '../../common/constants';
 
 
-const WorkSpace = () => {
-  const id = useSelector<RootState, ID>(projectOpenIdSelector);
-
-  return (
-    <div className="workspace">
-      {id && <Project id={id} />}
-    </div>
-  );
-};
+const WorkSpace = () => (
+  <div className="workspace">
+    <Switch>
+      <Route path={`/${Shortcuts.INBOX}`}>
+        { ({ match }) => <Project id={match.params.id} />}
+      </Route>
+      <Route path={`/${Shortcuts.TODAY}`}>
+        { ({ match }) => <Project id={match.params.id} />}
+      </Route>
+      <Route path={`/${Shortcuts.PLANS}`}>
+        { ({ match }) => <Project id={match.params.id} />}
+      </Route>
+      <Route path={`/${Shortcuts.ANYTIME}`}>
+        { ({ match }) => <Project id={match.params.id} />}
+      </Route>
+      <Route path={`/${Shortcuts.SOMEDAY}`}>
+        { ({ match }) => <Project id={match.params.id} />}
+      </Route>
+      <Route path="/project/:id">
+        { ({ match }) => <Project id={match.params.id} />}
+      </Route>
+    </Switch>
+  </div>
+);
 
 export default WorkSpace;
 

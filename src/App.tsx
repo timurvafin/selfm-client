@@ -1,4 +1,5 @@
 import React from 'react';
+import { HashRouter as Router } from "react-router-dom";
 import PlanView from './views/PlanView';
 import { useMountEffect } from './common/hooks';
 import { actions as SectionsActions } from 'store/models/section';
@@ -19,7 +20,11 @@ const App = () => {
   });
 
   return (
-    <div id={'app'}><PlanView /></div>
+    <div id={'app'}>
+      <Router>
+        <PlanView />
+      </Router>
+    </div>
   );
 };
 

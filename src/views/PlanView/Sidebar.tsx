@@ -1,71 +1,92 @@
 import React from 'react';
+import { Link, useRouteMatch } from 'react-router-dom';
 import cs from 'classnames';
 import Action from 'components/Action';
 import RadialProgressBar from 'components/RadialProgressBar';
 import { useSelector } from 'react-redux';
 import { projectsSelector } from 'store/selectors';
 import { actions as ProjectActions } from 'store/models/project';
-import { actions as TaskActions } from 'store/models/task';
 import { useActions } from 'common/hooks';
-import { useDrop } from 'react-dnd';
-import { PlusIcon } from 'components/Icon';
-import { ID } from '../../common/types';
+import {
+  PlusIcon,
+  CalendarIcon,
+  InboxIcon,
+  StarIcon,
+  ArchiveIcon,
+  LayersIcon,
+} from 'components/Icon';
+import { Shortcuts, WorkspaceTypes } from '../../common/constants';
 
 
-const ProjectLink = ({ project, onSelect, moveTask }: { onSelect: any; project: any; moveTask: any }) => {
-  const [{ isOver }, drop] = useDrop<{ id: ID; type: string }, {}, { isOver: boolean }>({
-    accept: 'task',
-    drop(taskItem) {
-      moveTask(taskItem.id, project.id);
-      return undefined;
-    },
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    })
-  });
+const ProjectIcon = ({ progress }) => (
+  <RadialProgressBar
+    size={15}
+    progress={progress}
+    color="#aaa"
+  />
+);
 
-  const classname = cs('sidebar__project', {
-    ['sidebar__project--selected']: project.isOpen,
-    ['sidebar__project--task-over']: isOver,
+const SidebarLink = ({ caption, type, id, isSelected, icon, className }) => {
+  const cls = cs('sidebar__link', className,{
+    ['sidebar__link--selected']: isSelected,
   });
 
   return (
-    <div
-      ref={drop}
-      onMouseDown={onSelect}
-      className={classname}
-    >
-      <RadialProgressBar
-        size="15"
-        progress={project.progress}
-        color="#aaa"
-        className="sidebar__project__progress-bar"
-      />
-      <div className="sidebar__project__icon">{project.icon}</div>
-      <div className="sidebar__project__name">{project.caption || project.placeholder}</div>
-    </div>
+    <Link to={`/${type}/${id}`}>
+      <div className={cls}>
+        <div className="sidebar__link__icon">{icon}</div>
+        <div className="sidebar__link__caption">{caption}</div>
+      </div>
+    </Link>
   );
 };
 
 const Sidebar = () => {
   const actions = useActions({
-    moveTask: TaskActions.move,
     loadProjects: ProjectActions.load,
-    openProject: ProjectActions.open,
     createProject: ProjectActions.create,
   });
 
   const projects = useSelector(projectsSelector);
+  const shortcuts = [
+    { caption: Shortcuts.INBOX, icon: <InboxIcon className={'icon-inbox'}/> },
+    { caption: Shortcuts.TODAY, icon: <StarIcon className={'icon-today'}/> },
+    { caption: Shortcuts.PLANS, icon: <CalendarIcon className={'icon-plans'}/> },
+    { caption: Shortcuts.ANYTIME, icon: <LayersIcon className={'icon-anytime'}/> },
+    { caption: Shortcuts.SOMEDAY, icon: <ArchiveIcon className={'icon-someday'}/> },
+  ];
+
+  const match = useRouteMatch('/:type/:id');
+  // const selectedWorkspace = useSelector(workspaceSelectors.selectedWorkspace);
+  const selectedWorkspace = match ? { type: match.params.type, id: match.params.id } : null;
+  const isWorkspaceSelected = (type, id) => selectedWorkspace && selectedWorkspace.id === id && selectedWorkspace.type === type;
 
   return (
     <div className="sidebar">
+      <div className="sidebar__shortcuts">
+        {shortcuts.map((shortcut) => (
+          <SidebarLink
+            key={shortcut.caption}
+            type={WorkspaceTypes.SHORTCUT}
+            id={shortcut.caption}
+            icon={shortcut.icon}
+            className={`sidebar__shortcut-${shortcut.caption}`}
+            caption={shortcut.caption}
+            isSelected={isWorkspaceSelected('shortcut', shortcut.caption)}
+          />
+        ))}
+      </div>
+
       <div className="sidebar__projects">
         {projects.map((project) => (
-          <ProjectLink
+          <SidebarLink
             key={project.id}
-            onSelect={() => actions.openProject(project.id)}
-            project={project}
-            moveTask={actions.moveTask}
+            type={WorkspaceTypes.PROJECT}
+            id={project.id}
+            caption={project.caption}
+            className={`sidebar__project`}
+            icon={<ProjectIcon progress={project.progress} />}
+            isSelected={isWorkspaceSelected('project', project.id)}
           />
         ))}
       </div>
