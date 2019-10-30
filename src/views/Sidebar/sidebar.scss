@@ -16,20 +16,17 @@
   font-family: Verdana, sans-serif;
 }
 
-.workspace {
-  flex: 1;
-  padding: 1em 3.5em 1em;
-  overflow-y: auto;
-  background-color: #fff;
-  overflow-x: hidden;
+.sidebar__shortcuts {
+  margin: 1rem 0;
+}
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
+.sidebar__shortcut-inbox {
+  margin-bottom: 1em;
 }
 
 .sidebar__projects {
-  margin: 1em 0;
+  margin: 1rem 0;
+  flex: 1;
 }
 
 .sidebar__actions {
@@ -65,7 +62,7 @@
   }
 }
 
-.sidebar__project {
+.sidebar__link {
   @include unselectable();
   @include clickable();
 
@@ -83,14 +80,16 @@
   @include overflow-dots();
 }
 
-.sidebar__project__progress-bar {
-  margin-right: .4em;
+.sidebar__link__icon {
+  width: 1.4rem;
+  display: flex;
+  align-items: center;
 }
 
 .sidebar__project--task-over {
   border-color: $clr_accent;
 }
 
-.sidebar__project--selected {
+.sidebar__link--selected {
   background-color: rgba(235, 230, 241, 0.64);
 }

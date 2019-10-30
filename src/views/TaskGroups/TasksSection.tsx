@@ -1,25 +1,25 @@
-import TaskList from '../TaskList';
 import React, { useCallback } from 'react';
-import { ID } from '../../common/types';
-import { stopPropagation } from '../../common/utils/component';
-import TextField from '../../components/Textfield';
-import { useDispatch } from 'react-redux';
+import { stopPropagation } from 'common/utils/component';
+import TextField from 'components/Textfield';
+import { useDispatch, useSelector } from 'react-redux';
 import { actions as SectionsActions, SectionEntity } from 'store/models/section';
-import Menu from '../Menu';
-import { CrossIcon, PlusIcon } from '../../components/Icon';
-import { actions as TaskActions } from 'store/models/task';
+import Menu from 'components/Menu';
+import { CrossIcon, PlusIcon } from 'components/Icon';
+import { sectionSelector } from 'store/selectors';
+import { ID } from '../../common/types';
 
 
-const TasksSection = ({ projectId, section }: { projectId: ID; section: SectionEntity }) => {
+const TasksSection = ({ id }: { id: ID }) => {
+  const section: SectionEntity = useSelector(state => sectionSelector(state, id));
   const dispatch = useDispatch();
   const update = useCallback((values) => {
-    dispatch(SectionsActions.update(section.id, values));
-  }, [section.id]);
+    dispatch(SectionsActions.update(id, values));
+  }, [id]);
   const remove = useCallback(() => {
-    dispatch(SectionsActions.remove(section.id));
-  }, [section.id]);
+    dispatch(SectionsActions.remove(id));
+  }, [id]);
   const addTask = () => {
-    dispatch(TaskActions.create(projectId, section.id));
+    // dispatch(TaskActions.create(projectId, section.id));
   };
 
   const menuItems = [
@@ -27,7 +27,7 @@ const TasksSection = ({ projectId, section }: { projectId: ID; section: SectionE
     { action: remove, name: 'Remove', icon: <CrossIcon />, className: 'action--remove' },
   ];
 
-  return (
+  return section && (
     <div className="task-section">
       <div className="task-section__header">
         <TextField
@@ -40,11 +40,6 @@ const TasksSection = ({ projectId, section }: { projectId: ID; section: SectionE
         />
         <Menu items={menuItems} />
       </div>
-
-      <TaskList
-        projectId={projectId}
-        sectionId={section.id}
-      />
     </div>
   );
 };

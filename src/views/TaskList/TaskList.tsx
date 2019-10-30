@@ -1,22 +1,17 @@
 import React from 'react';
 import cs from 'classnames';
 import Task from './Task';
-import { projectTasksSelector, TaskUIEntity } from '../../store/selectors';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { TaskUIEntity } from '../../store/selectors';
 import asDroppable from './asDroppable';
 
 import './tasks.scss';
-import { ID } from '../../common/types';
 
 
 export interface Props {
-  projectId: ID;
-  sectionId?: ID;
+  tasks: Array<TaskUIEntity>;
 }
 
-const TasksList = ({ projectId, sectionId }: Props) => {
-  const tasks = useSelector<RootState, Array<TaskUIEntity>>(state => projectTasksSelector(state, projectId, sectionId));
+const TasksList = ({ tasks }: Props) => {
 
   const taskDataList = tasks.map((task, index) => (
     <Task

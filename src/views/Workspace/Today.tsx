@@ -1,24 +1,29 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import TaskList from '../TaskList';
 import TextField from 'components/Textfield';
 import Action from 'components/Action';
 import RadialProgressBar from 'components/RadialProgressBar';
 
-import Menu from 'components/Menu';
+import Menu from '../../components/Menu';
 import './project.scss';
-import { projectSelector, ProjectUIEntity } from 'store/selectors';
+import { projectSelector, ProjectUIEntity, taskSectionsSelector } from 'store/selectors';
 import { RootState } from 'store';
 import { actions as TaskActions } from 'store/models/task';
-import { actions as SectionsActions } from 'store/models/section';
+import { actions as SectionsActions, SectionEntity } from 'store/models/section';
 import { actions as ProjectActions } from 'store/models/project';
-import { CheckIcon, CrossIcon, PlusIcon } from 'components/Icon';
-import { ID } from 'common/types';
-import TaskGroups from '../TaskGroups/TaskGroups';
-import { WorkspaceTypes } from 'common/constants';
+import { CheckIcon, CrossIcon, PlusIcon } from '../../components/Icon';
+import { ID } from '../../common/types';
+
 
 
 const Project = ({ id }: { id: ID }) => {
   const project = useSelector<RootState, ProjectUIEntity>(state => projectSelector(state, id));
+  const sections = useSelector<RootState, Array<SectionEntity>>(state => taskSectionsSelector(state, id));
+
+  if (!project) {
+    return null;
+  }
 
   const dispatch = useDispatch();
 
@@ -41,13 +46,8 @@ const Project = ({ id }: { id: ID }) => {
     { action: remove, name: 'Remove', icon: <CrossIcon />, className: 'project__action--remove' },
   ];
 
-  if (!project) {
-    return null;
-  }
-
   return (
     <div
-      // need to reinit view
       key={id}
       className="project"
     >
@@ -80,9 +80,25 @@ const Project = ({ id }: { id: ID }) => {
         />
       </div>
 
-      <div className="project__row">
-        <TaskGroups workspace={{ type: WorkspaceTypes.PROJECT, id: project.id }} />
+      <div className="project__row project__row--tags">
+        <Tags projectId={project.id} />
       </div>
+
+      <div className="project__row">
+        <TaskList projectId={project.id} />
+      </div>
+
+      { sections.map(section => (
+        <div
+          className="project__row"
+          key={section.id}
+        >
+          <TasksSection
+            projectId={project.id}
+            section={section}
+          />
+        </div>
+      )) }
 
       <div className="project__row project__row--actions">
         <Action

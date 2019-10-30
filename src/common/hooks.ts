@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { bindActionCreators } from 'redux';
 import { useDispatch } from 'react-redux';
 import { useMemo } from 'react';
+import { useRouteMatch, useLocation } from 'react-router-dom';
 
 
 export const useMountEffect = (fn) => useEffect(fn, []);
@@ -46,3 +47,19 @@ export function useActions(actions, deps = null): typeof actions {
     return bindActionCreators(actions, dispatch);
   }, deps ? [dispatch, ...deps] : [dispatch]);
 }
+
+export const useSelectedWorkspace = () => {
+  const match = useRouteMatch('/:type/:id');
+  // @ts-ignore
+  const selectedWorkspace = match ? { type: match.params.type, id: match.params.id } : null;
+
+  return selectedWorkspace;
+};
+
+export const useSelectedTag = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const selectedTag = searchParams.get('tag');
+
+  return selectedTag === 'All' ? null : selectedTag;
+};

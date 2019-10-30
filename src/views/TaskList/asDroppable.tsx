@@ -1,17 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 import { actions as TaskActions } from 'store/models/task';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { RootState } from '../../store';
-import { projectTasksSelector, TaskUIEntity } from '../../store/selectors';
 import { Props } from './TaskList';
-import { EntitiesArray } from '../../store/models/common';
 import { ID } from '../../common/types';
 
 
 const asDroppable = (TaskList: React.FC<Props>): React.FC<Props> => props => {
   const dispatch = useDispatch();
-  const tasks = useSelector<RootState, EntitiesArray<TaskUIEntity>>(state => projectTasksSelector(state, props.projectId));
+  const tasks = props.tasks;
   const order = useMemo<Array<ID>>(() => tasks.map(task => task.id), [tasks]);
 
   const onDragEnd = useCallback(

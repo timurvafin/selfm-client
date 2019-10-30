@@ -1,3 +1,7 @@
+import { ArchiveIcon, CalendarIcon, InboxIcon, LayersIcon, StarIcon } from '../components/Icon';
+import React from 'react';
+
+
 export const ENTER_KEY = 'Enter';
 export const BACKSPACE_KEY = 'Backspace';
 export const ESC_KEY = 'Escape';
@@ -14,10 +18,17 @@ export enum WorkspaceTypes {
 }
 
 export enum Shortcuts {
-  INBOX = 'Inbox',
-  TODAY = 'Today',
-  PLANS = 'Plans',
-  ANYTIME = 'Anytime',
-  SOMEDAY = 'Someday',
-  // TRASH = 'Trash',
+  INBOX= 'inbox',
+  TODAY= 'today',
+  PLANS= 'plans',
+  ANYTIME= 'anytime',
+  SOMEDAY= 'someday',
 }
+
+export const SHORTCUT_CAPTIONS = {
+  [Shortcuts.INBOX]: 'Inbox',
+  [Shortcuts.TODAY]: 'Today',
+  [Shortcuts.PLANS]: 'Plans',
+  [Shortcuts.ANYTIME]: 'Anytime',
+  [Shortcuts.SOMEDAY]: 'Someday',
+};

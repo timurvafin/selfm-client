@@ -3,7 +3,7 @@ import Action from 'components/Action';
 import cs from 'classnames';
 
 import './menu.scss';
-import { MoreIcon } from '../../components/Icon';
+import { MoreIcon } from '../Icon';
 
 
 export default class Menu extends Component<{ items: any }, { menuOpen: boolean }> {

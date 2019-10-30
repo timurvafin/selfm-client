@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router';
 import './styles/common.scss';
-import PlanView from './views/PlanView';
+import PlanView from './views/Sidebar';
 import ProjectVis from './views/vis/ProjectVis';
 import Header from './views/header';
 

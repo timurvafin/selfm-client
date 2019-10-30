@@ -23,7 +23,7 @@ export interface ProjectEntity extends BaseTaskEntity {
 
 export interface ProjectsUIState {
   openId?: ID;
-  selectedTag?: string;
+  // selectedTag?: string;
 }
 
 export type ProjectsState = {
@@ -38,7 +38,7 @@ export const actions = createActionCreators({
   add: (entity: ProjectEntity) => ({ entity }),
   load: () => ({}),
   receive: (entities: EntitiesArray<ProjectEntity>) => ({ entities }),
-  selectTag: (tag: string) => ({ tag }),
+  // selectTag: (tag: string) => ({ tag }),
   open: (id: ID) => ({ id }),
 }, namespace);
 
@@ -48,7 +48,7 @@ const spec: ModelSpec<ProjectsState, typeof actions> = {
     entities: Map<ID, ProjectEntity>(),
     ui: {
       openId: null,
-      selectedTag: null,
+      // selectedTag: null,
     },
   },
   actions,
@@ -57,9 +57,9 @@ const spec: ModelSpec<ProjectsState, typeof actions> = {
       ...entityBaseReducers,
     },
     ui: {
-      selectTag: (state: ProjectsUIState, { tag }) => {
+      /*selectTag: (state: ProjectsUIState, { tag }) => {
         return { ...state, selectedTag: tag };
-      },
+      },*/
       open: (state: ProjectsUIState, { id }) => {
         return { ...state, openId: id, selectedTag: null };
       },

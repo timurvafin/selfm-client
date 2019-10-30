@@ -1,0 +1,35 @@
+@import 'include';
+
+.workspace-container {
+  flex: 1;
+  padding: 2em 4.5em 1em;
+  overflow-y: auto;
+  background-color: #fff;
+  overflow-x: hidden;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.workspace__row {
+  margin-bottom: 1.5rem;
+}
+
+.workspace__row--caption {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 1.5em;
+}
+
+.workspace__caption {
+  margin-left: .8rem;
+  font-weight: bold;
+  border-bottom: 1px solid transparent;
+  font-family: $ff_title;
+}
+
+.workspace__row--tags {
+  margin-bottom: 3rem;
+}

@@ -24,7 +24,7 @@ export type ActionCreators<T extends BaseActionCreatorSpecs> = {
 }
 
 type ActionReducers<State, T extends BaseActionCreatorSpecs> = Partial<{
-  [K in keyof T]: (state: State, action: ActionObject<T[K]>) => any;
+  [K in keyof T]: (state: State, action: ActionObject<T[K]>) => State;
 }>
 
 type Subreducers<State, T extends BaseActionCreatorSpecs> = {
@@ -43,6 +43,7 @@ export interface ModelSpec<State, T extends BaseActionCreatorSpecs> {
   actions: T;
   reducers: Reducers<State, T>;
   effects?: Effects<T>;
+  selectors?: any;
   opts?: {
     delimeter?: string;
   };
@@ -56,6 +57,8 @@ export interface BaseEntity {
 
 export interface BaseTaskEntity extends BaseEntity, Completable {
   sectionId?: ID;
+  startTime?: number;
+  startTimeTag?: string;
   notes?: string;
   caption: string;
   order: number;

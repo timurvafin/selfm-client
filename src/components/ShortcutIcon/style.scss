@@ -1,0 +1,17 @@
+@import 'include';
+
+.shortcut-icon {
+  font-size: 120%;
+}
+
+.shortcut-icon-today {
+  font-size: 130%;
+}
+
+$shortcut_icon_colors: (inbox: #21adf8, today: #ffc300, plans: #fc3369, anytime: #37a69b, someday: #cbbf7c);
+
+@each $name, $color in $shortcut_icon_colors {
+  .shortcut-icon--#{$name} {
+    color: $color;
+  }
+}
