@@ -1,3 +1,3 @@
-import PlanView from './PlanView';
+import Sidebar from './Sidebar';
 
-export default PlanView;
+export default Sidebar;

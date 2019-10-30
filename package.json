@@ -48,6 +48,7 @@
     "@vx/point": "0.0.192",
     "@vx/shape": "0.0.192",
     "classnames": "^2.2.6",
+    "connected-react-router": "^6.5.2",
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.15",
     "react": "^16.10.2",

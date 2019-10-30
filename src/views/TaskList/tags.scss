@@ -29,6 +29,10 @@
   }
 }
 
+.tags__input {
+  min-width: 5em;
+}
+
 .tag__hash {
   color: $clr_accent;
 }

@@ -20,12 +20,11 @@ export interface SectionEntity extends BaseEntity {
 
 export type SectionsState = {
   entities: EntitiesMap<SectionEntity>;
-  // ui: {};
 }
 
-export const namespace = 'sections';
+const namespace = 'sections';
 
-export const actions = createActionCreators({
+const actions = createActionCreators({
   create: (parentId: ID) => ({ parentId }),
   add: (entity: SectionEntity) => ({ entity }),
   load: () => ({}),
@@ -52,6 +51,9 @@ const spec: ModelSpec<SectionsState, typeof actions> = {
         caption: '',
       }));
     },
+    add: function* ({ entity }) {
+      yield call(Api.addSection, entity);
+    },
     load: function* () {
       const sections = yield call(Api.loadSections);
 
@@ -67,6 +69,11 @@ const spec: ModelSpec<SectionsState, typeof actions> = {
       yield call(Api.removeSection, id);
     },
   },
+};
+
+export {
+  namespace as sectionsNamespace,
+  actions as sectionActions,
 };
 
 export default spec;

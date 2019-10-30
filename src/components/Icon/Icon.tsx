@@ -8,13 +8,10 @@ import {
   FiMoreHorizontal,
   FiList,
   FiTag,
-  FiCalendar,
-  FiTrash,
+  FiTrash2,
   FiHash,
-  // FiInbox,
-  // FiStar,
-  FiArchive,
-  FiLayers,
+  FiArrowRight,
+  FiCopy,
 } from 'react-icons/fi';
 import {
   FaInbox,
@@ -22,7 +19,6 @@ import {
   FaRegCalendarAlt,
   FaArchive,
   FaLayerGroup,
-  FaTrash,
 } from 'react-icons/fa';
 
 import './icon.scss';
@@ -44,8 +40,11 @@ export const MoreIcon = asIcon(FiMoreHorizontal);
 export const ListIcon = asIcon(FiList);
 export const TagIcon = asIcon(FiTag);
 export const CalendarIcon = asIcon(FaRegCalendarAlt);
-export const TrashIcon = asIcon(FaTrash);
+export const TrashIcon = asIcon(FiTrash2);
 export const HashIcon = asIcon(FiHash);
+export const ArrowRightIcon = asIcon(FiArrowRight);
+export const CopyIcon = asIcon(FiCopy);
+// filled
 export const InboxIcon = asIcon(FaInbox);
 export const StarIcon = asIcon(FaStar);
 export const ArchiveIcon = asIcon(FaArchive);

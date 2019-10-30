@@ -5,6 +5,10 @@
   min-width: 0.5em;
 }
 
+.textfield::placeholder {
+  color: #ccc;
+}
+
 .textfield--multiline {
   resize: none;
   overflow: hidden;

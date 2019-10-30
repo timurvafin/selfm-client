@@ -1,18 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import store from './store';
-// import Routes from './routes';
-// import { ConnectedRouter } from 'react-router-redux';
-// import createHistory from 'history/createHashHistory';
+import store, { history } from './store';
 import App from './App';
+import { ConnectedRouter } from 'connected-react-router';
 
-
-// const _history = createHistory();
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <ConnectedRouter history={history}>
+      <App />
+    </ConnectedRouter>
   </Provider>,
   document.getElementById('root')
 );

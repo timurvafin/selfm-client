@@ -1,9 +1,9 @@
 /* eslint-disable arrow-body-style */
-import { Map } from 'immutable';
-import { all, call, fork, put, select, takeEvery } from '@redux-saga/core/effects';
+import { Map, List, getIn } from 'immutable';
+import { call, select, takeEvery } from '@redux-saga/core/effects';
 import { ID } from '../../common/types';
 import { randomString } from '../../common/utils/common';
-import { RootState } from './index';
+import { ModelsState } from './index';
 import { TaskEntity } from './task';
 
 
@@ -41,7 +41,7 @@ export interface ModelSpec<State, T extends BaseActionCreatorSpecs> {
   namespace: string;
   state: State;
   actions: T;
-  reducers: Reducers<State, T>;
+  reducers?: Reducers<State, T>;
   effects?: Effects<T>;
   selectors?: any;
   opts?: {
@@ -57,6 +57,7 @@ export interface BaseEntity {
 
 export interface BaseTaskEntity extends BaseEntity, Completable {
   sectionId?: ID;
+  // type: 'project' | 'task';
   startTime?: number;
   startTimeTag?: string;
   notes?: string;
@@ -114,7 +115,7 @@ export class Model<State, ActionCreators> {
     const keys = Reflect.ownKeys(state);
 
     return keys.reduce((nextState, key) => {
-      const concreteReducer = this.spec.reducers[key][actionName];
+      const concreteReducer = getIn(this.spec, ['reducers', key, actionName], null);
       if (concreteReducer) {
         nextState[key] = concreteReducer(nextState[key], action);
       }
@@ -153,25 +154,13 @@ export const createBaseEntity = () => {
   };
 };
 
-export const makeReducer = (models: Model<any, any>[]) => (state = {}, action) => {
-  return models.reduce((result, model) => {
-    result[model.namespace] = model.reduce(state[model.namespace], action);
-    return result;
-  }, {});
-};
-
-export const makeSagas = <State>(models: Model<any, any>[]) => {
-  return function* () {
-    yield all(models.map(model => fork(() => model.saga())));
-  };
-};
-
 export const entityBaseReducers = {
   add: (state: EntitiesMap<any>, { entity }) => {
     return state.set(entity.id, entity);
   },
   receive: (state: EntitiesMap<any>, { entities }) => {
-    return state.merge(entities.map(entity => [entity.id, entity]));
+    const entitiesEntries: Array<[ID, any]> = entities.map(entity => [entity.id, entity]);
+    return state.merge(entitiesEntries);
   },
   update: (state: EntitiesMap<any>, { id, fields }) => {
     return state.mergeIn([id], fields);
@@ -188,19 +177,20 @@ export const createUpdateEffect = ({
   updateAction,
 }) => function* (action) {
   const { id, fields } = action;
-  const state: RootState = yield select();
+  const state: ModelsState = yield select();
   const entity = state[namespace].entities.get(id);
 
   if (!entity) {
     return;
   }
 
-  if (entity.isNew) {
+  yield call(updateApi, id, fields);
+  /*if (entity.isNew) {
     yield call(addApi, { ...entity, ...fields });
     yield put(updateAction(id, { isNew: false }));
   } else {
     yield call(updateApi, id, fields);
-  }
+  }*/
 };
 
 /**
@@ -213,6 +203,10 @@ export const updateEntitiesOrder = (entities: EntitiesMap<any>, ids: Array<ID>) 
   }, entities);
 };
 
-export const getNextOrder = (entities: EntitiesMap<any>) => (entities.maxBy(entity => entity.order) || 0) + 1;
+export const getNextOrder = (entities: List<BaseTaskEntity>) => {
+  const entityWithMaxOrder = entities.maxBy(entity => entity.order);
+
+  return entityWithMaxOrder ? (entityWithMaxOrder.order + 1) : 1;
+};
 
 

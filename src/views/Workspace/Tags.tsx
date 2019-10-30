@@ -1,25 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import cs from 'classnames';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store';
+import { useDispatch, useSelector } from 'react-redux';
+import { ModelsState } from 'store';
 import { tagsSelector } from 'store/selectors';
 import { isEmpty } from 'common/utils/collection';
-import { useSelectedTag } from 'common/hooks';
-import { WorkspaceEntity } from '../../store/models/workspace';
+import { workspaceActions, WorkspaceEntity, workspaceSelectors } from '../../store/models/workspace';
 
 
-const Tag = ({ tag, isSelected }) => (
-  <Link
-    to={`?tag=${tag}`}
-    className={cs('project-tag', isSelected && 'project-tag--selected')}
-  >{tag}</Link>
+const Tag = ({ tag, isSelected, onSelect }) => (
+  <div
+    onClick={onSelect}
+    className={cs('workspace-tag', isSelected && 'workspace-tag--selected')}
+  >{tag}</div>
 );
 
 const Tags = ({ workspace }: { workspace: WorkspaceEntity }) => {
-  // const selectedWorkspace = useSelectedWorkspace();
-  const selectedTag = useSelectedTag();
-  const tags = useSelector<RootState, Array<string>>(state => tagsSelector(state, workspace));
+  const tags = useSelector<ModelsState, Array<string>>(state => tagsSelector(state, workspace));
+  const selectedTag = useSelector<ModelsState, string | null>(workspaceSelectors.selectedTag);
+
+  const dispatch = useDispatch();
+  const selectTag = (tag) => dispatch(workspaceActions.selectTag(tag));
 
   const tagItems = tags.map(tag => {
     const isSelected = selectedTag === tag;
@@ -28,6 +28,7 @@ const Tags = ({ workspace }: { workspace: WorkspaceEntity }) => {
       <Tag
         key={tag}
         tag={tag}
+        onSelect={() => selectTag(tag)}
         isSelected={isSelected}
       />
     );
@@ -37,7 +38,8 @@ const Tags = ({ workspace }: { workspace: WorkspaceEntity }) => {
     <div className={'workspace-tags'}>
       <Tag
         tag={'All'}
-        isSelected={!selectedTag || selectedTag === 'All'}
+        onSelect={() => selectTag(null)}
+        isSelected={!selectedTag}
       />
       { tagItems }
     </div>

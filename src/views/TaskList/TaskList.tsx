@@ -12,7 +12,6 @@ export interface Props {
 }
 
 const TasksList = ({ tasks }: Props) => {
-
   const taskDataList = tasks.map((task, index) => (
     <Task
       key={task.id}

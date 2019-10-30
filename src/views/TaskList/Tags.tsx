@@ -48,9 +48,10 @@ const Tags = ({ tags, onChange, readonly }: Props) => {
       {tagItems}
       { !readonly && (
         <TextField
+          autosize
           controlled
           transparent
-          className=""
+          className="tags__input"
           onEnter={onAdd}
           value={inputValue}
           placeholder={tags.length <= 0 ? 'Add tags' : ''}

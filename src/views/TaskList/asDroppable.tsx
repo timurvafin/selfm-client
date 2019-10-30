@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
-import { actions as TaskActions } from 'store/models/task';
 import { useDispatch } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { Props } from './TaskList';
 import { ID } from '../../common/types';
+import { taskActions } from '../../store/models/task';
 
 
 const asDroppable = (TaskList: React.FC<Props>): React.FC<Props> => props => {
@@ -26,7 +26,7 @@ const asDroppable = (TaskList: React.FC<Props>): React.FC<Props> => props => {
       newOrder.splice(fromIndex, 1);
       newOrder.splice(toIndex, 0, order[fromIndex]);
 
-      dispatch(TaskActions.reorder(newOrder));
+      dispatch(taskActions.reorder(newOrder));
     },
     [order],
   );

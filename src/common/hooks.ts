@@ -18,10 +18,10 @@ export const useOutsideClickHandler = <T extends Element>(handler) => {
         }
       };
 
-      document.addEventListener("mousedown", handleClick);
+      document.addEventListener("click", handleClick);
 
       return () => {
-        document.removeEventListener("mousedown", handleClick);
+        document.removeEventListener("click", handleClick);
       };
     },
     [handler]

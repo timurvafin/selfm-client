@@ -1,7 +1,7 @@
 import React from 'react';
 import { WorkspaceEntity } from '../../store/models/workspace';
 import { useSelector } from 'react-redux';
-import { RootState } from 'store/models';
+import { ModelsState } from 'store/models';
 import { tasksSelector, TaskUIEntity } from 'store/selectors';
 import Tags from '../Workspace/Tags';
 import TaskList from '../TaskList';
@@ -12,7 +12,7 @@ import { Set } from 'immutable';
 
 const TaskGroups = ({ workspace, }: { workspace: WorkspaceEntity }) => {
   const selectedTag = useSelectedTag();
-  const tasks = useSelector<RootState, Array<TaskUIEntity>>(state => tasksSelector(state, workspace));
+  const tasks = useSelector<ModelsState, Array<TaskUIEntity>>(state => tasksSelector(state, workspace));
   const filteredByTag = tasks.filter(task => !selectedTag || (task.tags && task.tags.includes(selectedTag)));
   const woSection = filteredByTag.filter(task => !task.sectionId);
   const sectionIds = tasks.reduce((ids, { sectionId }) => sectionId ? ids.add(sectionId) : ids, Set()).toJS();

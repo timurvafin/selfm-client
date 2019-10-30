@@ -9,6 +9,7 @@ import { Shortcuts, WorkspaceTypes } from 'common/constants';
 
 import './workspace.scss';
 import Shortcut from './ShortcutWorkspace';
+import WorkspaceActions from './WorkspaceActions';
 
 
 const WorkSpace = () => (
@@ -33,6 +34,7 @@ const WorkSpace = () => (
         { ({ match }) => <Project id={match.params.id} />}
       </Route>
     </Switch>
+    <WorkspaceActions />
   </div>
 );
 

@@ -2,6 +2,8 @@
 
 $completed_task_opacity: .5;
 $hover_bc: #fafafa;
+$transition_duration: .2s;
+$transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 
 %checkbox {
   width: .5em;
@@ -17,7 +19,7 @@ $hover_bc: #fafafa;
 }
 
 .task-list {
-  margin: 0 -.5rem 3em;
+  margin: 0 -.5rem 3rem;
 }
 
 .task-outer {
@@ -47,8 +49,9 @@ $hover_bc: #fafafa;
 .task {
   @include clickable();
 
-  transition: background-color .2s, padding .2s, margin .2s;
-  transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  transition-property: background-color, padding, margin;
+  transition-duration: $transition_duration;
+  transition-timing-function: $transition_timing_func;
   border-radius: 3px;
   padding: 0 .5rem;
 
@@ -58,6 +61,7 @@ $hover_bc: #fafafa;
 
 .task__row {
   padding-left: 1.5em;
+  position: relative;
 }
 
 .task__row--caption {
@@ -100,6 +104,7 @@ $hover_bc: #fafafa;
   align-items: center;
   justify-content: flex-end;
   padding-left: 1em;
+  font-size: 15px;
 }
 
 .task__controls .action {
@@ -183,15 +188,41 @@ $hover_bc: #fafafa;
   background-color: #f7f7f7;
 }
 
+.task {
+  &:before {
+    left: 0;
+    top: 0;
+    padding: 0;
+    // box-shadow: 0 0 8px #e0e0e0;
+    background-color: transparent;
+    transition-property: background-color, box-shadow, padding, left, top;
+    transition-duration: $transition_duration;
+    transition-timing-function: $transition_timing_func;
+
+    z-index: 0;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    box-sizing: content-box;
+  }
+}
+
 .task--open {
-  padding: 1em;
-  box-shadow: 0 0 8px #e0e0e0;
-  margin: 1em 0;
   display: block;
-  background-color: #fff;
+  margin: 2em 0;
+  position: relative;
+
+  &:before {
+    left: -1em;
+    top: -1em;
+    padding: 1em;
+    box-shadow: 0 0 8px #e0e0e0;
+    background-color: #fff;
+  }
 
   .task__row + .task__row {
-    margin-top: 1em;
+    margin-top: 1.5em;
   }
 
   .task__row--details {

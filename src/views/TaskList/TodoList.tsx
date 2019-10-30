@@ -4,7 +4,7 @@ import Checkbox from 'components/Checkbox';
 import { KeyCode } from 'common/constants';
 import cs from 'classnames';
 import { useDispatch } from 'react-redux';
-import { actions as TaskActions, TodoEntity } from 'store/models/task';
+import { taskActions, TodoEntity } from 'store/models/task';
 import { ID } from '../../common/types';
 
 
@@ -61,13 +61,13 @@ const TodoList = ({ todoList, parentId }: Props) => {
     () => ({
       create: () => {
         setAutoFocusEnabled(true);
-        dispatch(TaskActions.createTodo(parentId));
+        dispatch(taskActions.createTodo(parentId));
       },
       update: (id, values) => {
-        dispatch(TaskActions.updateTodo(parentId, id, values));
+        dispatch(taskActions.updateTodo(parentId, id, values));
       },
       remove: (id) => {
-        dispatch(TaskActions.removeTodo(parentId, id));
+        dispatch(taskActions.removeTodo(parentId, id));
         setAutoFocusEnabled(true);
       },
     }),

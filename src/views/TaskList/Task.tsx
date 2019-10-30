@@ -1,18 +1,19 @@
-import React, { MutableRefObject, useCallback } from 'react';
+import React, { MutableRefObject, useCallback, useState } from 'react';
 import classnames from 'classnames';
 import Action from 'components/Action';
 import TextField from 'components/Textfield';
 import Checkbox from 'components/Checkbox';
 import TodoList from './TodoList';
 import { useDispatch } from 'react-redux';
-import { actions as TaskActions } from 'store/models/task';
 import { useOutsideClickHandler } from '../../common/hooks';
 import { stopPropagation } from '../../common/utils/component';
 import asDraggable from './asDraggable';
-import { CalendarIcon, ListIcon, TagIcon, TrashIcon } from '../../components/Icon';
+import { CalendarIcon, ListIcon, TagIcon } from '../../components/Icon';
 import Tags from './Tags';
 import { isEmpty } from '../../common/utils/collection';
 import { TaskUIEntity } from '../../store/selectors';
+import { taskActions } from '../../store/models/task';
+import { workspaceActions } from '../../store/models/workspace';
 
 
 const useActions = ({ id, isOpen, isSelected, completed }: TaskUIEntity) => {
@@ -20,22 +21,22 @@ const useActions = ({ id, isOpen, isSelected, completed }: TaskUIEntity) => {
 
   return {
     update: useCallback((values) => {
-      dispatch(TaskActions.update(id, values));
+      dispatch(taskActions.update(id, values));
     }, [id]),
     setComplete: useCallback((completed) => {
-      dispatch(TaskActions.update(id, { completed }));
+      dispatch(taskActions.update(id, { completed }));
     }, [id, completed]),
-    remove: useCallback(() => {
+    /*remove: useCallback(() => {
       dispatch(TaskActions.remove(id));
-    }, [id]),
+    }, [id]),*/
     setOpen: useCallback((value) => {
-      isOpen !== value && dispatch(TaskActions.setOpen(id, value));
+      isOpen !== value && dispatch(workspaceActions.setTaskOpen(id, value));
     }, [isOpen]),
     setSelected: useCallback((value) => {
-      value !== isSelected && dispatch(TaskActions.setSelected(id, value));
+      value !== isSelected && dispatch(workspaceActions.setTaskSelected(id, value));
     }, [isSelected]),
     createTodo: useCallback(() => {
-      dispatch(TaskActions.createTodo(id));
+      dispatch(taskActions.createTodo(id));
     }, [id]),
   };
 };
@@ -44,6 +45,7 @@ const Task = ({ task }: { task: TaskUIEntity }) => {
   const { completed, notes, isOpen, isSelected, caption, isNew } = task;
 
   const actions = useActions(task);
+  const [showTags, setShowTags] = useState(!isEmpty(task.tags));
 
   const classNames = classnames('task', {
     ['task--open']: isOpen,
@@ -67,7 +69,7 @@ const Task = ({ task }: { task: TaskUIEntity }) => {
   const onClick = () => {
     if (isSelected) {
       actions.setOpen(true);
-    } else {
+    } else if (!isOpen) {
       actions.setSelected(true);
     }
   };
@@ -115,13 +117,15 @@ const Task = ({ task }: { task: TaskUIEntity }) => {
         />
       </div>
 
-      <div className="task__row task__row--tags">
-        <Tags
-          readonly={!isOpen}
-          tags={task.tags}
-          onChange={(tags) => actions.update({ tags })}
-        />
-      </div>
+      { showTags && (
+        <div className="task__row task__row--tags">
+          <Tags
+            readonly={!isOpen}
+            tags={task.tags}
+            onChange={(tags) => actions.update({ tags })}
+          />
+        </div>
+      ) }
 
       <div className="task__row task__row--details">
         <TodoList
@@ -146,20 +150,14 @@ const Task = ({ task }: { task: TaskUIEntity }) => {
             title="Calendar"
             action={actions.createTodo}
           />
-          { isEmpty(task.tags) && (
+          { !showTags && (
             <Action
               icon={<TagIcon />}
               hoverClr="yellow"
               title="Tag"
-              action={actions.createTodo}
+              action={() => setShowTags(true)}
             />
           )}
-          <Action
-            icon={<TrashIcon />}
-            hoverClr="red"
-            action={actions.remove}
-            title="Remove"
-          />
         </div>
       </div>
     </div>

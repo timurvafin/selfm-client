@@ -1,24 +1,20 @@
-import projectModelSpec, { namespace as projectNamespace, ProjectsState } from './project';
-import taskModelSpec, { namespace as tasksNamespace, TasksState } from './task';
-import sectionModelSpec, { namespace as sectionsNamespace, SectionsState } from './section';
-import workspaceModelSpec, { namespace as workspaceNamespace, WorkspaceState } from './workspace';
+import projectModelSpec, { projectsNamespace, ProjectsState } from './project';
+import taskModelSpec, { tasksNamespace, TasksState } from './task';
+import sectionModelSpec, { sectionsNamespace, SectionsState } from './section';
+import workspaceModelSpec from './workspace';
 
-import { makeReducer, makeSagas, Model } from './common';
+import { Model } from './common';
 
 
-export type RootState = {
-  [workspaceNamespace]: WorkspaceState;
-  [projectNamespace]: ProjectsState;
+export type ModelsState = {
+  [projectsNamespace]: ProjectsState;
   [tasksNamespace]: TasksState;
   [sectionsNamespace]: SectionsState;
 }
 
-const models = [
+export const models = [
   new Model(workspaceModelSpec),
   new Model(projectModelSpec),
   new Model(taskModelSpec),
   new Model(sectionModelSpec),
 ];
-
-export const reducer = makeReducer(models);
-export const sagas = makeSagas(models);

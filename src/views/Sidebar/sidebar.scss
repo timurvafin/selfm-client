@@ -41,8 +41,9 @@
     top: -1px;
   }
 
+  padding: 0 .5rem;
   position: relative;
-  font-size: 80%;
+  font-size: 90%;
 }
 
 .sidebar__action {
@@ -91,5 +92,5 @@
 }
 
 .sidebar__link--selected {
-  background-color: rgba(235, 230, 241, 0.64);
+  background-color: rgba(220, 220, 220, 0.64);
 }

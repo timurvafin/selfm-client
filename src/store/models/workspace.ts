@@ -3,46 +3,116 @@ import {
   createActionCreators,
   ModelSpec,
 } from './common';
-import { RootState } from './index';
-
+import { ID } from '../../common/types';
+import { push } from 'connected-react-router';
+import { put, select } from '@redux-saga/core/effects';
+import { matchPath } from "react-router";
+import { RootState } from '../index';
+import { Location } from 'history';
 
 export interface WorkspaceEntity { id: any; type: 'project' | 'shortcut' }
 
-export type WorkspaceState = {
-  selectedWorkspace?: WorkspaceEntity;
-  selectedTag?: string;
-}
-
-export const namespace = 'workspace';
+const namespace = 'workspace';
 
 const actions = createActionCreators({
   selectWorkspace: (type: 'project' | 'shortcut', id: any) => ({ workspace: { type, id } }),
   selectTag: (tag: string) => ({ tag }),
+  setTaskSelected: (taskId: ID, value = true) => ({ taskId, value }),
+  setTaskOpen: (taskId: ID, value = true) => ({ taskId, value }),
 }, namespace);
 
+const selectRouterParams = (state: RootState, path) => {
+  const location = state.router.location;
+  const match = matchPath(location.pathname, { path });
+  return match ? match.params : {};
+};
+
+const workspacePath = (workspace: WorkspaceEntity | any) => workspace ? `/${workspace.type}/${workspace.id}` : '';
+
 const selectors = {
-  selectedTag: (state: RootState) => state[namespace].selectedTag,
-  selectedWorkspace: (state: RootState) => state[namespace].selectedWorkspace,
+  selectedTag: (state: RootState) => {
+    const location = state.router.location;
+
+    return new URLSearchParams(location.search).get('tag');
+  },
+  selectedWorkspace: (state: RootState): WorkspaceEntity | {} => {
+    const params = selectRouterParams(state, '/:type/:id');
+    return params;
+  },
+  selectedWorkspacePath: (state: RootState) => {
+    const workspace = selectors.selectedWorkspace(state);
+    return workspacePath(workspace);
+  },
+  openTaskId: (state: RootState) => {
+    const params = selectRouterParams(state, '/:type/:id/:taskId/open');
+    // @ts-ignore
+    return params.taskId;
+  },
+  selectedTaskId: (state: RootState) => {
+    const params = selectRouterParams(state, '/:type/:id/:taskId/');
+    // @ts-ignore
+    return params.taskId;
+  },
 };
 
-const spec: ModelSpec<WorkspaceState, typeof actions> = {
+const toggleId = (id, value, currentId) => {
+  if (value) {
+    return id;
+  }
+
+  return currentId === id ? null : currentId;
+};
+
+const locationSelector = (state: RootState) => state.router.location;
+
+const spec: ModelSpec<{}, typeof actions> = {
   namespace,
-  state: {
-    selectedWorkspace: null,
-    selectedTag: null,
-  },
+  state: {},
   actions,
-  reducers: {
-    selectWorkspace: (state: WorkspaceState, { workspace: { id, type } }) => {
-      return { ...state, selectedWorkspace: { id, type } };
+  effects: {
+    selectWorkspace: function* ({ workspace }) {
+      yield put(push(workspacePath(workspace)));
     },
-    selectTag: (state: WorkspaceState, { tag }) => {
-      return { ...state, selectedTag: tag };
+    selectTag: function* ({ tag }) {
+      const basePath = yield select(selectors.selectedWorkspacePath);
+      yield put(push(tag ? `${basePath}?tag=${tag}` : basePath));
     },
-  },
+    setTaskSelected: function* ({ taskId, value }) {
+      const location: Location = yield select(locationSelector);
+
+      const currentTaskId = yield select(selectors.selectedTaskId);
+      const nextTaskId = toggleId(taskId, value, currentTaskId);
+      const basePath = yield select(selectors.selectedWorkspacePath);
+
+      if (nextTaskId !== currentTaskId) {
+        yield put(push({
+          ...location,
+          pathname: nextTaskId ? `${basePath}/${nextTaskId}/` : basePath,
+        }));
+      }
+    },
+    setTaskOpen: function* ({ taskId, value }) {
+      const location: Location = yield select(locationSelector);
+
+      const currentTaskId = yield select(selectors.openTaskId);
+      const nextTaskId = toggleId(taskId, value, currentTaskId);
+      const basePath = yield select(selectors.selectedWorkspacePath);
+
+      if (nextTaskId !== currentTaskId) {
+        yield put(push({
+          ...location,
+          pathname: nextTaskId ? `${basePath}/${nextTaskId}/open` : basePath,
+        }));
+      }
+    },
+  }
 };
 
-export { actions as workspaceActions, selectors as workspaceSelectors };
+export {
+  namespace as workspaceNamespace,
+  actions as workspaceActions,
+  selectors as workspaceSelectors,
+};
 
 export default spec;
 

@@ -82,20 +82,6 @@
   margin-top: 5em;
 }
 
-.project-tag {
-  @include clickable();
-
-  border-radius: 1em;
-  padding: .3em .5em;
-  margin-right: .5em;
-  color: $clr_lvl3;
-}
-
-.project-tag--selected {
-  background-color: $clr_lvl3;
-  color: #fff;
-}
-
 .task-section {
 
 }

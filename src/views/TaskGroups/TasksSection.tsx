@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { stopPropagation } from 'common/utils/component';
 import TextField from 'components/Textfield';
 import { useDispatch, useSelector } from 'react-redux';
-import { actions as SectionsActions, SectionEntity } from 'store/models/section';
+import { sectionActions, SectionEntity } from 'store/models/section';
 import Menu from 'components/Menu';
 import { CrossIcon, PlusIcon } from 'components/Icon';
 import { sectionSelector } from 'store/selectors';
@@ -13,10 +13,10 @@ const TasksSection = ({ id }: { id: ID }) => {
   const section: SectionEntity = useSelector(state => sectionSelector(state, id));
   const dispatch = useDispatch();
   const update = useCallback((values) => {
-    dispatch(SectionsActions.update(id, values));
+    dispatch(sectionActions.update(id, values));
   }, [id]);
   const remove = useCallback(() => {
-    dispatch(SectionsActions.remove(id));
+    dispatch(sectionActions.remove(id));
   }, [id]);
   const addTask = () => {
     // dispatch(TaskActions.create(projectId, section.id));

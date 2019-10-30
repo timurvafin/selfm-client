@@ -2,18 +2,38 @@
 
 .workspace-container {
   flex: 1;
-  padding: 2em 4.5em 1em;
-  overflow-y: auto;
+  position: relative;
   background-color: #fff;
+}
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 2em 2.5em 1em;
+  height: 100%;
+}
+
+.workspace__row {
+  margin-bottom: 1.5rem;
+  padding: 0 2rem;
+}
+
+.workspace__row--body {
+  overflow-y: auto;
   overflow-x: hidden;
+  flex: 1;
 
   &::-webkit-scrollbar {
     display: none;
   }
 }
 
-.workspace__row {
-  margin-bottom: 1.5rem;
+.workspace-empty-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60%;
 }
 
 .workspace__row--caption {
@@ -31,5 +51,44 @@
 }
 
 .workspace__row--tags {
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+}
+
+.workspace-tags {
+  margin-bottom: 1rem;
+  display: flex;
+}
+
+.workspace-tag {
+  @include clickable();
+
+  border-radius: 1em;
+  padding: .3em .5em;
+  margin-right: .5em;
+  color: $clr_lvl3;
+}
+
+.workspace-tag--selected {
+  background-color: $clr_lvl3;
+  color: #fff;
+}
+
+.workspace-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 0 4.5em;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 3px 0 3px #ccc;
+}
+
+.workspace-action {
+  font-size: 1.2rem;
+  padding: .4rem;
+}
+
+.workspace-action--remove {
+  font-size: 1.1rem;
 }

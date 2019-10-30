@@ -28,7 +28,8 @@ export default function Action({ className, action, icon, name }: Props) {
   return (
     <div
       className={cs('action', className)}
-      onClick={onClick}>
+      onMouseDown={onClick}
+    >
       {icon || null}
       {name && <span className="action__name">{name}</span>}
     </div>

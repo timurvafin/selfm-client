@@ -13,8 +13,24 @@ const COMPONENTS = {
   [Shortcuts.SOMEDAY]: ArchiveIcon,
 };
 
-export const ShortcutIcon = ({ id, className }: { id: string; className?: string }) => {
-  const Icon = COMPONENTS[id];
+interface Props {
+ id: string;
+ size?: string;
+ color?: string;
+ className?: string;
+}
 
-  return <Icon className={`shortcut-icon shortcut-icon--${id} ${className}`} />;
+export const ShortcutIcon = ({ id, className, size, color }: Props) => {
+  const Icon = COMPONENTS[id];
+  const style = {
+    fontSize: size,
+    color,
+  };
+
+  return (
+    <Icon
+      style={style}
+      className={`shortcut-icon shortcut-icon--${id} ${className}`}
+    />
+);
 };
