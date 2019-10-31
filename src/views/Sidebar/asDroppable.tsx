@@ -1,25 +1,23 @@
 import React from 'react';
 import { Droppable, DroppableStateSnapshot } from 'react-beautiful-dnd';
-import { Props } from './TaskList';
+import SidebarLinkComp, { Props } from './SidebarLInk';
 import { encodeDroppableId } from '../../common/utils/common';
 
 
-const asDroppable = (TaskList: React.FC<Props>): React.FC<Props> => props => (
+const asDroppable = (SidebarLInk: typeof SidebarLinkComp): typeof SidebarLinkComp => (props: Props) => (
   <Droppable
-    droppableId={encodeDroppableId('task-list', props.sectionId)}
     type={'TASK'}
+    droppableId={encodeDroppableId('sidebar', props.workspace.code, props.workspace.type)}
   >
     {(provided, snapshot: DroppableStateSnapshot) => (
       <div
         ref={provided.innerRef}
-        className={'task-list-container'}
         {...provided.droppableProps}
       >
-        <TaskList
+        <SidebarLInk
           {...props}
           isDraggingOver={snapshot.isDraggingOver}
         />
-        {provided.placeholder}
       </div>
     )}
   </Droppable>

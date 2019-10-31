@@ -5,21 +5,16 @@ $hover_bc: #fafafa;
 $transition_duration: .2s;
 $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 
-%checkbox {
-  width: .5em;
-  flex-shrink: 0;
-
-  &:before {
-    border-radius: 3px;
-  }
-
-  &:checked {
-    // opacity: $completed_task_opacity;
-  }
+.task-list-container {
+  margin: 0 -.5rem 3rem;
 }
 
 .task-list {
-  margin: 0 -.5rem 3rem;
+
+}
+
+.task-list--dragging-over {
+
 }
 
 .task-outer {
@@ -76,6 +71,19 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 
 .task__row--controls {
 
+}
+
+%checkbox {
+  width: .5em;
+  flex-shrink: 0;
+
+  &:before {
+    border-radius: 3px;
+  }
+
+  &:checked {
+    // opacity: $completed_task_opacity;
+  }
 }
 
 .task__checkbox {
@@ -161,7 +169,7 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 
-.task-list--dragging .task {
+.task-list--dragging-over .task {
   transition: transform .1s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
@@ -184,8 +192,16 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 
-.task--selected {
+.task--selected, .task--dragging {
   background-color: #f7f7f7;
+}
+
+.task--dragging {
+  opacity: .5;
+
+  .task__controls {
+    display: none;
+  }
 }
 
 .task {

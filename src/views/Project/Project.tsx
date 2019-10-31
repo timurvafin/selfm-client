@@ -77,8 +77,8 @@ const Project = ({ id }: { id: ID }) => {
         />
       </div>
 
-      <div className="workspace__row">
-        <TaskGroups workspace={{ type: WorkspaceTypes.PROJECT, id: project.id }} />
+      <div className="workspace__row workspace__row--body">
+        <TaskGroups workspace={{ type: WorkspaceTypes.PROJECT, code: project.id }} />
       </div>
     </div>
   );

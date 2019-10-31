@@ -6,25 +6,30 @@ import {
   ListIcon,
   MoreIcon,
   ArrowRightIcon,
-  CopyIcon,
 } from '../../components/Icon';
 import Action from '../../components/Action';
 import { useSelectedWorkspace } from '../../common/hooks';
 import { WorkspaceTypes } from '../../common/constants';
 import { taskActions } from '../../store/models/task';
-import { workspaceSelectors } from '../../store/models/workspace';
+import { workspaceActions, WorkspaceEntity, workspaceSelectors } from '../../store/models/workspace';
+import { sectionActions } from '../../store/models/section';
 
 
 const WorkspaceActions = () => {
-  const workspace = useSelectedWorkspace();
+  // @ts-ignore
+  const workspace: WorkspaceEntity = useSelectedWorkspace();
   const selectedTaskId = useSelector(workspaceSelectors.selectedTaskId);
   const dispatch = useDispatch();
 
   const addTask = () => {
     dispatch(taskActions.create(workspace, null));
   };
+  const addSection = () => {
+    dispatch(sectionActions.create(workspace));
+  };
   const removeTask = () => {
     dispatch(taskActions.remove(selectedTaskId));
+    dispatch(workspaceActions.setTaskSelected(selectedTaskId, false));
   };
 
   const taskActionElems = [
@@ -58,9 +63,9 @@ const WorkspaceActions = () => {
           icon={<PlusIcon />}
         />
       )}
-      {workspace.type === WorkspaceTypes.PROJECT && !selectedTaskId && (
+      {workspace && workspace.type === WorkspaceTypes.PROJECT && !selectedTaskId && (
         <Action
-          action={addTask}
+          action={addSection}
           className="workspace-action"
           icon={<ListIcon />}
         />

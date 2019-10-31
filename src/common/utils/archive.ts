@@ -107,3 +107,39 @@ export const removeById = (collection, id) => {
 
   return Array.isArray(collection) ? collection.filter(predicate) : filterObjectValues(collection, predicate);
 };
+
+/*export function updateInArray(items, field, fieldValue, fields, doMerge = true) {
+    return items.updateCollection(item => {
+        if (item[field] !== fieldValue) {
+            return item
+        }
+
+        if (typeof fields === 'function') {
+            fields = fields(item)
+        }
+
+        return doMerge ? merge(item, fields) : fields
+    })
+}
+
+export function updateItems(items, cb, doMerge = true) {
+    return items.updateCollection(item => doMerge ? merge(item, cb(item)) : cb(item))
+}
+
+export const updateById = (items, id, fields, doMerge = true) => {
+    return updateInArray(items, 'id', id, fields, doMerge)
+}
+
+export function findInArray(items, fieldName, fieldValue) {
+    for (var i = 0; i < items.length; i++) {
+        if (items[i][fieldName] === fieldValue) {
+            return items[i][fieldName]
+        }
+    }
+
+    return null
+}
+
+export function onEnterKeyDown(e, cb) {
+
+}*/

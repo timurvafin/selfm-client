@@ -7,7 +7,8 @@ import { Completable, EntitiesArray, EntitiesMap } from './models/common';
 import { SectionEntity } from './models/section';
 import { List, Set } from 'immutable';
 import { WorkspaceEntity, workspaceSelectors } from './models/workspace';
-import { Shortcuts, WorkspaceTypes } from '../common/constants';
+import { Shortcut, WorkspaceTypes } from '../common/constants';
+import { isWorkspacesEqual } from '../common/utils/common';
 
 
 interface BaseTaskUIEntity {
@@ -42,11 +43,11 @@ export const projectOpenIdSelector = (state: ModelsState): ID => {
 };
 
 const shortcutTaskPredicates = {
-  [Shortcuts.INBOX]: (task: TaskEntity) => !task.startTime && !task.startTimeTag && !task.parentId,
-  [Shortcuts.TODAY]: (task: TaskEntity) => task.startTime && new Date(task.startTime) <= new Date(),
-  [Shortcuts.PLANS]: (task: TaskEntity) => !!task.startTime,
-  [Shortcuts.ANYTIME]: (task: TaskEntity) => task.startTimeTag === 'anytime',
-  [Shortcuts.SOMEDAY]: (task: TaskEntity) => task.startTimeTag === 'someday',
+  [Shortcut.INBOX]: (task: TaskEntity) => !task.startTime && !task.startTimeTag && !task.parentId,
+  [Shortcut.TODAY]: (task: TaskEntity) => task.startTime && new Date(task.startTime) <= new Date(),
+  [Shortcut.PLANS]: (task: TaskEntity) => !!task.startTime,
+  [Shortcut.ANYTIME]: (task: TaskEntity) => task.startTimeTag === 'anytime',
+  [Shortcut.SOMEDAY]: (task: TaskEntity) => task.startTimeTag === 'someday',
 };
 
 const taskEntitiesSelector = createSelector(
@@ -59,11 +60,11 @@ const taskEntitiesSelector = createSelector(
 
     return entities.filter(entity => {
       if (workspace.type === WorkspaceTypes.PROJECT) {
-        return entity.parentId === workspace.id;
+        return entity.parentId === workspace.code;
       }
 
       if (workspace.type === WorkspaceTypes.SHORTCUT) {
-        return shortcutTaskPredicates[workspace.id](entity);
+        return shortcutTaskPredicates[workspace.code](entity);
       }
 
       return false;
@@ -146,10 +147,10 @@ export const projectsSelector = createSelector(
 
 export const taskSectionsSelector = createSelector(
   (state: ModelsState) => state.sections.entities,
-  (_, parentId) => parentId,
+  (_, parent: WorkspaceEntity) => parent,
   workspaceSelectors.selectedTag,
-  (entities: EntitiesMap<SectionEntity>, parentId, selectedTag) => {
-    const sections = entities.filter(p => p.parentId == parentId);
+  (entities: EntitiesMap<SectionEntity>, parent: WorkspaceEntity) => {
+    const sections = entities.filter(p => isWorkspacesEqual(parent, p.parent));
     return [...sections.values()];
   }
 );

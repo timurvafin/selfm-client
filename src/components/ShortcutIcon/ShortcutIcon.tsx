@@ -1,27 +1,27 @@
 import React from 'react';
 import { ArchiveIcon, CalendarIcon, InboxIcon, LayersIcon, StarIcon } from '../Icon';
-import { Shortcuts } from '../../common/constants';
+import { Shortcut } from '../../common/constants';
 
 import './style.scss';
 
 
 const COMPONENTS = {
-  [Shortcuts.INBOX]: InboxIcon,
-  [Shortcuts.TODAY]: StarIcon,
-  [Shortcuts.PLANS]: CalendarIcon,
-  [Shortcuts.ANYTIME]: LayersIcon,
-  [Shortcuts.SOMEDAY]: ArchiveIcon,
+  [Shortcut.INBOX]: InboxIcon,
+  [Shortcut.TODAY]: StarIcon,
+  [Shortcut.PLANS]: CalendarIcon,
+  [Shortcut.ANYTIME]: LayersIcon,
+  [Shortcut.SOMEDAY]: ArchiveIcon,
 };
 
 interface Props {
- id: string;
- size?: string;
- color?: string;
- className?: string;
+  code: string;
+  size?: string;
+  color?: string;
+  className?: string;
 }
 
-export const ShortcutIcon = ({ id, className, size, color }: Props) => {
-  const Icon = COMPONENTS[id];
+export const ShortcutIcon = ({ code, className, size, color }: Props) => {
+  const Icon = COMPONENTS[code];
   const style = {
     fontSize: size,
     color,
@@ -30,7 +30,7 @@ export const ShortcutIcon = ({ id, className, size, color }: Props) => {
   return (
     <Icon
       style={style}
-      className={`shortcut-icon shortcut-icon--${id} ${className}`}
+      className={`shortcut-icon shortcut-icon--${code} ${className}`}
     />
-);
+  );
 };

@@ -8,8 +8,8 @@ import { TaskEntity } from './task';
 
 
 /**
- * TODO Почистить типы ActionCreator/ActionCreatorSpec
- * TODO Распределить код по разным местам
+ * TODO [rfg] Почистить типы ActionCreator/ActionCreatorSpec
+ * TODO [rfg] Распределить код по разным местам
  */
 export type ActionCreatorSpec = (...args) => {};
 export type ActionObject<T extends ActionCreatorSpec | undefined> = { type: string } & ReturnType<T>;
@@ -104,7 +104,7 @@ export class Model<State, ActionCreators> {
     this.namespacePrefix = `${spec.namespace}${this.opts.delimeter}`;
   }
 
-  // TODO implement common abstract algorithm
+  // TODO [impl] implement common abstract algorithm
   reduce(state: State = this.spec.state, action: ActionObject<any>) {
     const actionName = this.toActionName(action.type);
     if (!actionName) {

@@ -2,19 +2,22 @@
 import {
   BaseEntity,
   createActionCreators,
-  createBaseEntity,
   createUpdateEffect, EntitiesArray,
   EntitiesMap,
-  entityBaseReducers,
+  entityBaseReducers, getNextOrder,
   ModelSpec,
 } from './common';
-import { call, put } from '@redux-saga/core/effects';
+import { call, put, select } from '@redux-saga/core/effects';
 import * as Api from '../../service/api';
-import { Map } from 'immutable';
+import { List, Map } from 'immutable';
 import { ID } from '../../common/types';
+import { WorkspaceEntity } from './workspace';
+import { isWorkspacesEqual } from '../../common/utils/common';
+import { ModelsState } from './index';
 
 
 export interface SectionEntity extends BaseEntity {
+  parent: WorkspaceEntity;
   caption: string;
 }
 
@@ -25,7 +28,7 @@ export type SectionsState = {
 const namespace = 'sections';
 
 const actions = createActionCreators({
-  create: (parentId: ID) => ({ parentId }),
+  create: (parent: WorkspaceEntity) => ({ parent }),
   add: (entity: SectionEntity) => ({ entity }),
   load: () => ({}),
   receive: (entities: EntitiesArray<SectionEntity>) => ({ entities }),
@@ -44,15 +47,17 @@ const spec: ModelSpec<SectionsState, typeof actions> = {
     entities: entityBaseReducers,
   },
   effects: {
-    create: function* () {
-      const baseEntity = createBaseEntity();
-      yield put(actions.add({
-        ...baseEntity,
+    create: function* ({ parent }) {
+      const siblings = yield select((state: ModelsState) => state.sections.entities.filter(s => isWorkspacesEqual(parent, s.parent)));
+
+      const entityToAdd = {
+        parent,
         caption: '',
-      }));
-    },
-    add: function* ({ entity }) {
-      yield call(Api.addSection, entity);
+        order: getNextOrder(List(siblings)),
+      };
+
+      const entity = yield call(Api.addSection, entityToAdd);
+      yield put(actions.add(entity));
     },
     load: function* () {
       const sections = yield call(Api.loadSections);
@@ -65,7 +70,7 @@ const spec: ModelSpec<SectionsState, typeof actions> = {
       updateApi: Api.updateSection,
       updateAction: actions.update,
     }),
-    remove: function* (id) {
+    remove: function* ({ id }) {
       yield call(Api.removeSection, id);
     },
   },

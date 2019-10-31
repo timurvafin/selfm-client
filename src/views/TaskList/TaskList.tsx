@@ -9,24 +9,24 @@ import './tasks.scss';
 
 export interface Props {
   tasks: Array<TaskUIEntity>;
+  sectionId?: string;
+  isDraggingOver?: boolean;
 }
 
-const TasksList = ({ tasks }: Props) => {
-  const taskDataList = tasks.map((task, index) => (
-    <Task
-      key={task.id}
-      task={task}
-      index={index}
-    />
-  ));
-
+const TasksList = ({ tasks, isDraggingOver }: Props) => {
   const cls = cs('task-list', {
-    ['task-list--dragging']: false,
+    ['task-list--dragging-over']: isDraggingOver,
   });
 
   return (
     <div className={cls}>
-      {taskDataList}
+      {tasks.map((task, index) => (
+        <Task
+          key={task.id}
+          task={task}
+          index={index}
+        />
+      ))}
     </div>
   );
 };

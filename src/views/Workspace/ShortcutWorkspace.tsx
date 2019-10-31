@@ -1,28 +1,28 @@
 import React from 'react';
-import { useSelectedTag, useSelectedWorkspace } from '../../common/hooks';
+import { useSelectedTag } from '../../common/hooks';
 import TasksList from '../TaskList/TaskList';
 import { useSelector } from 'react-redux';
 import { ModelsState } from '../../store/models';
 import { tasksSelector, TaskUIEntity } from '../../store/selectors';
 import Tags from './Tags';
-import { SHORTCUT_CAPTIONS } from '../../common/constants';
+import { SHORTCUT_CAPTIONS, SHORTCUT_WORKSPACES } from '../../common/constants';
 import { ShortcutIcon } from '../../components/ShortcutIcon/ShortcutIcon';
 import { isEmpty } from '../../common/utils/collection';
 
 
-const EmptyShortcutContent = ({ id }) => (
+const EmptyShortcutContent = ({ code }) => (
   <div className={'workspace-empty-content'}>
     <ShortcutIcon
-      id={id}
+      code={code}
       size={'70px'}
       color={'#eee'}
     />
   </div>
 );
 
-const ShortcutWorkspace = ({ id }) => {
-  const caption = SHORTCUT_CAPTIONS[id];
-  const workspace = useSelectedWorkspace();
+const ShortcutWorkspace = ({ code }) => {
+  const caption = SHORTCUT_CAPTIONS[code];
+  const workspace = SHORTCUT_WORKSPACES.find(w => w.code === code);
   const selectedTag = useSelectedTag();
   const tasks = useSelector<ModelsState, Array<TaskUIEntity>>(state => tasksSelector(state, workspace));
   const filteredByTag = tasks.filter(task => !selectedTag || (task.tags && task.tags.includes(selectedTag)));
@@ -31,7 +31,7 @@ const ShortcutWorkspace = ({ id }) => {
     <div className={'workspace workspace--shortcut'}>
       <div className="workspace__row workspace__row--caption">
         <ShortcutIcon
-          id={id}
+          code={code}
           className="workspace__icon"
         />
         <div className="workspace__caption">
@@ -42,8 +42,11 @@ const ShortcutWorkspace = ({ id }) => {
         <Tags workspace={workspace} />
       </div>
       <div className="workspace__row workspace__row--body">
-        {isEmpty(filteredByTag) && <EmptyShortcutContent id={id} />}
-        <TasksList tasks={filteredByTag} />
+        {isEmpty(filteredByTag) && <EmptyShortcutContent code={code} />}
+        <TasksList
+          tasks={filteredByTag}
+          sectionId={'all'}
+        />
       </div>
     </div>
   );

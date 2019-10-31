@@ -100,7 +100,7 @@ const spec: ModelSpec<ProjectsState, typeof actions> = {
       updateApi: Api.update,
       updateAction: actions.update,
     }),
-    * remove(id) {
+    * remove({ id }) {
       yield call(Api.remove, id);
     },
   },

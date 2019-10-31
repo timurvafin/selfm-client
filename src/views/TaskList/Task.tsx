@@ -41,7 +41,7 @@ const useActions = ({ id, isOpen, isSelected, completed }: TaskUIEntity) => {
   };
 };
 
-const Task = ({ task }: { task: TaskUIEntity }) => {
+const Task = ({ task, isDragging }: { task: TaskUIEntity; isDragging?: boolean }) => {
   const { completed, notes, isOpen, isSelected, caption, isNew } = task;
 
   const actions = useActions(task);
@@ -52,8 +52,8 @@ const Task = ({ task }: { task: TaskUIEntity }) => {
     ['task--completed']: completed,
     // ['task--editable']: editable,
     ['task--selected']: isSelected,
-    ['task--dragging']: false,
-    ['task--can-drag']: false,
+    ['task--dragging']: isDragging,
+    // ['task--can-drag']: false,
   });
 
   const onClickOutside = useCallback(

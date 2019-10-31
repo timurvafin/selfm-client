@@ -1,19 +1,18 @@
 import React from 'react';
-import cs from 'classnames';
 import Action from 'components/Action';
 import RadialProgressBar from 'components/RadialProgressBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { projectsSelector } from 'store/selectors';
 import { useActions, useSelectedWorkspace } from 'common/hooks';
-import {
-  PlusIcon,
-} from 'components/Icon';
-import { SHORTCUT_CAPTIONS, Shortcuts, WorkspaceTypes } from '../../common/constants';
+import { PlusIcon } from 'components/Icon';
+import { SHORTCUT_CAPTIONS, WorkspaceTypes, SHORTCUT_WORKSPACES } from '../../common/constants';
 
-import  './sidebar.scss';
+import './sidebar.scss';
 import { ShortcutIcon } from '../../components/ShortcutIcon/ShortcutIcon';
 import { projectActions } from '../../store/models/project';
-import { workspaceActions } from '../../store/models/workspace';
+import { workspaceActions, WorkspaceEntity } from '../../store/models/workspace';
+import SidebarLink from './SidebarLInk';
+import { isWorkspacesEqual } from '../../common/utils/common';
 
 
 const ProjectIcon = ({ progress }) => (
@@ -24,21 +23,23 @@ const ProjectIcon = ({ progress }) => (
   />
 );
 
-const SidebarLink = ({ caption, onSelect, isSelected, icon, className }) => {
-  const cls = cs('sidebar__link', className,{
-    ['sidebar__link--selected']: isSelected,
-  });
+const shortcutWorkspaceSpecs = Object.values(SHORTCUT_WORKSPACES).map((workspace) => ({
+  workspace,
+  caption: SHORTCUT_CAPTIONS[workspace.code],
+  icon: <ShortcutIcon code={workspace.code} />,
+}));
 
-  return (
-    <div
-      className={cls}
-      onClick={onSelect}
-    >
-      <div className="sidebar__link__icon">{icon}</div>
-      <div className="sidebar__link__caption">{caption}</div>
-    </div>
-  );
-};
+const LinkList = ({ specs, isWorkspaceSelected, selectWorkspace }) => specs.map((spec) => (
+  <SidebarLink
+    key={`${spec.workspace.type}-${spec.workspace.code}`}
+    workspace={spec.workspace}
+    onSelect={() => selectWorkspace(spec.workspace)}
+    icon={spec.icon}
+    className={`sidebar__shortcut-${spec.workspace.code}`}
+    caption={spec.caption}
+    isSelected={isWorkspaceSelected(spec.workspace)}
+  />
+));
 
 const Sidebar = () => {
   const actions = useActions({
@@ -49,42 +50,34 @@ const Sidebar = () => {
   const projects = useSelector(projectsSelector);
 
   const selectedWorkspace = useSelectedWorkspace();
-  const isWorkspaceSelected = (type, id) => selectedWorkspace && selectedWorkspace.id === id && selectedWorkspace.type === type;
+  const isWorkspaceSelected = (workspace: WorkspaceEntity) => isWorkspacesEqual(workspace, (selectedWorkspace as WorkspaceEntity));
   const dispatch = useDispatch();
-  const selectWorkspace = (type: 'project' | 'shortcut', id: any) => {
-    dispatch(workspaceActions.selectWorkspace(type, id));
+  const selectWorkspace = (workspace: WorkspaceEntity) => {
+    dispatch(workspaceActions.selectWorkspace(workspace));
   };
+
+  const projectsSpecs = projects.map((project) => ({
+    workspace: { type: WorkspaceTypes.PROJECT, code: project.id },
+    caption: project.caption,
+    icon: <ProjectIcon progress={project.progress} />,
+  }));
 
   return (
     <div className="sidebar">
       <div className="sidebar__shortcuts">
-        {Object.values(Shortcuts).map((id) => {
-          const caption = SHORTCUT_CAPTIONS[id];
-
-          return (
-            <SidebarLink
-              key={id}
-              onSelect={() => selectWorkspace(WorkspaceTypes.SHORTCUT, id)}
-              icon={<ShortcutIcon id={id} />}
-              className={`sidebar__shortcut-${id}`}
-              caption={caption}
-              isSelected={isWorkspaceSelected(WorkspaceTypes.SHORTCUT, id)}
-            />
-          );
-        })}
+        <LinkList
+          specs={shortcutWorkspaceSpecs}
+          selectWorkspace={selectWorkspace}
+          isWorkspaceSelected={isWorkspaceSelected}
+        />
       </div>
 
       <div className="sidebar__projects">
-        {projects.map((project) => (
-          <SidebarLink
-            key={project.id}
-            onSelect={() => selectWorkspace(WorkspaceTypes.PROJECT, project.id)}
-            caption={project.caption}
-            className={`sidebar__project`}
-            icon={<ProjectIcon progress={project.progress} />}
-            isSelected={isWorkspaceSelected(WorkspaceTypes.PROJECT, project.id)}
-          />
-        ))}
+        <LinkList
+          specs={projectsSpecs}
+          selectWorkspace={selectWorkspace}
+          isWorkspaceSelected={isWorkspaceSelected}
+        />
       </div>
 
       <div className="sidebar__actions">

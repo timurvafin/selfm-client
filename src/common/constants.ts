@@ -1,5 +1,6 @@
 import { ArchiveIcon, CalendarIcon, InboxIcon, LayersIcon, StarIcon } from '../components/Icon';
 import React from 'react';
+import { ShortcutIcon } from '../components/ShortcutIcon/ShortcutIcon';
 
 
 export const ENTER_KEY = 'Enter';
@@ -17,7 +18,7 @@ export enum WorkspaceTypes {
   PROJECT = 'project',
 }
 
-export enum Shortcuts {
+export enum Shortcut {
   INBOX= 'inbox',
   TODAY= 'today',
   PLANS= 'plans',
@@ -26,9 +27,11 @@ export enum Shortcuts {
 }
 
 export const SHORTCUT_CAPTIONS = {
-  [Shortcuts.INBOX]: 'Inbox',
-  [Shortcuts.TODAY]: 'Today',
-  [Shortcuts.PLANS]: 'Plans',
-  [Shortcuts.ANYTIME]: 'Anytime',
-  [Shortcuts.SOMEDAY]: 'Someday',
+  [Shortcut.INBOX]: 'Inbox',
+  [Shortcut.TODAY]: 'Today',
+  [Shortcut.PLANS]: 'Plans',
+  [Shortcut.ANYTIME]: 'Anytime',
+  [Shortcut.SOMEDAY]: 'Someday',
 };
+
+export const SHORTCUT_WORKSPACES = Object.values(Shortcut).map((code) => ({ type: WorkspaceTypes.SHORTCUT, code }));

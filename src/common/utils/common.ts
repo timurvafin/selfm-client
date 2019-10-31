@@ -1,38 +1,6 @@
-/*export function updateInArray(items, field, fieldValue, fields, doMerge = true) {
-    return items.updateCollection(item => {
-        if (item[field] !== fieldValue) {
-            return item
-        }
+import { DNDId } from '../types';
+import { WorkspaceEntity } from '../../store/models/workspace';
 
-        if (typeof fields === 'function') {
-            fields = fields(item)
-        }
-
-        return doMerge ? merge(item, fields) : fields
-    })
-}
-
-export function updateItems(items, cb, doMerge = true) {
-    return items.updateCollection(item => doMerge ? merge(item, cb(item)) : cb(item))
-}
-
-export const updateById = (items, id, fields, doMerge = true) => {
-    return updateInArray(items, 'id', id, fields, doMerge)
-}
-
-export function findInArray(items, fieldName, fieldValue) {
-    for (var i = 0; i < items.length; i++) {
-        if (items[i][fieldName] === fieldValue) {
-            return items[i][fieldName]
-        }
-    }
-
-    return null
-}
-
-export function onEnterKeyDown(e, cb) {
-
-}*/
 
 export function randomString() {
   return Math.random().toString(36).slice(2);
@@ -42,4 +10,31 @@ export function merge(...objects) {
   return Object.assign({}, ...objects);
 }
 
-export const ENTER_KEY = 13;
+export const encodeDroppableId = (scope: string, code: string, type?: string): string => JSON.stringify({
+  scope,
+  code,
+  type,
+});
+export const encodeDraggableId = (code: string, type: string): string => JSON.stringify({ code, type });
+export const decodeDNDId = (idStr: string): DNDId => {
+  try {
+    const json = JSON.parse(idStr);
+    return json;
+  } catch (e) {
+    return null;
+  }
+};
+
+export const isWorkspacesEqual = (w1: WorkspaceEntity, w2: WorkspaceEntity) => {
+  if (w1 == w2) {
+    return true;
+  }
+
+  if (!w1 || !w2) {
+    return false;
+  }
+
+  return w1.type === w2.type && w1.code === w2.code;
+};
+
+export const isUndefined = arg => arg === undefined;

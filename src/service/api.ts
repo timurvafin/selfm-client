@@ -29,7 +29,7 @@ export function reorder(ids) {
 }
 
 export function remove(id) {
-  return ajax.post(makeUrl('tm/remove'), id);
+  return ajax.post(makeUrl('tm/remove'), { id });
 }
 
 export function loadSections(parentId?: ID) {
