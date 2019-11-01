@@ -11,7 +11,7 @@ import { CheckIcon, CrossIcon } from 'components/Icon';
 import { ID } from 'common/types';
 import TaskGroups from '../TaskGroups/TaskGroups';
 import { WorkspaceTypes } from 'common/constants';
-import { projectActions } from '../../store/models/project';
+import { projectActions } from '../../models/project';
 
 
 const Project = ({ id }: { id: ID }) => {

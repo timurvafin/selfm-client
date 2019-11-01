@@ -3,15 +3,13 @@ import {
   createActionCreators,
   ModelSpec,
 } from './common';
-import { DNDItem, ID } from '../../common/types';
+import { ID } from '../common/types';
 import { push } from 'connected-react-router';
 import { put, select } from '@redux-saga/core/effects';
 import { matchPath } from "react-router";
-import { RootState } from '../index';
+import { RootState } from '../store';
 import { Location } from 'history';
-import { taskActions, TaskEntity } from './task';
-import { taskSelector } from '../selectors';
-import { Shortcut, WorkspaceTypes } from '../../common/constants';
+import { DNDSourceItem } from '../vendor/dnd';
 
 
 export interface WorkspaceEntity { code: string; type: 'project' | 'shortcut' }
@@ -23,7 +21,7 @@ const actions = createActionCreators({
   selectTag: (tag: string) => ({ tag }),
   setTaskSelected: (taskId: ID, value = true) => ({ taskId, value }),
   setTaskOpen: (taskId: ID, value = true) => ({ taskId, value }),
-  performDND: (source: DNDItem, destination: DNDItem) => ({ source, destination }),
+  performDND: (source: DNDSourceItem, destination: DNDSourceItem) => ({ source, destination }),
 }, namespace);
 
 const selectRouterParams = (state: RootState, path) => {
@@ -110,32 +108,6 @@ const spec: ModelSpec<{}, typeof actions> = {
         }));
       }
     },
-    performDND: function* ({ source, destination }) {
-      if (source.type ==='task') {
-        const sourceTask: TaskEntity = yield select(state => taskSelector(state, source.code));
-
-        if (source.scope === 'task-list') {
-          if (destination.scope === 'task-list') {
-            return yield put(taskActions.move(sourceTask.id, {
-              sectionId: destination.code,
-              position: destination.index,
-            }));
-          }
-
-          if (destination.scope === 'sidebar' && destination.type === WorkspaceTypes.PROJECT) {
-            return yield put(taskActions.move(sourceTask.id, { parentId: destination.code, sectionId: null }));
-          }
-
-          if (destination.scope === 'sidebar' && destination.type === WorkspaceTypes.SHORTCUT) {
-            return yield put(taskActions.setShortcut(sourceTask.id, (destination.code as Shortcut)));
-          }
-        }
-      }
-
-      if (source.type === 'project') {
-
-      }
-    }
   }
 };
 

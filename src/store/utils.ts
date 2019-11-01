@@ -1,7 +1,7 @@
 import { connectRouter } from 'connected-react-router';
 import { combineReducers } from 'redux';
 import { all, fork } from '@redux-saga/core/effects';
-import { Model } from './models/common';
+import { Model } from '../models/common';
 
 
 export const makeReducer = (history, models: Model<any, any>[]) => {

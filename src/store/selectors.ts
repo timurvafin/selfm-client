@@ -1,12 +1,12 @@
-import { ModelsState } from './models';
+import { ModelsState } from '../models';
 import { createSelector } from 'reselect';
 import { ID } from '../common/types';
-import { ProjectEntity } from './models/project';
-import { TaskEntity } from './models/task';
-import { Completable, EntitiesArray, EntitiesMap } from './models/common';
-import { SectionEntity } from './models/section';
-import { List, Set } from 'immutable';
-import { WorkspaceEntity, workspaceSelectors } from './models/workspace';
+import { ProjectEntity } from '../models/project';
+import { TaskEntity } from '../models/task';
+import { Completable, EntitiesArray, EntitiesMap } from '../models/common';
+import { SectionEntity } from '../models/section';
+import { List, Set, Map } from 'immutable';
+import { WorkspaceEntity, workspaceSelectors } from '../models/workspace';
 import { Shortcut, WorkspaceTypes } from '../common/constants';
 import { isWorkspacesEqual } from '../common/utils/common';
 
@@ -50,12 +50,12 @@ const shortcutTaskPredicates = {
   [Shortcut.SOMEDAY]: (task: TaskEntity) => task.startTimeTag === 'someday',
 };
 
-const taskEntitiesSelector = createSelector(
+export const workspaceTasksSelector = createSelector(
   (state: ModelsState) => state.tasks.entities,
   (_, workspace: WorkspaceEntity) => workspace,
   (entities: EntitiesMap<TaskEntity>, workspace) => {
     if (!workspace) {
-      return [];
+      return Map<ID, TaskEntity>();
     }
 
     return entities.filter(entity => {
@@ -76,16 +76,18 @@ export const openTaskIdSelector = (state: ModelsState) => state.tasks.ui.openId;
 export const selectedTaskIdSelector = (state: ModelsState) => state.tasks.ui.selectedId;
 export const taskSelector = (state: ModelsState, id: ID) => state.tasks.entities.get(id);
 
+// by workspace & selected tag
 export const tasksSelector = createSelector(
-  taskEntitiesSelector,
+  workspaceTasksSelector,
   workspaceSelectors.openTaskId,
   workspaceSelectors.selectedTaskId,
-  (taskEntities: EntitiesMap<TaskEntity>, openTaskId, selectedTaskId): EntitiesArray<TaskUIEntity> => {
-    const entities = taskEntities.sort((a, b) => a.order - b.order);
+  workspaceSelectors.selectedTag,
+  (taskEntities: EntitiesMap<TaskEntity>, openTaskId, selectedTaskId, selectedTag): EntitiesArray<TaskUIEntity> => {
+    let entities = taskEntities.sort((a, b) => a.order - b.order);
 
-    /*if (selectedTag) {
-      entities = entities.filter((task: TaskEntity) => task.tags.includes(selectedTag));
-    }*/
+    if (selectedTag) {
+      entities = entities.filter((task: TaskEntity) => task.tags && task.tags.includes(selectedTag));
+    }
 
     const uiEntities = entities.map(task => ({
       ...task,
@@ -99,7 +101,7 @@ export const tasksSelector = createSelector(
 );
 
 export const tagsSelector = createSelector(
-  taskEntitiesSelector,
+  workspaceTasksSelector,
   (tasks: EntitiesMap<TaskEntity>): Array<string> => {
     const allTags = tasks.reduce((tags, task) => tags.union(task.tags), Set());
 
@@ -139,7 +141,7 @@ export const projectsSelector = createSelector(
   (state: ModelsState) => state.projects.ui,
   (state: ModelsState) => state.tasks.entities,
   (projectEntities, projectsUI, taskEntities) => {
-    const projects = projectEntities.map((project) => toUIProject(project, taskEntities, projectsUI));
+    const projects = projectEntities.map((project) => toUIProject(project, taskEntities, projectsUI)).sortBy(s => s.order);
 
     return [...projects.values()];
   }
@@ -150,7 +152,7 @@ export const taskSectionsSelector = createSelector(
   (_, parent: WorkspaceEntity) => parent,
   workspaceSelectors.selectedTag,
   (entities: EntitiesMap<SectionEntity>, parent: WorkspaceEntity) => {
-    const sections = entities.filter(p => isWorkspacesEqual(parent, p.parent));
+    const sections = entities.filter(p => isWorkspacesEqual(parent, p.parent)).sortBy(s => s.order);
     return [...sections.values()];
   }
 );

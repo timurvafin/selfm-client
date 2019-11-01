@@ -1,10 +1,11 @@
 /* eslint-disable arrow-body-style */
 import { Map, List, getIn } from 'immutable';
-import { call, select, takeEvery } from '@redux-saga/core/effects';
-import { ID } from '../../common/types';
-import { randomString } from '../../common/utils/common';
+import { call, put, select, takeEvery } from '@redux-saga/core/effects';
+import { ID } from '../common/types';
+import { randomString } from '../common/utils/common';
 import { ModelsState } from './index';
 import { TaskEntity } from './task';
+import Api from '../service/api';
 
 
 /**
@@ -52,6 +53,7 @@ export interface ModelSpec<State, T extends BaseActionCreatorSpecs> {
 export interface BaseEntity {
   id: ID;
   parentId?: ID;
+  order?: number;
   isNew?: boolean;
 }
 
@@ -62,7 +64,6 @@ export interface BaseTaskEntity extends BaseEntity, Completable {
   startTimeTag?: string;
   notes?: string;
   caption: string;
-  order: number;
 }
 
 export interface Completable {
@@ -154,53 +155,71 @@ export const createBaseEntity = () => {
   };
 };
 
-export const entityBaseReducers = {
-  add: (state: EntitiesMap<any>, { entity }) => {
-    return state.set(entity.id, entity);
-  },
-  receive: (state: EntitiesMap<any>, { entities }) => {
-    const entitiesEntries: Array<[ID, any]> = entities.map(entity => [entity.id, entity]);
-    return state.merge(entitiesEntries);
-  },
-  update: (state: EntitiesMap<any>, { id, fields }) => {
-    return state.mergeIn([id], fields);
-  },
-  remove: (state: EntitiesMap<any>, { id }) => {
-    return state.delete(id);
-  },
-};
-
-export const createUpdateEffect = ({
-  namespace,
-  addApi,
-  updateApi,
-  updateAction,
-}) => function* (action) {
-  const { id, fields } = action;
-  const state: ModelsState = yield select();
-  const entity = state[namespace].entities.get(id);
-
-  if (!entity) {
-    return;
-  }
-
-  yield call(updateApi, id, fields);
-  /*if (entity.isNew) {
-    yield call(addApi, { ...entity, ...fields });
-    yield put(updateAction(id, { isNew: false }));
-  } else {
-    yield call(updateApi, id, fields);
-  }*/
-};
-
 /**
  * Обновляет значения порядковых номеров у сущностей на основе отсортированного массива.
  * Используется для DnD перемещения
  */
-export const updateEntitiesOrder = (entities: EntitiesMap<any>, ids: Array<ID>) => {
-  return ids.reduce((nextState: EntitiesMap<TaskEntity>, id, order) => {
+export const updateEntitiesOrder = <T>(entitiesState: EntitiesMap<any>, ids: Array<ID>) => {
+  return ids.reduce((nextState: EntitiesMap<any>, id, order) => {
     return nextState.setIn([id, 'order'], order);
-  }, entities);
+  }, entitiesState);
+};
+
+export const createBaseEntityActions = <T extends BaseEntity>() => ({
+  add: (entity: T) => ({ entity }),
+  update: (id: ID, fields: Partial<T>) => ({ id, fields }),
+  remove: (id: ID) => ({ id }),
+  load: () => ({}),
+  reorder: (ids: Array<ID>) => ({ ids }),
+  receive: (entities: EntitiesArray<T>) => ({ entities }),
+});
+
+export const createBaseEntityReducers = <T extends BaseEntity>() => ({
+  add: (state: EntitiesMap<T>, { entity }) => {
+    return state.set(entity.id, entity);
+  },
+  receive: (state: EntitiesMap<T>, { entities }) => {
+    const entitiesEntries: Array<[ID, T]> = entities.map(entity => [entity.id, entity]);
+    return state.merge(entitiesEntries);
+  },
+  update: (state: EntitiesMap<T>, { id, fields }) => {
+    return state.mergeIn([id], fields);
+  },
+  remove: (state: EntitiesMap<T>, { id }) => {
+    return state.delete(id);
+  },
+  reorder: (state: EntitiesMap<T>, action) => {
+    return updateEntitiesOrder(state, action.ids);
+  },
+});
+
+export const createBaseEntityEffects = <T extends BaseEntity>(namespace, actions) => {
+  const api = new Api(namespace);
+
+  return {
+    load: function* () {
+      const entities: EntitiesArray<T> = yield call(api.list);
+
+      yield put(actions.receive(entities));
+    },
+    update: function* (action) {
+      const { id, fields } = action;
+      const state: ModelsState = yield select();
+      const entity = state[namespace].entities.get(id);
+
+      if (!entity) {
+        return;
+      }
+
+      yield call(api.update, id, fields);
+    },
+    reorder: function* ({ ids }) {
+      yield call(api.reorder, ids);
+    },
+    remove: function* ({ id }) {
+      yield call(api.remove, id);
+    },
+  };
 };
 
 export const getNextOrder = (entities: List<BaseTaskEntity>) => {

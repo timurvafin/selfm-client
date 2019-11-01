@@ -1,19 +1,26 @@
-import React from 'react';
-import { WorkspaceEntity } from '../../store/models/workspace';
-import { useSelector } from 'react-redux';
-import { ModelsState } from 'store/models';
+import React, { useCallback } from 'react';
+import { WorkspaceEntity } from '../../models/workspace';
+import { useDispatch, useSelector } from 'react-redux';
+import { ModelsState } from 'models';
 import { taskSectionsSelector, tasksSelector, TaskUIEntity } from 'store/selectors';
 import Tags from '../Workspace/Tags';
 import TaskList from '../TaskList';
 import TasksSection from './TasksSection';
-import { useSelectedTag } from '../../common/hooks';
+import Droppable from '../../vendor/dnd/beautiful-dnd/Droppable';
+import { DNDSourceItem } from '../../vendor/dnd';
+import { workspaceId } from '../../common/utils/common';
+import { sectionActions } from '../../models/section';
+import { DNDDestinationItem } from '../../vendor/dnd/types';
+import { UIComponentType } from '../../common/constants';
 
 
-const TaskGroups = ({ workspace }: { workspace: WorkspaceEntity }) => {
-  const selectedTag = useSelectedTag();
+interface Props {
+  workspace: WorkspaceEntity;
+}
+
+const TaskGroups = ({ workspace }: Props) => {
   const tasks = useSelector<ModelsState, Array<TaskUIEntity>>(state => tasksSelector(state, workspace));
-  const filteredByTag = tasks.filter(task => !selectedTag || (task.tags && task.tags.includes(selectedTag)));
-  const woSection = filteredByTag.filter(task => !task.sectionId);
+  const woSection = tasks.filter(task => !task.sectionId);
   const sections = useSelector(state => taskSectionsSelector(state, workspace));
 
   return (
@@ -29,15 +36,15 @@ const TaskGroups = ({ workspace }: { workspace: WorkspaceEntity }) => {
         />
       </div>
 
-      { sections.map(section => (
+      { sections.map((section, index) => (
         <div
           key={section.id}
           className="project__row"
         >
-          <TasksSection id={section.id} />
-          <TaskList
-            tasks={filteredByTag.filter(task => task.sectionId == section.id)}
-            sectionId={section.id}
+          <TasksSection
+            id={section.id}
+            index={index}
+            tasks={tasks.filter(task => task.sectionId == section.id)}
           />
         </div>
       )) }
@@ -45,4 +52,25 @@ const TaskGroups = ({ workspace }: { workspace: WorkspaceEntity }) => {
   );
 };
 
-export default TaskGroups;
+const DroppableTaskGroups = (props: Props) => {
+  const dispatch = useDispatch();
+  const onDrop = useCallback((sourceItem: DNDSourceItem, destinationItem: DNDDestinationItem) => {
+    if (sourceItem.type === UIComponentType.TASK_SECTION) {
+      dispatch(sectionActions.move(sourceItem.id, {
+        position: destinationItem.index,
+      }));
+    }
+  }, []);
+
+  return (
+    <Droppable
+      id={workspaceId(props.workspace)}
+      accept={UIComponentType.TASK_SECTION}
+      onDrop={onDrop}
+    >
+      <TaskGroups {...props} />
+    </Droppable>
+  );
+};
+
+export default DroppableTaskGroups;

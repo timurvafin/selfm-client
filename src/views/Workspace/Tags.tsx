@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ModelsState } from 'store';
 import { tagsSelector } from 'store/selectors';
 import { isEmpty } from 'common/utils/collection';
-import { workspaceActions, WorkspaceEntity, workspaceSelectors } from '../../store/models/workspace';
+import { workspaceActions, WorkspaceEntity, workspaceSelectors } from '../../models/workspace';
 
 
 const Tag = ({ tag, isSelected, onSelect }) => (

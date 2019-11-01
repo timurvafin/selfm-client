@@ -7,13 +7,14 @@ import TodoList from './TodoList';
 import { useDispatch } from 'react-redux';
 import { useOutsideClickHandler } from '../../common/hooks';
 import { stopPropagation } from '../../common/utils/component';
-import asDraggable from './asDraggable';
 import { CalendarIcon, ListIcon, TagIcon } from '../../components/Icon';
 import Tags from './Tags';
 import { isEmpty } from '../../common/utils/collection';
 import { TaskUIEntity } from '../../store/selectors';
-import { taskActions } from '../../store/models/task';
-import { workspaceActions } from '../../store/models/workspace';
+import { taskActions } from '../../models/task';
+import { workspaceActions } from '../../models/workspace';
+import { Draggable, DraggableComponentProps } from '../../vendor/dnd';
+import { UIComponentType } from '../../common/constants';
 
 
 const useActions = ({ id, isOpen, isSelected, completed }: TaskUIEntity) => {
@@ -41,7 +42,12 @@ const useActions = ({ id, isOpen, isSelected, completed }: TaskUIEntity) => {
   };
 };
 
-const Task = ({ task, isDragging }: { task: TaskUIEntity; isDragging?: boolean }) => {
+interface Props {
+  index: number;
+  task: TaskUIEntity;
+}
+
+const Task = ({ task, isDragging }: Props & DraggableComponentProps) => {
   const { completed, notes, isOpen, isSelected, caption, isNew } = task;
 
   const actions = useActions(task);
@@ -50,10 +56,9 @@ const Task = ({ task, isDragging }: { task: TaskUIEntity; isDragging?: boolean }
   const classNames = classnames('task', {
     ['task--open']: isOpen,
     ['task--completed']: completed,
-    // ['task--editable']: editable,
     ['task--selected']: isSelected,
     ['task--dragging']: isDragging,
-    // ['task--can-drag']: false,
+    // ['task--can-combined']: canCombined,
   });
 
   const onClickOutside = useCallback(
@@ -164,4 +169,16 @@ const Task = ({ task, isDragging }: { task: TaskUIEntity; isDragging?: boolean }
   );
 };
 
-export default asDraggable(Task);
+const DraggableTask = (props: Props) => (
+  <Draggable
+    index={props.index}
+    id={props.task.id}
+    type={UIComponentType.TASK}
+    isDisabled={props.task.isOpen}
+    className={'task-outer'}
+  >
+    <Task {...props} />
+  </Draggable>
+);
+
+export default DraggableTask;

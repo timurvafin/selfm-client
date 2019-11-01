@@ -10,9 +10,9 @@ import {
 import Action from '../../components/Action';
 import { useSelectedWorkspace } from '../../common/hooks';
 import { WorkspaceTypes } from '../../common/constants';
-import { taskActions } from '../../store/models/task';
-import { workspaceActions, WorkspaceEntity, workspaceSelectors } from '../../store/models/workspace';
-import { sectionActions } from '../../store/models/section';
+import { taskActions } from '../../models/task';
+import { workspaceActions, WorkspaceEntity, workspaceSelectors } from '../../models/workspace';
+import { sectionActions } from '../../models/section';
 
 
 const WorkspaceActions = () => {

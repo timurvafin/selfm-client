@@ -4,7 +4,7 @@ import Checkbox from 'components/Checkbox';
 import { KeyCode } from 'common/constants';
 import cs from 'classnames';
 import { useDispatch } from 'react-redux';
-import { taskActions, TodoEntity } from 'store/models/task';
+import { taskActions, TodoEntity } from 'models/task';
 import { ID } from '../../common/types';
 
 

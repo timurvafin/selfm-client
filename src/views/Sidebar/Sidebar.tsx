@@ -9,8 +9,8 @@ import { SHORTCUT_CAPTIONS, WorkspaceTypes, SHORTCUT_WORKSPACES } from '../../co
 
 import './sidebar.scss';
 import { ShortcutIcon } from '../../components/ShortcutIcon/ShortcutIcon';
-import { projectActions } from '../../store/models/project';
-import { workspaceActions, WorkspaceEntity } from '../../store/models/workspace';
+import { projectActions } from '../../models/project';
+import { workspaceActions, WorkspaceEntity } from '../../models/workspace';
 import SidebarLink from './SidebarLInk';
 import { isWorkspacesEqual } from '../../common/utils/common';
 

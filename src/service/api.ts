@@ -1,53 +1,40 @@
+/* eslint-disable arrow-body-style */
 import * as ajax from '../common/utils/ajax';
-import { ID } from '../common/types';
 
 
-const baseUrl = `${location.protocol}//${location.hostname}:3000/`;
-
-export function makeUrl(action) {
-  return baseUrl + action;
-}
-
-export function list(type?: string) {
-  if (type) {
-    return ajax.post(makeUrl('tm/list'), { type });
+export default class Api {
+  entity: string;
+  baseUrl = `${location.protocol}//${location.hostname}:9000`;
+  
+  constructor(entity) {
+    this.entity = entity;
   }
 
-  return ajax.get(makeUrl('tm/list'));
-}
+  makeUrl(action) {
+    return `${this.baseUrl}/${this.entity}/${action}`;
+  }
 
-export function update(id, fields) {
-  return ajax.post(makeUrl('tm/update'), { id, fields });
-}
+  list = (type?: string) => {
+    if (type) {
+      return ajax.post(this.makeUrl('list'), { type });
+    }
 
-export function add(fields, type) {
-  return ajax.post(makeUrl('tm/add'), { ...fields, type });
-}
+    return ajax.get(this.makeUrl('list'));
+  }
 
-export function reorder(ids) {
-  return ajax.post(makeUrl('tm/reorder'), ids);
-}
+  update = (id, fields) => {
+    return ajax.post(this.makeUrl('update'), { id, fields });
+  }
 
-export function remove(id) {
-  return ajax.post(makeUrl('tm/remove'), { id });
-}
+  add = (fields) => {
+    return ajax.post(this.makeUrl('add'), fields);
+  }
 
-export function loadSections(parentId?: ID) {
-  return ajax.post(makeUrl('sections/list'), { parentId });
-}
+  reorder = (ids) => {
+    return ajax.post(this.makeUrl('reorder'), ids);
+  }
 
-export function updateSection(id, fields) {
-  return ajax.post(makeUrl('sections/update'), { id, fields });
-}
-
-export function addSection(fields) {
-  return ajax.post(makeUrl('sections/add'), fields);
-}
-
-export function reorderSections(ids) {
-  return ajax.post(makeUrl('sections/reorder'), ids);
-}
-
-export function removeSection(id) {
-  return ajax.post(makeUrl('sections/remove'), id);
+  remove = (id) => {
+    return ajax.post(this.makeUrl('remove'), { id });
+  }
 }

@@ -2,20 +2,24 @@
 import {
   BaseTaskEntity,
   createActionCreators,
-  createBaseEntity,
-  createUpdateEffect, EntitiesArray,
   EntitiesMap,
-  entityBaseReducers, getNextOrder,
+  createBaseEntityReducers,
+  getNextOrder,
   ModelSpec,
+  createBaseEntityEffects,
+  createBaseEntityActions,
 } from './common';
-import { ID } from '../../common/types';
+import { ID } from '../common/types';
 import { call, put, select } from '@redux-saga/core/effects';
-import * as Api from '../../service/api';
+import Api from '../service/api';
 import { Map } from 'immutable';
 import { ModelsState } from './index';
+import { workspaceActions } from './workspace';
+import { WorkspaceTypes } from '../common/constants';
 
 
 const namespace = 'projects';
+const projectApi = new Api(namespace);
 
 export interface ProjectEntity extends BaseTaskEntity {
   placeholder: string;
@@ -32,12 +36,8 @@ export type ProjectsState = {
 }
 
 const actions = createActionCreators({
+  ...createBaseEntityActions<ProjectEntity>(),
   create: (sectionId?: ID) => ({ sectionId }),
-  update: (id, fields: Partial<ProjectEntity>) => ({ id, fields }),
-  remove: (id: ID) => ({ id }),
-  add: (entity: ProjectEntity) => ({ entity }),
-  load: () => ({}),
-  receive: (entities: EntitiesArray<ProjectEntity>) => ({ entities }),
   // selectTag: (tag: string) => ({ tag }),
   // open: (id: ID) => ({ id }),
 }, namespace);
@@ -47,32 +47,23 @@ const spec: ModelSpec<ProjectsState, typeof actions> = {
   state: {
     entities: Map<ID, ProjectEntity>(),
     ui: {
-      openId: null,
-      // selectedTag: null,
     },
   },
   actions,
   reducers: {
     entities: {
-      ...entityBaseReducers,
+      ...createBaseEntityReducers<ProjectEntity>(),
     },
     ui: {
-      /*selectTag: (state: ProjectsUIState, { tag }) => {
-        return { ...state, selectedTag: tag };
-      },*/
-      /*open: (state: ProjectsUIState, { id }) => {
-        return { ...state, openId: id, selectedTag: null };
-      },*/
     },
   },
   effects: {
+    ...createBaseEntityEffects(namespace, actions),
     * create({ sectionId }) {
-      const baseEntity = createBaseEntity();
       const state: ModelsState = yield select();
       const siblings = state.projects.entities.filter(project => project.sectionId == sectionId);
 
-      const entity = {
-        ...baseEntity,
+      const entityToAdd = {
         parentId: null,
         sectionId,
         caption: '',
@@ -81,27 +72,9 @@ const spec: ModelSpec<ProjectsState, typeof actions> = {
         order: getNextOrder(siblings.toList()),
       };
 
+      const entity: ProjectEntity = yield call(projectApi.add, entityToAdd);
       yield put(actions.add(entity));
-    },
-    * add({ entity }) {
-      yield call(Api.add, entity, 'project');
-    },
-    * load() {
-      const projects = yield call(Api.list, 'project');
-
-      if (projects) {
-        yield put(actions.receive(projects));
-        // yield put(actions.open(projects[0].id));
-      }
-    },
-    update: createUpdateEffect({
-      namespace,
-      addApi: Api.add,
-      updateApi: Api.update,
-      updateAction: actions.update,
-    }),
-    * remove({ id }) {
-      yield call(Api.remove, id);
+      yield put(workspaceActions.selectWorkspace({ type: WorkspaceTypes.PROJECT, code: entity.id }));
     },
   },
 };

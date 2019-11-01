@@ -19,11 +19,11 @@ export enum WorkspaceTypes {
 }
 
 export enum Shortcut {
-  INBOX= 'inbox',
-  TODAY= 'today',
-  PLANS= 'plans',
-  ANYTIME= 'anytime',
-  SOMEDAY= 'someday',
+  INBOX = 'inbox',
+  TODAY = 'today',
+  PLANS = 'plans',
+  ANYTIME = 'anytime',
+  SOMEDAY = 'someday',
 }
 
 export const SHORTCUT_CAPTIONS = {
@@ -33,5 +33,14 @@ export const SHORTCUT_CAPTIONS = {
   [Shortcut.ANYTIME]: 'Anytime',
   [Shortcut.SOMEDAY]: 'Someday',
 };
+
+export enum UIComponentType {
+  TASK = 'task',
+  PROJECT = 'project',
+  TASK_SECTION = 'task-section',
+  TASK_LIST = 'task-list',
+  SIDEBAR_PROJECT = 'sidebar-project',
+  SIDEBAR_SHORTCUT = 'sidebar-shortcut',
+}
 
 export const SHORTCUT_WORKSPACES = Object.values(Shortcut).map((code) => ({ type: WorkspaceTypes.SHORTCUT, code }));

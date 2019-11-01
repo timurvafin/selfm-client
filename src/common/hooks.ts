@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMemo } from 'react';
-import { workspaceSelectors } from '../store/models/workspace';
+import { workspaceSelectors } from '../models/workspace';
 
 
 export const useMountEffect = (fn) => useEffect(fn, []);

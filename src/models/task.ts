@@ -1,26 +1,23 @@
 /* eslint-disable arrow-body-style */
-import { List, Map } from 'immutable';
+import { Map } from 'immutable';
 import {
   BaseEntity,
   BaseTaskEntity,
   createActionCreators,
   createBaseEntity,
-  createUpdateEffect,
-  EntitiesArray,
   EntitiesMap,
-  entityBaseReducers,
+  createBaseEntityReducers,
   getNextOrder,
-  ModelSpec,
-  updateEntitiesOrder,
+  ModelSpec, createBaseEntityEffects, createBaseEntityActions,
 } from './common';
-import { ID } from '../../common/types';
+import { ID } from '../common/types';
 import { call, put, select } from '@redux-saga/core/effects';
-import * as Api from '../../service/api';
+import Api from '../service/api';
 import { ModelsState } from './index';
-import { taskSelector, tasksSelector } from '../selectors';
+import { workspaceTasksSelector, taskSelector } from '../store/selectors';
 import { workspaceActions, WorkspaceEntity } from './workspace';
-import { Shortcut, WorkspaceTypes } from '../../common/constants';
-import { isUndefined } from '../../common/utils/common';
+import { Shortcut, WorkspaceTypes } from '../common/constants';
+import { isUndefined } from '../common/utils/common';
 
 
 export interface TodoEntity extends BaseEntity {
@@ -51,16 +48,12 @@ export type TasksState = {
 }
 
 const namespace = 'tasks';
+const taskApi = new Api('task');
 
 const actions = createActionCreators({
+  ...createBaseEntityActions<TaskEntity>(),
   create: (workspace?: WorkspaceEntity, sectionId?: ID) => ({ workspace, sectionId }),
-  add: (entity: TaskEntity) => ({ entity }),
-  update: (id: ID, fields: Partial<TaskEntity>) => ({ id, fields }),
-  remove: (id: ID) => ({ id }),
-  load: () => ({}),
-  receive: (entities: EntitiesArray<TaskEntity>) => ({ entities }),
   move: (id: ID, destination: { parentId?: ID; sectionId?: ID; position?: number }) => ({ id, destination }),
-  reorder: (ids: Array<ID>) => ({ ids }),
   setShortcut: (taskId: ID, shortcutCode: Shortcut) => ({ taskId, shortcutCode }),
   // todos
   createTodo: (parentId: ID) => ({ parentId }),
@@ -110,7 +103,7 @@ const spec: ModelSpec<TasksState, typeof actions> = {
   actions,
   reducers: {
     entities: {
-      ...entityBaseReducers,
+      ...createBaseEntityReducers<TaskEntity>(),
       addTodo: (state: EntitiesMap<TaskEntity>, { entity }) => {
         return state.mergeIn([entity.id, 'todoList'], [entity]);
       },
@@ -120,21 +113,14 @@ const spec: ModelSpec<TasksState, typeof actions> = {
       removeTodo: (state: EntitiesMap<TaskEntity>, { parentId, id }) => {
         return state.deleteIn([parentId, 'todoList', id]);
       },
-      reorder: (state: EntitiesMap<TaskEntity>, action) => {
-        return updateEntitiesOrder(state, action.ids);
-      },
     },
     ui: {},
   },
   effects: {
-    load: function* () {
-      const tasks: TaskEntity[] = yield call(Api.list, 'task');
-
-      yield put(actions.receive(tasks));
-    },
+    ...createBaseEntityEffects<TaskEntity>(namespace, actions),
     create: function* ({ workspace, sectionId }) {
       const state: ModelsState = yield select();
-      const workspaceTasks: Array<TaskEntity> = tasksSelector(state, workspace);
+      const workspaceTasks: EntitiesMap<TaskEntity> = workspaceTasksSelector(state, workspace);
       const siblings = workspaceTasks.filter(task => task.sectionId == sectionId);
 
       const entityToAdd = {
@@ -143,11 +129,11 @@ const spec: ModelSpec<TasksState, typeof actions> = {
         sectionId,
         completed: false,
         tags: [],
-        order: getNextOrder(List(siblings)),
+        order: getNextOrder(siblings.toList()),
         todoList: [],
       };
 
-      const entity: TaskEntity = yield call(Api.add, entityToAdd, 'task');
+      const entity: TaskEntity = yield call(taskApi.add, entityToAdd);
       yield put(actions.add(entity));
       yield put(workspaceActions.setTaskOpen(entity.id, true));
     },
@@ -160,18 +146,6 @@ const spec: ModelSpec<TasksState, typeof actions> = {
         parentId,
         completed: false,
       }));
-    },
-    update: createUpdateEffect({
-      namespace,
-      addApi: Api.add,
-      updateApi: Api.update,
-      updateAction: actions.update,
-    }),
-    reorder: function* ({ ids }) {
-      yield call(Api.reorder, ids);
-    },
-    remove: function* ({ id }) {
-      yield call(Api.remove, id);
     },
     setShortcut: function* ({ taskId, shortcutCode }) {
       yield put(actions.update(taskId, getEntityFields({ code: shortcutCode, type: WorkspaceTypes.SHORTCUT })));
