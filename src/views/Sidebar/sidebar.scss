@@ -63,7 +63,7 @@
   }
 }
 
-.sidebar__link {
+.sidebar-link {
   @include unselectable();
   @include clickable();
 
@@ -81,16 +81,24 @@
   @include overflow-dots();
 }
 
-.sidebar__link__icon {
+.sidebar-link__icon {
   width: 1.4rem;
   display: flex;
   align-items: center;
 }
 
-.sidebar__project--dragging-over {
+.sidebar-link__caption {
+  flex: 1;
+}
+
+.sidebar-link__count {
+  color: $clr_lvl3;
+}
+
+.sidebar-link--dragging-over {
   border-color: $clr_accent;
 }
 
-.sidebar__link--selected {
+.sidebar-link--selected {
   background-color: rgba(220, 220, 220, 0.64);
 }

@@ -49,7 +49,7 @@ const DroppableTaskList = (props: Props) => {
     <Droppable
       id={`task-list-${props.sectionId}`}
       className={'task-list-container'}
-      accept={'task'}
+      accept={UIComponentType.TASK}
       onDrop={onDrop}
     >
       <TasksList {...props} />

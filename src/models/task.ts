@@ -48,7 +48,7 @@ export type TasksState = {
 }
 
 const namespace = 'tasks';
-const taskApi = new Api('task');
+const taskApi = new Api(namespace);
 
 const actions = createActionCreators({
   ...createBaseEntityActions<TaskEntity>(),
@@ -79,7 +79,7 @@ const getEntityFields = (workspace: WorkspaceEntity) => {
 
   if (workspace.type === WorkspaceTypes.SHORTCUT) {
     const handlers = {
-      [Shortcut.INBOX]: () => ({ startTime: null, startTimeTag: null, parentId: null }),
+      [Shortcut.INBOX]: () => ({ startTime: null, startTimeTag: null, parentId: null, sectionId: null }),
       [Shortcut.TODAY]: () => ({ startTime: Date.now(), startTimeTag: null }),
       [Shortcut.PLANS]: () => ({ startTime: Date.now() + 24 * 3600, startTimeTag: null }),
       [Shortcut.ANYTIME]: () => ({ startTimeTag: 'anytime', startTime: null }),

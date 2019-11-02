@@ -14,12 +14,13 @@ export interface Props {
   icon: ReactNode;
   className?: string;
   workspace: WorkspaceEntity;
+  count?: number;
 }
 
-const SidebarLink = ({ caption, onSelect, isSelected, icon, className, isDraggingOver }: Props & DroppableComponentProps) => {
-  const cls = cs('sidebar__link', className, {
-    ['sidebar__link--selected']: isSelected,
-    ['sidebar__project--dragging-over']: isDraggingOver,
+const SidebarLink = ({ caption, onSelect, isSelected, icon, className, count, isDraggingOver }: Props & DroppableComponentProps) => {
+  const cls = cs('sidebar-link', className, {
+    ['sidebar-link--selected']: isSelected,
+    ['sidebar-link--dragging-over']: isDraggingOver,
   });
 
   return (
@@ -27,8 +28,9 @@ const SidebarLink = ({ caption, onSelect, isSelected, icon, className, isDraggin
       className={cls}
       onClick={onSelect}
     >
-      <div className="sidebar__link__icon">{icon}</div>
-      <div className="sidebar__link__caption">{caption}</div>
+      <div className="sidebar-link__icon">{icon}</div>
+      <div className="sidebar-link__caption">{caption}</div>
+      { count && <div className="sidebar-link__count">{count}</div> }
     </div>
   );
 };
@@ -54,6 +56,7 @@ const DroppableLink = (props: Props) => {
       isDisabled={props.workspace.type === WorkspaceTypes.PROJECT && props.isSelected}
       mode={'copy'}
       onDrop={onDrop}
+      accept={UIComponentType.TASK}
     >
       <SidebarLink {...props} />
     </Droppable>

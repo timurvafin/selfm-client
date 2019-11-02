@@ -2,10 +2,10 @@ import React from 'react';
 import Action from 'components/Action';
 import RadialProgressBar from 'components/RadialProgressBar';
 import { useDispatch, useSelector } from 'react-redux';
-import { projectsSelector } from 'store/selectors';
+import { projectsSelector, workspaceTasksSelector } from 'store/selectors';
 import { useActions, useSelectedWorkspace } from 'common/hooks';
 import { PlusIcon } from 'components/Icon';
-import { SHORTCUT_CAPTIONS, WorkspaceTypes, SHORTCUT_WORKSPACES } from '../../common/constants';
+import { Shortcut, SHORTCUT_CAPTIONS, SHORTCUT_WORKSPACES, WorkspaceTypes } from '../../common/constants';
 
 import './sidebar.scss';
 import { ShortcutIcon } from '../../components/ShortcutIcon/ShortcutIcon';
@@ -23,12 +23,6 @@ const ProjectIcon = ({ progress }) => (
   />
 );
 
-const shortcutWorkspaceSpecs = Object.values(SHORTCUT_WORKSPACES).map((workspace) => ({
-  workspace,
-  caption: SHORTCUT_CAPTIONS[workspace.code],
-  icon: <ShortcutIcon code={workspace.code} />,
-}));
-
 const LinkList = ({ specs, isWorkspaceSelected, selectWorkspace }) => specs.map((spec) => (
   <SidebarLink
     key={`${spec.workspace.type}-${spec.workspace.code}`}
@@ -38,6 +32,7 @@ const LinkList = ({ specs, isWorkspaceSelected, selectWorkspace }) => specs.map(
     className={`sidebar__shortcut-${spec.workspace.code}`}
     caption={spec.caption}
     isSelected={isWorkspaceSelected(spec.workspace)}
+    count={spec.count}
   />
 ));
 
@@ -48,7 +43,6 @@ const Sidebar = () => {
   });
 
   const projects = useSelector(projectsSelector);
-
   const selectedWorkspace = useSelectedWorkspace();
   const isWorkspaceSelected = (workspace: WorkspaceEntity) => isWorkspacesEqual(workspace, (selectedWorkspace as WorkspaceEntity));
   const dispatch = useDispatch();
@@ -56,10 +50,37 @@ const Sidebar = () => {
     dispatch(workspaceActions.selectWorkspace(workspace));
   };
 
+  const inboxTasks = useSelector(state => workspaceTasksSelector(state, { type: WorkspaceTypes.SHORTCUT, code: Shortcut.INBOX }));
+  const todayTasks = useSelector(state => workspaceTasksSelector(state, { type: WorkspaceTypes.SHORTCUT, code: Shortcut.TODAY }));
+  const incompletePredicate = task => !task.completed;
+
+  const getTasksCount = (workspace: WorkspaceEntity) => {
+    if (workspace.type === WorkspaceTypes.SHORTCUT) {
+      if (workspace.code === Shortcut.INBOX) {
+        const size = inboxTasks.filter(incompletePredicate).size;
+        return size > 0 ? size : null;
+      }
+
+      if (workspace.code === Shortcut.TODAY) {
+        const size = todayTasks.filter(incompletePredicate).size;
+        return size > 0 ? size : null;
+      }
+    }
+
+    return null;
+  };
+
   const projectsSpecs = projects.map((project) => ({
     workspace: { type: WorkspaceTypes.PROJECT, code: project.id },
     caption: project.caption,
     icon: <ProjectIcon progress={project.progress} />,
+  }));
+
+  const shortcutWorkspaceSpecs = Object.values(SHORTCUT_WORKSPACES).map((workspace) => ({
+    workspace,
+    caption: SHORTCUT_CAPTIONS[workspace.code],
+    icon: <ShortcutIcon code={workspace.code} />,
+    count: getTasksCount(workspace),
   }));
 
   return (

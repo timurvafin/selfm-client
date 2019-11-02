@@ -30,7 +30,7 @@ export type SectionsState = {
 }
 
 const namespace = 'sections';
-const sectionApi = new Api('section');
+const sectionApi = new Api(namespace);
 
 const actions = createActionCreators({
   ...createBaseEntityActions<SectionEntity>(),
