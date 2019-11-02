@@ -54,7 +54,7 @@ const ProjectWorkspace = ({ id }: { id: ID }) => {
         <TextField
           autosize
           transparent
-          placeholder="Название"
+          placeholder="Caption"
           className="workspace__caption project__name--textfield"
           onChange={caption => update({ caption })}
           value={project.caption}
@@ -63,7 +63,7 @@ const ProjectWorkspace = ({ id }: { id: ID }) => {
         <Menu items={menuItems} />
       </Workspace.CaptionRow>
 
-      <Workspace.Row>
+      <Workspace.Row className={'project__row--notes'}>
         <TextField
           multiline={true}
           placeholder="Заметки"

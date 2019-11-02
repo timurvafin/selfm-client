@@ -17,6 +17,10 @@
 .workspace__row {
   margin-bottom: 1.5rem;
   padding: 0 2rem;
+
+  &:empty {
+    display: none;
+  }
 }
 
 .workspace__row--body {
@@ -48,29 +52,6 @@
   font-weight: bold;
   border-bottom: 1px solid transparent;
   font-family: $ff_title;
-}
-
-.workspace__row--tags {
-  margin-bottom: 2rem;
-}
-
-.workspace-tags {
-  margin-bottom: 1rem;
-  display: flex;
-}
-
-.workspace-tag {
-  @include clickable();
-
-  border-radius: 1em;
-  padding: .3em .5em;
-  margin-right: .5em;
-  color: $clr_lvl3;
-}
-
-.workspace-tag--selected {
-  background-color: $clr_lvl3;
-  color: #fff;
 }
 
 .workspace-actions {

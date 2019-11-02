@@ -22,7 +22,6 @@
 
 .project__name--textfield {
   padding: 0;
-  border-bottom: 1px solid $lgray;
 }
 
 .project__name, .project__notes {
@@ -38,8 +37,8 @@
   line-height: 1.4;
 }
 
-.project__row--tags {
-  margin-top: 5em;
+.project__row--notes {
+  margin-bottom: 3.5em;
 }
 
 .task-section__header {

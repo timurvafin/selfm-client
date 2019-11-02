@@ -1,16 +1,16 @@
-import React, { useCallback } from 'react';
-import { WorkspaceEntity } from 'models/workspace';
-import { useDispatch, useSelector } from 'react-redux';
-import { ModelsState } from 'models';
-import { taskSectionsSelector, tasksSelector, TaskUIEntity } from 'store/selectors';
-import Droppable from 'vendor/dnd/beautiful-dnd/Droppable';
-import { DNDSourceItem } from 'vendor/dnd';
-import { workspaceId } from 'common/utils/common';
-import { sectionActions } from 'models/section';
-import { DNDDestinationItem } from 'vendor/dnd/types';
 import { UIComponentType } from 'common/constants';
+import { workspaceId } from 'common/utils/common';
+import { ModelsState } from 'models';
+import { sectionActions } from 'models/section';
+import { WorkspaceEntity } from 'models/workspace';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { taskSectionsSelector, tasksSelector, TaskUIEntity } from 'store/selectors';
+import { DNDSourceItem } from 'vendor/dnd';
+import Droppable from 'vendor/dnd/beautiful-dnd/Droppable';
+import { DNDDestinationItem } from 'vendor/dnd/types';
+import { TaskList } from 'views/Workspace';
 import TasksSection from './TasksSection';
-import { Layouts as Workspace, TaskList } from 'views/Workspace';
 
 
 interface Props {
@@ -24,24 +24,24 @@ const TaskSections = ({ workspace }: Props) => {
 
   return (
     <div>
-      <Workspace.Row >
-        <TaskList
-          tasks={woSection}
-          sectionId={null}
-        />
-      </Workspace.Row>
+      <TaskList
+        tasks={woSection}
+        sectionId={null}
+      />
 
-      { sections.map((section, index) => (
-        <Workspace.Row
+      {sections.map((section, index) => (
+        <div
+          style={{ marginTop: '2rem' }}
           key={section.id}
         >
           <TasksSection
+            key={section.id}
             id={section.id}
             index={index}
             tasks={tasks.filter(task => task.sectionId == section.id)}
           />
-        </Workspace.Row>
-      )) }
+        </div>
+      ))}
     </div>
   );
 };

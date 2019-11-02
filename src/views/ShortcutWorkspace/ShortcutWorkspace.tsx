@@ -38,7 +38,7 @@ const ShortcutWorkspace = ({ code }) => {
       <Workspace.Row className="shortcut-row--tags">
         <WorkspaceTags workspace={workspace} />
       </Workspace.Row>
-      <Workspace.BodyRow>
+      <Workspace.BodyRow className={'shortcut__body'}>
         {isEmpty(tasks) && <EmptyShortcutContent code={code} />}
         <TaskList
           tasks={tasks}

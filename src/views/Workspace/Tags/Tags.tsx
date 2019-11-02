@@ -6,6 +6,8 @@ import { tagsSelector } from 'store/selectors';
 import { isEmpty } from 'common/utils/collection';
 import { workspaceActions, WorkspaceEntity, workspaceSelectors } from 'models/workspace';
 
+import './tags.scss';
+
 
 const Tag = ({ tag, isSelected, onSelect }) => (
   <div
