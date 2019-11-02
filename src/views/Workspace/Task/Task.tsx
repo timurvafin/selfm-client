@@ -13,8 +13,7 @@ import { isEmpty } from 'common/utils/collection';
 import { TaskUIEntity } from 'store/selectors';
 import { taskActions } from 'models/task';
 import { workspaceActions } from 'models/workspace';
-import { Draggable, DraggableComponentProps } from 'vendor/dnd';
-import { UIComponentType } from 'common/constants';
+import { DraggableComponentProps } from 'vendor/dnd';
 
 import './task.scss';
 
@@ -44,7 +43,7 @@ const useActions = ({ id, isOpen, isSelected, completed }: TaskUIEntity) => {
   };
 };
 
-interface Props {
+export interface Props {
   index: number;
   task: TaskUIEntity;
 }
@@ -171,16 +170,4 @@ const Task = ({ task, isDragging }: Props & DraggableComponentProps) => {
   );
 };
 
-const DraggableTask = (props: Props) => (
-  <Draggable
-    index={props.index}
-    id={props.task.id}
-    type={UIComponentType.TASK}
-    isDisabled={props.task.isOpen}
-    className={'task-outer'}
-  >
-    <Task {...props} />
-  </Draggable>
-);
-
-export default DraggableTask;
+export default Task;

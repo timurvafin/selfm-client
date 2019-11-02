@@ -9,9 +9,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { sectionSelector, TaskUIEntity } from 'store/selectors';
 import { UIComponentType } from 'common/constants';
 import { ID } from 'common/types';
-import { DraggableComponentProps } from 'vendor/dnd';
+import { DNDDestinationItem, DNDSourceItem, DraggableComponentProps } from 'vendor/dnd';
 import Draggable from 'vendor/dnd/beautiful-dnd/Draggable';
-import TaskList from 'views/Workspace/TaskList';
+import { DroppableTaskList } from 'views/Workspace';
+import { taskActions } from 'models/task';
 
 
 interface Props {
@@ -33,6 +34,13 @@ const TasksSection = ({ id, tasks, isDragging }: Props & DraggableComponentProps
   const addTask = () => {
     // dispatch(TaskActions.create(projectId, section.id));
   };
+
+  const onTaskDrop = useCallback((sourceItem: DNDSourceItem, destinationItem: DNDDestinationItem) => {
+    dispatch(taskActions.move(sourceItem.id, {
+      sectionId: id,
+      position: destinationItem.index,
+    }));
+  }, []);
 
   const menuItems = [
     { action: addTask, name: 'Add task', icon: <PlusIcon />, className: 'action--add' },
@@ -56,9 +64,11 @@ const TasksSection = ({ id, tasks, isDragging }: Props & DraggableComponentProps
         />
         <Menu items={menuItems} />
       </div>
-      <TaskList
+      <DroppableTaskList
         tasks={tasks}
-        sectionId={section.id}
+        id={`task-list-${id}`}
+        onTaskDrop={onTaskDrop}
+        orderBy={'order'}
       />
     </div>
   );

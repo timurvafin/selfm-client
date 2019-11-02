@@ -7,7 +7,7 @@ import {
   getNextOrder,
   ModelSpec,
   createBaseEntityActions,
-  createBaseEntityEffects,
+  createBaseEntityEffects, makeOrderFieldsMap,
 } from './common';
 import { call, put, select } from '@redux-saga/core/effects';
 import Api from '../service/api';
@@ -37,7 +37,6 @@ const actions = createActionCreators({
   create: (parent: WorkspaceEntity) => ({ parent }),
   add: (entity: SectionEntity) => ({ entity }),
   move: (id: ID, destination: { parent?: WorkspaceEntity; position?: number }) => ({ id, destination }),
-  reorder: (ids: Array<ID>) => ({ ids }),
 }, namespace);
 
 const spec: ModelSpec<SectionsState, typeof actions> = {
@@ -88,9 +87,10 @@ const spec: ModelSpec<SectionsState, typeof actions> = {
 
         siblingsList = siblingsList.insert(actionDestination.position, section);
         const ids = siblingsList.map(task => task.id).toArray();
+        const fieldsMap = makeOrderFieldsMap(ids, 'order');
 
-        // TODO [opt] update only suitable ids
-        yield put(actions.reorder(ids));
+        // TODO [opt] update only changed entities
+        yield put(actions.batchUpdate(fieldsMap));
         yield put(actions.update(id, { parent: destination.parent }));
       }
     },

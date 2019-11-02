@@ -4,7 +4,6 @@ import { call, put, select, takeEvery } from '@redux-saga/core/effects';
 import { ID } from '../common/types';
 import { randomString } from '../common/utils/common';
 import { ModelsState } from './index';
-import { TaskEntity } from './task';
 import Api from '../service/api';
 
 
@@ -156,13 +155,12 @@ export const createBaseEntity = () => {
 };
 
 /**
- * Обновляет значения порядковых номеров у сущностей на основе отсортированного массива.
- * Используется для DnD перемещения
  */
-export const updateEntitiesOrder = <T>(entitiesState: EntitiesMap<any>, ids: Array<ID>) => {
-  return ids.reduce((nextState: EntitiesMap<any>, id, order) => {
-    return nextState.setIn([id, 'order'], order);
-  }, entitiesState);
+export const makeOrderFieldsMap = <T>(ids: Array<ID>, orderFieldName) => {
+  return ids.reduce((fieldsMap: {}, id, order) => {
+    fieldsMap[id] = { [orderFieldName]: order };
+    return fieldsMap;
+  }, {});
 };
 
 export const createBaseEntityActions = <T extends BaseEntity>() => ({
@@ -170,7 +168,7 @@ export const createBaseEntityActions = <T extends BaseEntity>() => ({
   update: (id: ID, fields: Partial<T>) => ({ id, fields }),
   remove: (id: ID) => ({ id }),
   load: () => ({}),
-  reorder: (ids: Array<ID>) => ({ ids }),
+  batchUpdate: (entities: { [id: string]: Partial<T> }) => ({ entities }),
   receive: (entities: EntitiesArray<T>) => ({ entities }),
 });
 
@@ -188,8 +186,9 @@ export const createBaseEntityReducers = <T extends BaseEntity>() => ({
   remove: (state: EntitiesMap<T>, { id }) => {
     return state.delete(id);
   },
-  reorder: (state: EntitiesMap<T>, action) => {
-    return updateEntitiesOrder(state, action.ids);
+  batchUpdate: (state: EntitiesMap<T>, { entities }) => {
+    const ids = Reflect.ownKeys(entities);
+    return ids.reduce((nextState, id) => nextState.mergeIn([id], entities[id]), state);
   },
 });
 
@@ -213,8 +212,8 @@ export const createBaseEntityEffects = <T extends BaseEntity>(namespace, actions
 
       yield call(api.update, id, fields);
     },
-    reorder: function* ({ ids }) {
-      yield call(api.reorder, ids);
+    batchUpdate: function* ({ entities }) {
+      yield call(api.batchUpdate, entities);
     },
     remove: function* ({ id }) {
       yield call(api.remove, id);
@@ -222,10 +221,10 @@ export const createBaseEntityEffects = <T extends BaseEntity>(namespace, actions
   };
 };
 
-export const getNextOrder = (entities: List<BaseTaskEntity>) => {
-  const entityWithMaxOrder = entities.maxBy(entity => entity.order);
+export const getNextOrder = (entities: List<BaseTaskEntity>, orderField = 'order') => {
+  const entityWithMaxOrder = entities.maxBy(entity => entity[orderField]);
 
-  return entityWithMaxOrder ? (entityWithMaxOrder.order + 1) : 1;
+  return entityWithMaxOrder ? (entityWithMaxOrder[orderField] + 1) : 1;
 };
 
 

@@ -38,9 +38,9 @@ const selectors = {
     const location = state.router.location;
     return new URLSearchParams(location.search).get('tag');
   },
-  selectedWorkspace: (state: RootState): WorkspaceEntity | {} => {
+  selectedWorkspace: (state: RootState): WorkspaceEntity => {
     const params = selectRouterParams(state, '/:type/:code');
-    return params;
+    return (params as WorkspaceEntity);
   },
   selectedWorkspacePath: (state: RootState) => {
     const workspace = selectors.selectedWorkspace(state);

@@ -1,5 +1,6 @@
 import { ArchiveIcon, CalendarIcon, InboxIcon, LayersIcon, StarIcon } from '../components/Icon';
 import React from 'react';
+import { WorkspaceEntity } from '../models/workspace';
 import { ShortcutIcon } from '../views/ShortcutWorkspace/ShortcutIcon';
 
 
@@ -43,4 +44,7 @@ export enum UIComponentType {
   SIDEBAR_SHORTCUT = 'sidebar-shortcut',
 }
 
-export const SHORTCUT_WORKSPACES = Object.values(Shortcut).map((code) => ({ type: WorkspaceTypes.SHORTCUT, code }));
+export const SHORTCUT_WORKSPACES: { [code: string]: WorkspaceEntity } = Object.values(Shortcut).reduce((map, code) => {
+  map[code] = { type: WorkspaceTypes.SHORTCUT, code };
+  return map;
+}, {});

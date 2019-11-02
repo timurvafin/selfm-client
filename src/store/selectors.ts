@@ -2,12 +2,11 @@ import { ModelsState } from '../models';
 import { createSelector } from 'reselect';
 import { ID } from '../common/types';
 import { ProjectEntity } from '../models/project';
-import { TaskEntity } from '../models/task';
+import { TaskEntity, taskSelectors } from '../models/task';
 import { Completable, EntitiesArray, EntitiesMap } from '../models/common';
 import { SectionEntity } from '../models/section';
-import { List, Set, Map } from 'immutable';
+import { List, Set } from 'immutable';
 import { WorkspaceEntity, workspaceSelectors } from '../models/workspace';
-import { Shortcut, WorkspaceTypes } from '../common/constants';
 import { isWorkspacesEqual } from '../common/utils/common';
 
 
@@ -42,52 +41,20 @@ export const projectOpenIdSelector = (state: ModelsState): ID => {
   return project ? openId : null;
 };
 
-const shortcutTaskPredicates = {
-  [Shortcut.INBOX]: (task: TaskEntity) => !task.startTime && !task.startTimeTag && !task.parentId,
-  [Shortcut.TODAY]: (task: TaskEntity) => task.startTime && new Date(task.startTime) <= new Date(),
-  [Shortcut.PLANS]: (task: TaskEntity) => !!task.startTime,
-  [Shortcut.ANYTIME]: (task: TaskEntity) => task.startTimeTag === 'anytime',
-  [Shortcut.SOMEDAY]: (task: TaskEntity) => task.startTimeTag === 'someday',
-};
-
-export const workspaceTasksSelector = createSelector(
-  (state: ModelsState) => state.tasks.entities,
-  (_, workspace: WorkspaceEntity) => workspace,
-  (entities: EntitiesMap<TaskEntity>, workspace) => {
-    if (!workspace) {
-      return Map<ID, TaskEntity>();
-    }
-
-    return entities.filter(entity => {
-      if (workspace.type === WorkspaceTypes.PROJECT) {
-        return entity.parentId === workspace.code;
-      }
-
-      if (workspace.type === WorkspaceTypes.SHORTCUT) {
-        return shortcutTaskPredicates[workspace.code](entity);
-      }
-
-      return false;
-    });
-  }
-);
-
-export const openTaskIdSelector = (state: ModelsState) => state.tasks.ui.openId;
-export const selectedTaskIdSelector = (state: ModelsState) => state.tasks.ui.selectedId;
-export const taskSelector = (state: ModelsState, id: ID) => state.tasks.entities.get(id);
-
 // by workspace & selected tag
 export const tasksSelector = createSelector(
-  workspaceTasksSelector,
+  taskSelectors.byWorkspace,
   workspaceSelectors.openTaskId,
   workspaceSelectors.selectedTaskId,
   workspaceSelectors.selectedTag,
   (taskEntities: EntitiesMap<TaskEntity>, openTaskId, selectedTaskId, selectedTag): EntitiesArray<TaskUIEntity> => {
-    let entities = taskEntities.sort((a, b) => a.order - b.order);
+    let entities = taskEntities;
 
     if (selectedTag) {
       entities = entities.filter((task: TaskEntity) => task.tags && task.tags.includes(selectedTag));
     }
+
+    // entities = entities.sort((a, b) => a.order - b.order);
 
     const uiEntities = entities.map(task => ({
       ...task,
@@ -101,7 +68,7 @@ export const tasksSelector = createSelector(
 );
 
 export const tagsSelector = createSelector(
-  workspaceTasksSelector,
+  taskSelectors.byWorkspace,
   (tasks: EntitiesMap<TaskEntity>): Array<string> => {
     const allTags = tasks.reduce((tags, task) => tags.union(task.tags), Set());
 

@@ -1,28 +1,32 @@
-import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 import cs from 'classnames';
 import { TaskUIEntity } from 'store/selectors';
-import { Droppable, DNDSourceItem, DroppableComponentProps, DNDDestinationItem } from 'vendor/dnd';
-import { taskActions } from 'models/task';
-import { UIComponentType } from 'common/constants';
-import Task from '../Task';
+import { DroppableComponentProps } from 'vendor/dnd';
+import Task, { DraggableTask } from '../Task';
 import './tasks.scss';
 
 
 export interface Props {
   tasks: Array<TaskUIEntity>;
-  sectionId?: string;
+  orderBy?: string;
+  droppable?: boolean;
 }
 
-const TasksList = ({ tasks, isDraggingOver }: Props & DroppableComponentProps) => {
+const TasksList = ({ tasks, orderBy, droppable, isDraggingOver }: Props & DroppableComponentProps) => {
   const cls = cs('task-list', {
     ['task-list--dragging-over']: isDraggingOver,
   });
 
+  if (orderBy) {
+    tasks = tasks.sort((a, b) => a[orderBy] - b[orderBy]);
+  }
+
+  const TaskComponent = droppable ? DraggableTask : Task;
+
   return (
     <div className={cls}>
       {tasks.map((task, index) => (
-        <Task
+        <TaskComponent
           key={task.id}
           task={task}
           index={index}
@@ -32,27 +36,4 @@ const TasksList = ({ tasks, isDraggingOver }: Props & DroppableComponentProps) =
   );
 };
 
-const DroppableTaskList = (props: Props) => {
-  const dispatch = useDispatch();
-  const onDrop = useCallback((sourceItem: DNDSourceItem, destinationItem: DNDDestinationItem) => {
-    if (sourceItem.type === UIComponentType.TASK) {
-      dispatch(taskActions.move(sourceItem.id, {
-        sectionId: props.sectionId,
-        position: destinationItem.index,
-      }));
-    }
-  }, [props.sectionId]);
-
-  return (
-    <Droppable
-      id={`task-list-${props.sectionId}`}
-      className={'task-list-container'}
-      accept={UIComponentType.TASK}
-      onDrop={onDrop}
-    >
-      <TasksList {...props} />
-    </Droppable>
-  );
-};
-
-export default DroppableTaskList;
+export default TasksList;

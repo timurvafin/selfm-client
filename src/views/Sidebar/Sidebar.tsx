@@ -2,7 +2,7 @@ import React from 'react';
 import Action from 'components/Action';
 import RadialProgressBar from 'components/RadialProgressBar';
 import { useDispatch, useSelector } from 'react-redux';
-import { projectsSelector, workspaceTasksSelector } from 'store/selectors';
+import { projectsSelector } from 'store/selectors';
 import { useActions, useSelectedWorkspace } from 'common/hooks';
 import { PlusIcon } from 'components/Icon';
 import { Shortcut, SHORTCUT_CAPTIONS, SHORTCUT_WORKSPACES, WorkspaceTypes } from 'common/constants';
@@ -11,7 +11,8 @@ import './sidebar.scss';
 import { ShortcutIcon } from 'views/ShortcutWorkspace/ShortcutIcon';
 import { projectActions } from 'models/project';
 import { workspaceActions, WorkspaceEntity } from 'models/workspace';
-import SidebarLink from './SidebarLInk';
+import { taskSelectors } from '../../models/task';
+import SidebarLink from './SidebarLink';
 import { isWorkspacesEqual } from 'common/utils/common';
 
 
@@ -50,8 +51,8 @@ const Sidebar = () => {
     dispatch(workspaceActions.selectWorkspace(workspace));
   };
 
-  const inboxTasks = useSelector(state => workspaceTasksSelector(state, { type: WorkspaceTypes.SHORTCUT, code: Shortcut.INBOX }));
-  const todayTasks = useSelector(state => workspaceTasksSelector(state, { type: WorkspaceTypes.SHORTCUT, code: Shortcut.TODAY }));
+  const inboxTasks = useSelector(state => taskSelectors.byWorkspace(state, SHORTCUT_WORKSPACES[Shortcut.INBOX]));
+  const todayTasks = useSelector(state => taskSelectors.byWorkspace(state, SHORTCUT_WORKSPACES[Shortcut.TODAY]));
   const incompletePredicate = task => !task.completed;
 
   const getTasksCount = (workspace: WorkspaceEntity) => {

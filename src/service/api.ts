@@ -26,6 +26,10 @@ export default class Api {
     return ajax.post(this.makeUrl('update'), { id, fields });
   }
 
+  batchUpdate = (entities) => {
+    return ajax.post(this.makeUrl('batchUpdate'), entities);
+  }
+
   add = (fields) => {
     return ajax.post(this.makeUrl('add'), fields);
   }

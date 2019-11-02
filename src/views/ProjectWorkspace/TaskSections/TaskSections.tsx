@@ -9,7 +9,8 @@ import { taskSectionsSelector, tasksSelector, TaskUIEntity } from 'store/selecto
 import { DNDSourceItem } from 'vendor/dnd';
 import Droppable from 'vendor/dnd/beautiful-dnd/Droppable';
 import { DNDDestinationItem } from 'vendor/dnd/types';
-import { TaskList } from 'views/Workspace';
+import { DroppableTaskList } from 'views/Workspace';
+import { taskActions } from '../../../models/task';
 import TasksSection from './TasksSection';
 
 
@@ -22,11 +23,21 @@ const TaskSections = ({ workspace }: Props) => {
   const woSection = tasks.filter(task => !task.sectionId);
   const sections = useSelector(state => taskSectionsSelector(state, workspace));
 
+  const dispatch = useDispatch();
+  const onTaskDrop = useCallback((sourceItem: DNDSourceItem, destinationItem: DNDDestinationItem) => {
+    dispatch(taskActions.move(sourceItem.id, {
+      sectionId: null,
+      position: destinationItem.index,
+    }));
+  }, []);
+
   return (
     <div>
-      <TaskList
+      <DroppableTaskList
         tasks={woSection}
-        sectionId={null}
+        id={'empty-section-task-list'}
+        orderBy={'order'}
+        onTaskDrop={onTaskDrop}
       />
 
       {sections.map((section, index) => (

@@ -1,51 +1,23 @@
 /* eslint-disable arrow-body-style */
 import { Map } from 'immutable';
 import {
-  BaseEntity,
-  BaseTaskEntity,
   createActionCreators,
   createBaseEntity,
   EntitiesMap,
   createBaseEntityReducers,
   getNextOrder,
-  ModelSpec, createBaseEntityEffects, createBaseEntityActions,
-} from './common';
-import { ID } from '../common/types';
+  ModelSpec, createBaseEntityEffects, createBaseEntityActions, makeOrderFieldsMap,
+} from '../common';
+import { ID } from 'common/types';
 import { call, put, select } from '@redux-saga/core/effects';
-import Api from '../service/api';
-import { ModelsState } from './index';
-import { workspaceTasksSelector, taskSelector } from '../store/selectors';
-import { workspaceActions, WorkspaceEntity } from './workspace';
-import { Shortcut, WorkspaceTypes } from '../common/constants';
-import { isUndefined } from '../common/utils/common';
+import Api from 'service/api';
+import { ModelsState } from '../index';
+import { workspaceActions, WorkspaceEntity, workspaceSelectors } from '../workspace';
+import { Shortcut, WorkspaceTypes } from 'common/constants';
+import { isUndefined } from 'common/utils/common';
+import { TaskEntity, TasksState, TodoEntity } from './index';
+import * as selectors from './selectors';
 
-
-export interface TodoEntity extends BaseEntity {
-  id: ID;
-  caption: string;
-  completed: boolean;
-}
-
-export interface TaskEntity extends BaseTaskEntity {
-  todoList: Array<TodoEntity>;
-  tags: Array<string>;
-}
-
-export interface TodoEntity {
-  id: ID;
-  caption: string;
-  completed: boolean;
-}
-
-export interface TasksUIState {
-  openId?: ID;
-  selectedId?: ID;
-}
-
-export type TasksState = {
-  entities: EntitiesMap<TaskEntity>;
-  ui: TasksUIState;
-}
 
 const namespace = 'tasks';
 const taskApi = new Api(namespace);
@@ -61,12 +33,6 @@ const actions = createActionCreators({
   updateTodo: (parentId, id: ID, fields: Partial<TodoEntity>) => ({ parentId, id, fields }),
   removeTodo: (parentId, id: ID) => ({ parentId, id }),
 }, namespace);
-
-const selectors = {
-  siblings: (state: ModelsState, parentId?: ID, sectionId?: ID): EntitiesMap<TaskEntity> => {
-    return state.tasks.entities.filter(task => task.parentId == parentId && task.sectionId == sectionId);
-  },
-};
 
 const getEntityFields = (workspace: WorkspaceEntity) => {
   if (!workspace) {
@@ -94,7 +60,7 @@ const getEntityFields = (workspace: WorkspaceEntity) => {
   return {};
 };
 
-const spec: ModelSpec<TasksState, typeof actions> = {
+const modelSpec: ModelSpec<TasksState, typeof actions> = {
   namespace,
   state: {
     entities: Map<ID, TaskEntity>(),
@@ -120,8 +86,7 @@ const spec: ModelSpec<TasksState, typeof actions> = {
     ...createBaseEntityEffects<TaskEntity>(namespace, actions),
     create: function* ({ workspace, sectionId }) {
       const state: ModelsState = yield select();
-      const workspaceTasks: EntitiesMap<TaskEntity> = workspaceTasksSelector(state, workspace);
-      const siblings = workspaceTasks.filter(task => task.sectionId == sectionId);
+      const siblings: EntitiesMap<TaskEntity> = selectors.byWorkspace(state, workspace, sectionId);
 
       const entityToAdd = {
         ...getEntityFields(workspace),
@@ -151,7 +116,9 @@ const spec: ModelSpec<TasksState, typeof actions> = {
       yield put(actions.update(taskId, getEntityFields({ code: shortcutCode, type: WorkspaceTypes.SHORTCUT })));
     },
     move: function* ({ id, destination: actionDestination }) {
-      const task: TaskEntity = yield select(state => taskSelector(state, id));
+      const task: TaskEntity = yield select(state => selectors.byId(state, id));
+      const workspace: WorkspaceEntity = yield select(workspaceSelectors.selectedWorkspace);
+      const orderBy = workspace.type === WorkspaceTypes.SHORTCUT ? 'order2' : 'order';
 
       const destination = {
         parentId: isUndefined(actionDestination.parentId) ? task.parentId : actionDestination.parentId,
@@ -159,37 +126,44 @@ const spec: ModelSpec<TasksState, typeof actions> = {
         position: actionDestination.position,
       };
 
-      const targetSiblings: EntitiesMap<TaskEntity> = yield select(state => selectors.siblings(state, destination.parentId, destination.sectionId));
+      const targetSiblings: EntitiesMap<TaskEntity> = yield select(state => selectors.siblings(state, workspace, destination.sectionId));
 
+      // move
       if (actionDestination.position == null) {
-        const order = getNextOrder(targetSiblings.toList());
+        const order = getNextOrder(targetSiblings.toList(), orderBy);
         yield put(actions.update(id, { parentId: destination.parentId, sectionId: destination.sectionId, order }));
       } else {
-        let siblingsList = targetSiblings.sortBy(task => task.order).toList();
-        const sourceIndex = siblingsList.findIndex(task => task.id === id);
+        let orderedSiblings = targetSiblings.sortBy(task => task[orderBy]).toList();
+        const sourceIndex = orderedSiblings.findIndex(task => task.id === id);
 
         if (sourceIndex !== -1) {
-          siblingsList = siblingsList.delete(sourceIndex);
+          orderedSiblings = orderedSiblings.delete(sourceIndex);
         }
 
-        siblingsList = siblingsList.insert(actionDestination.position, task);
-        const ids = siblingsList.map(task => task.id).toArray();
+        orderedSiblings = orderedSiblings.insert(actionDestination.position, task);
+        const ids = orderedSiblings.map(task => task.id).toArray();
 
-        // TODO [opt] update only suitable ids
-        yield put(actions.reorder(ids));
+        const fieldsMap = makeOrderFieldsMap(ids, orderBy);
+        // TODO [opt] update only changed entities
+        yield put(actions.batchUpdate(fieldsMap));
 
-        yield put(actions.update(id, { parentId: destination.parentId, sectionId: destination.sectionId }));
+        const isParentChanged = actionDestination.parentId && task.parentId !== actionDestination.parentId;
+        const isSectionChanged = actionDestination.sectionId && task.sectionId !== actionDestination.sectionId;
+
+        if (isParentChanged || isSectionChanged) {
+          yield put(actions.update(id, { parentId: destination.parentId, sectionId: destination.sectionId }));
+        }
       }
     },
   },
 };
 
 export {
-  namespace as tasksNamespace,
-  actions as taskActions,
+  namespace,
+  actions,
 };
 
-export default spec;
+export default modelSpec;
 
 
 
