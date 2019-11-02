@@ -1,14 +1,12 @@
 import React, { useCallback } from 'react';
-import cs from 'classnames';
-import Task from './Task';
-import { TaskUIEntity } from 'store/selectors';
-import Droppable from '../../vendor/dnd/beautiful-dnd/Droppable';
-import './tasks.scss';
-import { DNDSourceItem, DroppableComponentProps } from '../../vendor/dnd';
-import { taskActions } from 'models/task';
 import { useDispatch } from 'react-redux';
-import { DNDDestinationItem } from '../../vendor/dnd/types';
-import { UIComponentType } from '../../common/constants';
+import cs from 'classnames';
+import { TaskUIEntity } from 'store/selectors';
+import { Droppable, DNDSourceItem, DroppableComponentProps, DNDDestinationItem } from 'vendor/dnd';
+import { taskActions } from 'models/task';
+import { UIComponentType } from 'common/constants';
+import Task from '../Task';
+import './tasks.scss';
 
 
 export interface Props {

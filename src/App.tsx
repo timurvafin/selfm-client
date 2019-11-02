@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import 'styles/common.scss';
 import Sidebar from './views/Sidebar/Sidebar';
-import Workspace from './views/Workspace/WorkSpace';
+import WorkspaceRouter from './views/Workspace/WorkSpace';
 import { sectionActions } from './models/section';
 import { projectActions } from './models/project';
 import { taskActions } from './models/task';
@@ -24,7 +24,7 @@ const App = () => {
     <DNDContainer>
       <div id={'app'}>
         <Sidebar />
-        <Workspace />
+        <WorkspaceRouter />
       </div>
     </DNDContainer>
   );

@@ -5,20 +5,6 @@ $hover_bc: #fafafa;
 $transition_duration: .2s;
 $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 
-.task-list-container {
-  margin: 0 -.5rem;
-  min-height: 1em;
-  padding-bottom: 2rem;
-}
-
-.task-list {
-
-}
-
-.task-list--dragging-over {
-
-}
-
 .task-outer {
   display: flex;
   align-items: center;
@@ -274,39 +260,4 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 
 .task:not(.task--completed) .task__checkbox:hover:before {
   background-color: #f5f5f5;
-}
-
-/* ------------------------------------------ */
-/* ---------------- 2. TODOS ---------------- */
-/* ------------------------------------------ */
-.todo {
-  padding: .2em 0;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  align-items: center;
-  font-size: 13px;
-
-  &:last-child {
-    border-color: transparent;
-  }
-}
-
-.todo--done {
-  opacity: .3;
-
-  .todo__caption {
-    text-decoration: line-through;
-  }
-}
-
-.todo__checkbox {
-  @extend %checkbox
-}
-
-.todo__caption {
-  border: 0;
-  background: none;
-  color: #666;
-  font-weight: 300;
-  outline: none;
 }

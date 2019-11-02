@@ -1,10 +1,10 @@
 import React, { ReactNode, useCallback } from 'react';
 import cs from 'classnames';
-import { WorkspaceEntity } from '../../models/workspace';
-import { DNDSourceItem, Droppable, DroppableComponentProps } from '../../vendor/dnd';
-import { Shortcut, UIComponentType, WorkspaceTypes } from '../../common/constants';
+import { WorkspaceEntity } from 'models/workspace';
+import { DNDSourceItem, Droppable, DroppableComponentProps } from 'vendor/dnd';
+import { Shortcut, UIComponentType, WorkspaceTypes } from 'common/constants';
 import { useDispatch } from 'react-redux';
-import { taskActions } from '../../models/task';
+import { taskActions } from 'models/task';
 
 
 export interface Props {

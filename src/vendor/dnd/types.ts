@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { UIComponentType } from '../../common/constants';
+import { UIComponentType } from 'common/constants';
 
 
 export type DNDId = { id: any; type: UIComponentType };

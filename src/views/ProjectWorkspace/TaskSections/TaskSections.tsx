@@ -1,52 +1,46 @@
 import React, { useCallback } from 'react';
-import { WorkspaceEntity } from '../../models/workspace';
+import { WorkspaceEntity } from 'models/workspace';
 import { useDispatch, useSelector } from 'react-redux';
 import { ModelsState } from 'models';
 import { taskSectionsSelector, tasksSelector, TaskUIEntity } from 'store/selectors';
-import Tags from '../Workspace/Tags';
-import TaskList from '../TaskList';
+import Droppable from 'vendor/dnd/beautiful-dnd/Droppable';
+import { DNDSourceItem } from 'vendor/dnd';
+import { workspaceId } from 'common/utils/common';
+import { sectionActions } from 'models/section';
+import { DNDDestinationItem } from 'vendor/dnd/types';
+import { UIComponentType } from 'common/constants';
 import TasksSection from './TasksSection';
-import Droppable from '../../vendor/dnd/beautiful-dnd/Droppable';
-import { DNDSourceItem } from '../../vendor/dnd';
-import { workspaceId } from '../../common/utils/common';
-import { sectionActions } from '../../models/section';
-import { DNDDestinationItem } from '../../vendor/dnd/types';
-import { UIComponentType } from '../../common/constants';
+import { Layouts as Workspace, TaskList } from 'views/Workspace';
 
 
 interface Props {
   workspace: WorkspaceEntity;
 }
 
-const TaskGroups = ({ workspace }: Props) => {
+const TaskSections = ({ workspace }: Props) => {
   const tasks = useSelector<ModelsState, Array<TaskUIEntity>>(state => tasksSelector(state, workspace));
   const woSection = tasks.filter(task => !task.sectionId);
   const sections = useSelector(state => taskSectionsSelector(state, workspace));
 
   return (
     <div>
-      <div className="project__row project__row--tags">
-        <Tags workspace={workspace} />
-      </div>
-
-      <div className="project__row">
+      <Workspace.Row >
         <TaskList
           tasks={woSection}
           sectionId={null}
         />
-      </div>
+      </Workspace.Row>
 
       { sections.map((section, index) => (
-        <div
+        <Workspace.Row
           key={section.id}
-          className="project__row"
         >
           <TasksSection
             id={section.id}
             index={index}
             tasks={tasks.filter(task => task.sectionId == section.id)}
           />
-        </div>
+        </Workspace.Row>
       )) }
     </div>
   );
@@ -68,7 +62,7 @@ const DroppableTaskGroups = (props: Props) => {
       accept={UIComponentType.TASK_SECTION}
       onDrop={onDrop}
     >
-      <TaskGroups {...props} />
+      <TaskSections {...props} />
     </Droppable>
   );
 };

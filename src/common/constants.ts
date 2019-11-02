@@ -1,6 +1,6 @@
 import { ArchiveIcon, CalendarIcon, InboxIcon, LayersIcon, StarIcon } from '../components/Icon';
 import React from 'react';
-import { ShortcutIcon } from '../components/ShortcutIcon/ShortcutIcon';
+import { ShortcutIcon } from '../views/ShortcutWorkspace/ShortcutIcon';
 
 
 export const ENTER_KEY = 'Enter';

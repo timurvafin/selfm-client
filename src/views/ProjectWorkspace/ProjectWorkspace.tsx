@@ -4,27 +4,20 @@ import TextField from 'components/Textfield';
 import RadialProgressBar from 'components/RadialProgressBar';
 
 import Menu from 'components/Menu';
-import './project.scss';
 import { projectSelector, ProjectUIEntity } from 'store/selectors';
 import { ModelsState } from 'store';
 import { CheckIcon, CrossIcon } from 'components/Icon';
 import { ID } from 'common/types';
-import TaskGroups from '../TaskGroups/TaskGroups';
 import { WorkspaceTypes } from 'common/constants';
-import { projectActions } from '../../models/project';
+import { projectActions } from 'models/project';
+import { Layouts as Workspace, Tags as WorkspaceTags } from '../Workspace';
+import TaskSections from './TaskSections';
+import './project.scss';
 
 
-const Project = ({ id }: { id: ID }) => {
-  const project = useSelector<ModelsState, ProjectUIEntity>(state => projectSelector(state, id));
-
+const ProjectWorkspace = ({ id }: { id: ID }) => {
   const dispatch = useDispatch();
 
-  /*const addTask = () => {
-    dispatch(TaskActions.create(id, null));
-  };
-  const addSection = () => {
-    dispatch(SectionsActions.create(id));
-  };*/
   const remove = () => {
     dispatch(projectActions.remove(id));
   };
@@ -38,17 +31,20 @@ const Project = ({ id }: { id: ID }) => {
     { action: remove, name: 'Remove', icon: <CrossIcon />, className: 'project__action--remove' },
   ];
 
+  const project = useSelector<ModelsState, ProjectUIEntity>(state => projectSelector(state, id));
   if (!project) {
     return null;
   }
 
+  const workspace = { type: WorkspaceTypes.PROJECT, code: project.id };
+
   return (
-    <div
+    <Workspace.Container
       // need to reinit view
       key={id}
-      className="project workspace"
+      className="project"
     >
-      <div className="workspace__row workspace__row--caption">
+      <Workspace.CaptionRow>
         <RadialProgressBar
           size={20}
           progress={project.progress}
@@ -65,9 +61,9 @@ const Project = ({ id }: { id: ID }) => {
         />
 
         <Menu items={menuItems} />
-      </div>
+      </Workspace.CaptionRow>
 
-      <div className="workspace__row workspace__row--notes">
+      <Workspace.Row>
         <TextField
           multiline={true}
           placeholder="Заметки"
@@ -75,13 +71,17 @@ const Project = ({ id }: { id: ID }) => {
           className="project__notes"
           value={project.notes}
         />
-      </div>
+      </Workspace.Row>
 
-      <div className="workspace__row workspace__row--body">
-        <TaskGroups workspace={{ type: WorkspaceTypes.PROJECT, code: project.id }} />
-      </div>
-    </div>
+      <Workspace.Row className="project__row--tags">
+        <WorkspaceTags workspace={workspace} />
+      </Workspace.Row>
+
+      <Workspace.BodyRow>
+        <TaskSections workspace={workspace} />
+      </Workspace.BodyRow>
+    </Workspace.Container>
   );
 };
 
-export default Project;
+export default ProjectWorkspace;

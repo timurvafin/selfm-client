@@ -1,0 +1,20 @@
+@import 'include';
+
+.workspace-tags {
+  margin-bottom: 1rem;
+  display: flex;
+}
+
+.workspace-tag {
+  @include clickable();
+
+  border-radius: 1em;
+  padding: .3em .5em;
+  margin-right: .5em;
+  color: $clr_lvl3;
+}
+
+.workspace-tag--selected {
+  background-color: $clr_lvl3;
+  color: #fff;
+}

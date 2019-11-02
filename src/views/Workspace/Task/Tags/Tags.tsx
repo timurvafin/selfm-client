@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import cs from 'classnames';
-import { CrossIcon, HashIcon } from '../../components/Icon';
+import { CrossIcon, HashIcon } from 'components/Icon';
+import TextField from 'components/Textfield';
 
 import './tags.scss';
-import TextField from '../../components/Textfield';
 
 
 const TagItem = ({ tag, onRemove, readonly }) => (

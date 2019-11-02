@@ -1,6 +1,6 @@
 import React from 'react';
-import { ArchiveIcon, CalendarIcon, InboxIcon, LayersIcon, StarIcon } from '../Icon';
-import { Shortcut } from '../../common/constants';
+import { ArchiveIcon, CalendarIcon, InboxIcon, LayersIcon, StarIcon } from 'components/Icon';
+import { Shortcut } from 'common/constants';
 
 import './style.scss';
 

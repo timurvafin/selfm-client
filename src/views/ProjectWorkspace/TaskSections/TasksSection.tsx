@@ -1,17 +1,17 @@
-import React, { useCallback } from 'react';
 import cls from 'classnames';
 import { stopPropagation } from 'common/utils/component';
-import TextField from 'components/Textfield';
-import { useDispatch, useSelector } from 'react-redux';
-import { sectionActions, SectionEntity } from 'models/section';
-import Menu from 'components/Menu';
 import { CrossIcon, PlusIcon } from 'components/Icon';
+import Menu from 'components/Menu';
+import TextField from 'components/Textfield';
+import { sectionActions, SectionEntity } from 'models/section';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { sectionSelector, TaskUIEntity } from 'store/selectors';
-import { ID } from '../../common/types';
-import TaskList from '../TaskList';
-import Draggable from '../../vendor/dnd/beautiful-dnd/Draggable';
-import { DraggableComponentProps } from '../../vendor/dnd';
-import { UIComponentType } from '../../common/constants';
+import { UIComponentType } from 'common/constants';
+import { ID } from 'common/types';
+import { DraggableComponentProps } from 'vendor/dnd';
+import Draggable from 'vendor/dnd/beautiful-dnd/Draggable';
+import TaskList from 'views/Workspace/TaskList';
 
 
 interface Props {

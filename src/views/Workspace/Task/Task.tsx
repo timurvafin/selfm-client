@@ -3,18 +3,20 @@ import classnames from 'classnames';
 import Action from 'components/Action';
 import TextField from 'components/Textfield';
 import Checkbox from 'components/Checkbox';
-import TodoList from './TodoList';
+import TodoList from './TodoList/TodoList';
 import { useDispatch } from 'react-redux';
-import { useOutsideClickHandler } from '../../common/hooks';
-import { stopPropagation } from '../../common/utils/component';
-import { CalendarIcon, ListIcon, TagIcon } from '../../components/Icon';
-import Tags from './Tags';
-import { isEmpty } from '../../common/utils/collection';
-import { TaskUIEntity } from '../../store/selectors';
-import { taskActions } from '../../models/task';
-import { workspaceActions } from '../../models/workspace';
-import { Draggable, DraggableComponentProps } from '../../vendor/dnd';
-import { UIComponentType } from '../../common/constants';
+import { useOutsideClickHandler } from 'common/hooks';
+import { stopPropagation } from 'common/utils/component';
+import { CalendarIcon, ListIcon, TagIcon } from 'components/Icon';
+import Tags from './Tags/Tags';
+import { isEmpty } from 'common/utils/collection';
+import { TaskUIEntity } from 'store/selectors';
+import { taskActions } from 'models/task';
+import { workspaceActions } from 'models/workspace';
+import { Draggable, DraggableComponentProps } from 'vendor/dnd';
+import { UIComponentType } from 'common/constants';
+
+import './task.scss';
 
 
 const useActions = ({ id, isOpen, isSelected, completed }: TaskUIEntity) => {

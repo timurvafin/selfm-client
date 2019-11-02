@@ -4,15 +4,15 @@ import {
   Route
 } from "react-router-dom";
 
-import Project from '../Project';
+import ProjectWorkspace from '../ProjectWorkspace';
 import { Shortcut, WorkspaceTypes } from 'common/constants';
 
-import './workspace.scss';
-import ShortcutWorkspace from './ShortcutWorkspace';
+import ShortcutWorkspace from '../ShortcutWorkspace';
 import WorkspaceActions from './WorkspaceActions';
+import './workspace.scss';
 
 
-const Workspace = () => (
+const WorkspaceRouter = () => (
   <div className="workspace-container">
     <Switch>
       <Route path={`/${WorkspaceTypes.SHORTCUT}/${Shortcut.INBOX}`}>
@@ -31,12 +31,12 @@ const Workspace = () => (
         <ShortcutWorkspace code={Shortcut.SOMEDAY} />
       </Route>
       <Route path={`/${WorkspaceTypes.PROJECT}/:id`}>
-        { ({ match }) => <Project id={match.params.id} />}
+        { ({ match }) => <ProjectWorkspace id={match.params.id} />}
       </Route>
     </Switch>
     <WorkspaceActions />
   </div>
 );
 
-export default Workspace;
+export default WorkspaceRouter;
 

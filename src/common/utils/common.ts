@@ -1,4 +1,4 @@
-import { WorkspaceEntity } from '../../models/workspace';
+import { WorkspaceEntity } from 'models/workspace';
 
 
 export function randomString() {

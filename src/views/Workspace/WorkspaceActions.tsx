@@ -6,13 +6,13 @@ import {
   ListIcon,
   MoreIcon,
   ArrowRightIcon,
-} from '../../components/Icon';
-import Action from '../../components/Action';
-import { useSelectedWorkspace } from '../../common/hooks';
-import { WorkspaceTypes } from '../../common/constants';
-import { taskActions } from '../../models/task';
-import { workspaceActions, WorkspaceEntity, workspaceSelectors } from '../../models/workspace';
-import { sectionActions } from '../../models/section';
+} from 'components/Icon';
+import Action from 'components/Action';
+import { useSelectedWorkspace } from 'common/hooks';
+import { WorkspaceTypes } from 'common/constants';
+import { taskActions } from 'models/task';
+import { workspaceActions, WorkspaceEntity, workspaceSelectors } from 'models/workspace';
+import { sectionActions } from 'models/section';
 
 
 const WorkspaceActions = () => {

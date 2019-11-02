@@ -5,7 +5,9 @@ import { KeyCode } from 'common/constants';
 import cs from 'classnames';
 import { useDispatch } from 'react-redux';
 import { taskActions, TodoEntity } from 'models/task';
-import { ID } from '../../common/types';
+import { ID } from 'common/types';
+
+import './todolist.scss';
 
 
 const TodoItem = ({ onRemove, onCreate, onUpdate, todo, autoFocus }) => {

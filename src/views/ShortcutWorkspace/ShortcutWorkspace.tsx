@@ -1,12 +1,12 @@
 import React from 'react';
-import TasksList from '../TaskList/TaskList';
 import { useSelector } from 'react-redux';
-import { ModelsState } from '../../models';
-import { tasksSelector, TaskUIEntity } from '../../store/selectors';
-import Tags from './Tags';
-import { SHORTCUT_CAPTIONS, SHORTCUT_WORKSPACES } from '../../common/constants';
-import { ShortcutIcon } from '../../components/ShortcutIcon/ShortcutIcon';
-import { isEmpty } from '../../common/utils/collection';
+import { SHORTCUT_CAPTIONS, SHORTCUT_WORKSPACES } from 'common/constants';
+import { isEmpty } from 'common/utils/collection';
+import { ModelsState } from 'models';
+import { tasksSelector, TaskUIEntity } from 'store/selectors';
+import { ShortcutIcon } from './ShortcutIcon';
+import { Layouts as Workspace, Tags as WorkspaceTags, TaskList } from '../Workspace';
+import './style.scss';
 
 
 const EmptyShortcutContent = ({ code }) => (
@@ -25,27 +25,27 @@ const ShortcutWorkspace = ({ code }) => {
   const tasks = useSelector<ModelsState, Array<TaskUIEntity>>(state => tasksSelector(state, workspace));
 
   return (
-    <div className={'workspace workspace--shortcut'}>
-      <div className="workspace__row workspace__row--caption">
+    <Workspace.Container className={'shortcut'}>
+      <Workspace.CaptionRow>
         <ShortcutIcon
           code={code}
           className="workspace__icon"
         />
         <div className="workspace__caption">
-          { caption }
+          {caption}
         </div>
-      </div>
-      <div className="workspace__row workspace__row--tags">
-        <Tags workspace={workspace} />
-      </div>
-      <div className="workspace__row workspace__row--body">
+      </Workspace.CaptionRow>
+      <Workspace.Row className="shortcut-row--tags">
+        <WorkspaceTags workspace={workspace} />
+      </Workspace.Row>
+      <Workspace.BodyRow>
         {isEmpty(tasks) && <EmptyShortcutContent code={code} />}
-        <TasksList
+        <TaskList
           tasks={tasks}
-          sectionId={'all'}
+          sectionId={null}
         />
-      </div>
-    </div>
+      </Workspace.BodyRow>
+    </Workspace.Container>
   );
 };
 

@@ -5,14 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { projectsSelector, workspaceTasksSelector } from 'store/selectors';
 import { useActions, useSelectedWorkspace } from 'common/hooks';
 import { PlusIcon } from 'components/Icon';
-import { Shortcut, SHORTCUT_CAPTIONS, SHORTCUT_WORKSPACES, WorkspaceTypes } from '../../common/constants';
+import { Shortcut, SHORTCUT_CAPTIONS, SHORTCUT_WORKSPACES, WorkspaceTypes } from 'common/constants';
 
 import './sidebar.scss';
-import { ShortcutIcon } from '../../components/ShortcutIcon/ShortcutIcon';
-import { projectActions } from '../../models/project';
-import { workspaceActions, WorkspaceEntity } from '../../models/workspace';
+import { ShortcutIcon } from 'views/ShortcutWorkspace/ShortcutIcon';
+import { projectActions } from 'models/project';
+import { workspaceActions, WorkspaceEntity } from 'models/workspace';
 import SidebarLink from './SidebarLInk';
-import { isWorkspacesEqual } from '../../common/utils/common';
+import { isWorkspacesEqual } from 'common/utils/common';
 
 
 const ProjectIcon = ({ progress }) => (

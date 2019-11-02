@@ -1,36 +1,11 @@
 @import 'include';
 
-/* ------------------------------------------ */
-/* --------------- 1. PROJECT --------------- */
-/* ------------------------------------------ */
 .project {
   input, textarea {
     @include placeholder() {
       color: #ccc;
     }
   }
-}
-
-.project__row {
-  margin-bottom: 1rem;
-}
-
-.project__row--caption {
-  display: flex;
-  align-items: center;
-  margin-top: 1rem;
-}
-
-.project__row--notes {
-  //  margin-left: 2em;
-}
-
-.project__row--actions {
-  padding: 0 .5em;
-}
-
-.project__action {
-  margin-right: 1em;
 }
 
 .project__progress-bar {
@@ -63,27 +38,8 @@
   line-height: 1.4;
 }
 
-.project__action {
-  color: $clr_accent;
-
-  .action__icon {
-    font-weight: bold;
-    font-size: 85%;
-  }
-
-  &:hover {
-    .action__name {
-      text-decoration: underline;
-    }
-  }
-}
-
 .project__row--tags {
   margin-top: 5em;
-}
-
-.task-section {
-
 }
 
 .task-section__header {
