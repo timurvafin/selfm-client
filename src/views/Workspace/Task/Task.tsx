@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useCallback, useState } from 'react';
+import React, { MutableRefObject, useCallback, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import Action from 'components/Action';
 import TextField from 'components/Textfield';
@@ -24,6 +24,9 @@ const useActions = ({ id, isOpen, isSelected, completed }: TaskUIEntity) => {
   return {
     update: useCallback((values) => {
       dispatch(taskActions.update(id, values));
+    }, [id]),
+    updateCaption: useCallback((caption) => {
+      dispatch(taskActions.updateCaption(id, caption));
     }, [id]),
     setComplete: useCallback((completed) => {
       dispatch(taskActions.update(id, { completed }));
@@ -53,6 +56,14 @@ const Task = ({ task, isDragging }: Props & DraggableComponentProps) => {
 
   const actions = useActions(task);
   const [showTags, setShowTags] = useState(!isEmpty(task.tags));
+  const [captionInputValue, setCaptionInputValue] = useState(caption);
+
+  useEffect(
+    () => {
+      setShowTags(!isEmpty(task.tags));
+    },
+    [task.tags]
+  );
 
   const classNames = classnames('task', {
     ['task--open']: isOpen,
@@ -100,12 +111,19 @@ const Task = ({ task, isDragging }: Props & DraggableComponentProps) => {
           <TextField
             transparent
             multiline
-            value={caption}
+            controlled
+            value={captionInputValue}
+            onChange={setCaptionInputValue}
+            onCancel={() => setCaptionInputValue(caption)}
             onMouseDown={stopPropagation}
             tabIndex={-1}
             className="task__caption"
             autoFocus={isNew}
-            onChange={caption => actions.update({ caption })}
+            onEnter={(e) => {
+              actions.updateCaption(captionInputValue);
+              e.preventDefault();
+              actions.setOpen(false);
+            }}
           />
         ) : (
           <div className="task__caption">{caption}</div>

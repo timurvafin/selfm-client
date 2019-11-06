@@ -60,6 +60,7 @@ export interface BaseTaskEntity extends BaseEntity, Completable {
   sectionId?: ID;
   // type: 'project' | 'task';
   startTime?: number;
+  deadline?: number;
   startTimeTag?: string;
   notes?: string;
   caption: string;

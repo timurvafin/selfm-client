@@ -9,8 +9,15 @@ import { WorkspaceEntity } from '../workspace';
 
 
 const shortcutTaskPredicates = {
-  [Shortcut.INBOX]: (task: TaskEntity) => !task.startTime && !task.startTimeTag && !task.parentId,
-  [Shortcut.TODAY]: (task: TaskEntity) => task.startTime && new Date(task.startTime) <= new Date(),
+  [Shortcut.INBOX]: (task: TaskEntity) => !task.startTime && !task.startTimeTag && !task.parentId && !task.completed,
+  [Shortcut.TODAY]: (task: TaskEntity) => {
+    // TODO:impl change logic
+    if (!task.startTime) {
+      return false;
+    }
+
+    return Date.now() - task.startTime < 3600 * 24 * 1000;
+  },
   [Shortcut.PLANS]: (task: TaskEntity) => !!task.startTime,
   [Shortcut.ANYTIME]: (task: TaskEntity) => task.startTimeTag === 'anytime',
   [Shortcut.SOMEDAY]: (task: TaskEntity) => task.startTimeTag === 'someday',

@@ -17,6 +17,7 @@ import { Shortcut, WorkspaceTypes } from 'common/constants';
 import { isUndefined } from 'common/utils/common';
 import { TaskEntity, TasksState, TodoEntity } from './index';
 import * as selectors from './selectors';
+import { extractFieldsValuesFromStr, getEntityFieldsByWorkspace, mergeCollectionFieldValues } from './utils';
 
 
 const namespace = 'tasks';
@@ -27,38 +28,13 @@ const actions = createActionCreators({
   create: (workspace?: WorkspaceEntity, sectionId?: ID) => ({ workspace, sectionId }),
   move: (id: ID, destination: { parentId?: ID; sectionId?: ID; position?: number }) => ({ id, destination }),
   setShortcut: (taskId: ID, shortcutCode: Shortcut) => ({ taskId, shortcutCode }),
+  updateCaption: (id: ID, caption: string) => ({ id, caption }),
   // todos
   createTodo: (parentId: ID) => ({ parentId }),
   addTodo: (entity: TodoEntity) => ({ entity }),
   updateTodo: (parentId, id: ID, fields: Partial<TodoEntity>) => ({ parentId, id, fields }),
   removeTodo: (parentId, id: ID) => ({ parentId, id }),
 }, namespace);
-
-const getEntityFields = (workspace: WorkspaceEntity) => {
-  if (!workspace) {
-    return {};
-  }
-
-  if (workspace.type === WorkspaceTypes.PROJECT) {
-    return { parentId: workspace.code };
-  }
-
-  if (workspace.type === WorkspaceTypes.SHORTCUT) {
-    const handlers = {
-      [Shortcut.INBOX]: () => ({ startTime: null, startTimeTag: null, parentId: null, sectionId: null }),
-      [Shortcut.TODAY]: () => ({ startTime: Date.now(), startTimeTag: null }),
-      [Shortcut.PLANS]: () => ({ startTime: Date.now() + 24 * 3600, startTimeTag: null }),
-      [Shortcut.ANYTIME]: () => ({ startTimeTag: 'anytime', startTime: null }),
-      [Shortcut.SOMEDAY]: () => ({ startTimeTag: 'someday', startTime: null }),
-    };
-
-    if (handlers[workspace.code]) {
-      return handlers[workspace.code]();
-    }
-  }
-
-  return {};
-};
 
 const modelSpec: ModelSpec<TasksState, typeof actions> = {
   namespace,
@@ -84,17 +60,35 @@ const modelSpec: ModelSpec<TasksState, typeof actions> = {
   },
   effects: {
     ...createBaseEntityEffects<TaskEntity>(namespace, actions),
+    updateCaption: function* ({ id, caption }) {
+      if (!caption) {
+        yield put(actions.update(id, { caption: '' }));
+      }
+
+      const [cleanCaption, stringToParse] = caption.split('//');
+      let fieldsToUpdate = { caption: cleanCaption };
+
+      if (stringToParse) {
+        const task: TaskEntity = yield select(state => selectors.byId(state, id));
+        const extractedValues = extractFieldsValuesFromStr(stringToParse);
+        const values = mergeCollectionFieldValues(extractedValues, task);
+        fieldsToUpdate = { ...fieldsToUpdate, ...values };
+      }
+
+      yield put(actions.update(id, fieldsToUpdate));
+    },
     create: function* ({ workspace, sectionId }) {
       const state: ModelsState = yield select();
       const siblings: EntitiesMap<TaskEntity> = selectors.byWorkspace(state, workspace, sectionId);
 
       const entityToAdd = {
-        ...getEntityFields(workspace),
+        ...getEntityFieldsByWorkspace(workspace),
         caption: '',
         sectionId,
         completed: false,
         tags: [],
-        order: getNextOrder(siblings.toList()),
+        order: getNextOrder(siblings.toList(), 'order'),
+        order2: getNextOrder(siblings.toList(), 'order2'),
         todoList: [],
       };
 
@@ -113,7 +107,7 @@ const modelSpec: ModelSpec<TasksState, typeof actions> = {
       }));
     },
     setShortcut: function* ({ taskId, shortcutCode }) {
-      yield put(actions.update(taskId, getEntityFields({ code: shortcutCode, type: WorkspaceTypes.SHORTCUT })));
+      yield put(actions.update(taskId, getEntityFieldsByWorkspace({ code: shortcutCode, type: WorkspaceTypes.SHORTCUT })));
     },
     move: function* ({ id, destination: actionDestination }) {
       const task: TaskEntity = yield select(state => selectors.byId(state, id));

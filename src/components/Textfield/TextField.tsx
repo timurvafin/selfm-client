@@ -13,7 +13,8 @@ export interface Props extends HTMLProps<HTMLInputElement> {
   multiline?: boolean;
   className?: string;
   onChange: (value: string) => void;
-  onEnter?: () => void;
+  onEnter?: (e: React.KeyboardEvent<HTMLInputElement>, node: HTMLInputElement) => void;
+  onCancel?: () => void;
   autoFocus?: boolean;
   controlled?: boolean;
   transparent?: boolean;
@@ -46,9 +47,9 @@ const TextField = ({
 
   useEffect(
     () => {
-
+      setInputValue(value);
     },
-    [value, inputValue]
+    [value]
   );
 
   const onType = useCallback(
@@ -73,7 +74,6 @@ const TextField = ({
       if (inputValue !== value) {
         setInputValue(value);
       }
-      setTimeout(() => ref.current.blur());
     },
     [value, inputValue]
   );
@@ -98,9 +98,11 @@ const TextField = ({
           if (!controlled) {
             cancel();
           }
+          setTimeout(() => ref.current.blur());
+          props.onCancel && props.onCancel();
           break;
         case KeyCode.ENTER:
-          onEnter && onEnter();
+          onEnter && onEnter(e, ref.current);
           // submit();
           break;
       }
@@ -109,7 +111,7 @@ const TextField = ({
         props.onKeyDown(e);
       }
     },
-    [cancel, onEnter, props.onKeyDown]
+    [cancel, onEnter, props.onKeyDown, props.onCancel]
   );
 
   const cls = cs('textfield', className, {
