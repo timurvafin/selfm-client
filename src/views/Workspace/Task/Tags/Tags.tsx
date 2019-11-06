@@ -4,14 +4,15 @@ import { CrossIcon, HashIcon } from 'components/Icon';
 import TextField from 'components/Textfield';
 
 import './tags.scss';
+import Action from 'components/Action';
 
 
 const TagItem = ({ tag, onRemove, readonly }) => (
   <div className={cs('tag', readonly && 'tag--readonly')}>
-    <CrossIcon
-      onClick={onRemove}
-      className={'tag__cross'}
-    />
+    <Action action={onRemove}>
+      <CrossIcon className={'tag__cross'} />
+    </Action>
+
     <HashIcon className={'tag__hash'} />
     <span className={'tag__caption'}>{tag}</span>
   </div>

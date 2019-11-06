@@ -12,9 +12,10 @@ interface Props {
   className?: string;
   iconClassName?: string;
   hoverClr?: string;
+  children?: ReactNode;
 }
 
-export default function Action({ className, action, icon, name }: Props) {
+export default function Action({ className, action, icon, name, children }: Props) {
   const onClick = useCallback(
     (e) => {
       e.preventDefault();
@@ -26,12 +27,13 @@ export default function Action({ className, action, icon, name }: Props) {
   );
 
   return (
-    <div
+    <span
       className={cs('action', className)}
       onMouseDown={onClick}
     >
       {icon || null}
+      {children}
       {name && <span className="action__name">{name}</span>}
-    </div>
+    </span>
   );
 }
