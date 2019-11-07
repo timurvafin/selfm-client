@@ -20,7 +20,7 @@ module.exports =  {
     // BASE
     "semi": ["warn", "always"],
     "object-curly-spacing": ["error", "always"],
-    "arrow-body-style": ["error", "as-needed"],
+    // "arrow-body-style": ["error", "as-needed"],
     "max-statements-per-line": ["error", { "max": 1 }],
     "max-depth": ["error", 3],
     // TYPESCRIPT

@@ -65,6 +65,13 @@ const Task = ({ task, isDragging }: Props & DraggableComponentProps) => {
     [task.tags]
   );
 
+  useEffect(
+    () => {
+      setShowTags(!isEmpty(task.tags));
+    },
+    [task]
+  );
+
   const classNames = classnames('task', {
     ['task--open']: isOpen,
     ['task--completed']: completed,
@@ -119,6 +126,9 @@ const Task = ({ task, isDragging }: Props & DraggableComponentProps) => {
             tabIndex={-1}
             className="task__caption"
             autoFocus={isNew}
+            onBlur={() => {
+              actions.updateCaption(captionInputValue);
+            }}
             onEnter={(e) => {
               actions.updateCaption(captionInputValue);
               e.preventDefault();

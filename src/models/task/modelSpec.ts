@@ -65,7 +65,7 @@ const modelSpec: ModelSpec<TasksState, typeof actions> = {
         yield put(actions.update(id, { caption: '' }));
       }
 
-      const [cleanCaption, stringToParse] = caption.split('//');
+      const [cleanCaption, stringToParse] = caption.split(' // ');
       let fieldsToUpdate = { caption: cleanCaption };
 
       if (stringToParse) {

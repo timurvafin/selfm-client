@@ -3,15 +3,15 @@ import * as ajax from '../common/utils/ajax';
 
 
 export default class Api {
-  entity: string;
+  entityNamespace: string;
   baseUrl = `${location.protocol}//${location.hostname}:9000`;
   
-  constructor(entity) {
-    this.entity = entity;
+  constructor(entityNamespace) {
+    this.entityNamespace = entityNamespace;
   }
 
   makeUrl(action) {
-    return `${this.baseUrl}/${this.entity}/${action}`;
+    return `${this.baseUrl}/${this.entityNamespace}/${action}`;
   }
 
   list = (type?: string) => {

@@ -64,3 +64,11 @@
   color: $clr_accent;
   font-size: 13px;
 }
+
+.task-section-wrap:empty {
+  display: none;
+}
+
+.task-section-wrap + .task-section-wrap {
+  margin-top: 2rem;
+}

@@ -63,7 +63,7 @@ const TextField = ({
       }
 
       if (autosize) {
-        setStyle({ width: (val || placeholder || '').length + 'ch' });
+        setStyle({ width: 1 + (val || placeholder || '').length + 'ch' });
       }
     },
     []

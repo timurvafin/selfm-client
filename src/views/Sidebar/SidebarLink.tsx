@@ -52,7 +52,7 @@ const DroppableLink = (props: Props) => {
   return (
     <Droppable
       id={`${props.workspace.type}-${props.workspace.code}`}
-      // Disable moving in the same project
+      // Disable move task to the same project
       isDisabled={props.workspace.type === WorkspaceTypes.PROJECT && props.isSelected}
       mode={'copy'}
       onDrop={onDrop}

@@ -21,9 +21,9 @@ export const extractFieldsValuesFromStr = (str: string) => {
   };
 
   const parseTags = (str) => {
-    const matchRes = str.match(/#([\S]+)/);
+    const matchRes = str.match(/#([\S]+)/g);
 
-    return matchRes ? matchRes.slice(1) : [];
+    return matchRes ? matchRes.map(tag => tag.substr(1)) : [];
   };
 
   const values = {

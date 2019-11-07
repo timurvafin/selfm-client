@@ -16,7 +16,10 @@ const shortcutTaskPredicates = {
       return false;
     }
 
-    return Date.now() - task.startTime < 3600 * 24 * 1000;
+    const today = new Date();
+    today.setHours(0, 0, 0);
+
+    return task.startTime - today.getTime()  < 3600 * 24 * 1000;
   },
   [Shortcut.PLANS]: (task: TaskEntity) => !!task.startTime,
   [Shortcut.ANYTIME]: (task: TaskEntity) => task.startTimeTag === 'anytime',

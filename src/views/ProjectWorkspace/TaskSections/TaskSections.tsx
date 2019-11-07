@@ -10,6 +10,7 @@ import { DNDSourceItem } from 'vendor/dnd';
 import Droppable from 'vendor/dnd/beautiful-dnd/Droppable';
 import { DNDDestinationItem } from 'vendor/dnd/types';
 import { DroppableTaskList } from 'views/Workspace';
+import { isEmpty } from '../../../common/utils/collection';
 import { taskActions } from '../../../models/task';
 import TasksSection from './TasksSection';
 
@@ -33,16 +34,20 @@ const TaskSections = ({ workspace }: Props) => {
 
   return (
     <div>
-      <DroppableTaskList
-        tasks={woSection}
-        id={'empty-section-task-list'}
-        orderBy={'order'}
-        onTaskDrop={onTaskDrop}
-      />
+      { !isEmpty(woSection) && (
+        <div className={'task-section-wrap'}>
+          <DroppableTaskList
+            tasks={woSection}
+            id={'empty-section-task-list'}
+            orderBy={'order'}
+            onTaskDrop={onTaskDrop}
+          />
+        </div>
+      )}
 
       {sections.map((section, index) => (
         <div
-          style={{ marginTop: '2rem' }}
+          className={'task-section-wrap'}
           key={section.id}
         >
           <TasksSection

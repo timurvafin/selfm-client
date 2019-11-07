@@ -32,7 +32,7 @@ const selectRouterParams = (state: RootState, path) => {
 
 const workspacePath = (workspace: WorkspaceEntity | any) => workspace ? `/${workspace.type}/${workspace.code}` : '';
 
-// TODO [impl] check entity existance in selectors in effects
+// TODO [impl] check entityNamespace existance in selectors in effects
 const selectors = {
   selectedTag: (state: RootState) => {
     const location = state.router.location;
