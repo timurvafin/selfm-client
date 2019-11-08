@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { projectsSelector } from 'store/selectors';
 import { useActions, useSelectedWorkspace } from 'common/hooks';
 import { PlusIcon } from 'components/Icon';
-import { Shortcut, SHORTCUT_CAPTIONS, SHORTCUT_WORKSPACES, WorkspaceTypes } from 'common/constants';
+import { Shortcut, SHORTCUT_CAPTIONS, SHORTCUT_WORKSPACES, UIComponentType, WorkspaceTypes } from 'common/constants';
 
 import './sidebar.scss';
 import { ShortcutIcon } from 'views/ShortcutWorkspace/ShortcutIcon';
@@ -24,9 +24,10 @@ const ProjectIcon = ({ progress }) => (
   />
 );
 
-const LinkList = ({ specs, isWorkspaceSelected, selectWorkspace }) => specs.map((spec) => (
+const LinkList = ({ specs, isWorkspaceSelected, selectWorkspace, type }) => specs.map((spec) => (
   <SidebarLink
     key={`${spec.workspace.type}-${spec.workspace.code}`}
+    type={type}
     workspace={spec.workspace}
     onSelect={() => selectWorkspace(spec.workspace)}
     icon={spec.icon}
@@ -88,6 +89,7 @@ const Sidebar = () => {
     <div className="sidebar">
       <div className="sidebar__shortcuts">
         <LinkList
+          type={UIComponentType.SIDEBAR_SHORTCUT}
           specs={shortcutWorkspaceSpecs}
           selectWorkspace={selectWorkspace}
           isWorkspaceSelected={isWorkspaceSelected}
@@ -96,6 +98,7 @@ const Sidebar = () => {
 
       <div className="sidebar__projects">
         <LinkList
+          type={UIComponentType.SIDEBAR_PROJECT}
           specs={projectsSpecs}
           selectWorkspace={selectWorkspace}
           isWorkspaceSelected={isWorkspaceSelected}

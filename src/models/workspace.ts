@@ -9,7 +9,7 @@ import { put, select } from '@redux-saga/core/effects';
 import { matchPath } from "react-router";
 import { RootState } from '../store';
 import { Location } from 'history';
-import { DNDSourceItem } from '../vendor/dnd';
+import { DNDSourceItem } from '../vendor/dnd/beautiful-dnd';
 
 
 export interface WorkspaceEntity { code: string; type: 'project' | 'shortcut' }

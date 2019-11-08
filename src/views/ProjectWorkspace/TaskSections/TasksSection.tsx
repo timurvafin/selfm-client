@@ -9,10 +9,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { sectionSelector, TaskUIEntity } from 'store/selectors';
 import { UIComponentType } from 'common/constants';
 import { ID } from 'common/types';
-import { DNDDestinationItem, DNDSourceItem, DraggableComponentProps } from 'vendor/dnd';
-import Draggable from 'vendor/dnd/beautiful-dnd/Draggable';
-import { DroppableTaskList } from 'views/Workspace';
+import { SortableTaskList } from 'views/Workspace';
 import { taskActions } from 'models/task';
+import { DraggableItem } from 'vendor/dnd/react-dnd';
+import { SortableElement } from 'vendor/dnd/react-dnd/sortable';
 
 
 interface Props {
@@ -21,7 +21,7 @@ interface Props {
   tasks: Array<TaskUIEntity>;
 }
 
-const TasksSection = ({ id, tasks, isDragging }: Props & DraggableComponentProps) => {
+const TasksSection = ({ id, tasks }: Props) => {
   const section: SectionEntity = useSelector(state => sectionSelector(state, id));
 
   const dispatch = useDispatch();
@@ -35,10 +35,10 @@ const TasksSection = ({ id, tasks, isDragging }: Props & DraggableComponentProps
     // dispatch(TaskActions.create(projectId, section.id));
   };
 
-  const onTaskDrop = useCallback((sourceItem: DNDSourceItem, destinationItem: DNDDestinationItem) => {
+  const onTaskMove = useCallback((sourceItem: DraggableItem, position: number) => {
     dispatch(taskActions.move(sourceItem.id, {
       sectionId: id,
-      position: destinationItem.index,
+      position,
     }));
   }, []);
 
@@ -48,7 +48,7 @@ const TasksSection = ({ id, tasks, isDragging }: Props & DraggableComponentProps
   ];
 
   const classNames = cls('task-section', {
-    ['task-section--dragging']: isDragging,
+    // ['task-section--dragging']: isDragging,
   });
 
   return section && (
@@ -64,10 +64,10 @@ const TasksSection = ({ id, tasks, isDragging }: Props & DraggableComponentProps
         />
         <Menu items={menuItems} />
       </div>
-      <DroppableTaskList
+      <SortableTaskList
         tasks={tasks}
         id={`task-list-${id}`}
-        onTaskDrop={onTaskDrop}
+        onTaskMove={onTaskMove}
         orderBy={'order'}
       />
     </div>
@@ -75,13 +75,20 @@ const TasksSection = ({ id, tasks, isDragging }: Props & DraggableComponentProps
 };
 
 const DraggableTaskSection = (props: Props) => (
-  <Draggable
+  <SortableElement
     index={props.index}
     id={props.id}
     type={UIComponentType.TASK_SECTION}
   >
-    <TasksSection {...props} />
-  </Draggable>
+    {({ setRef, isDragging }) => (
+      <div
+        ref={setRef}
+        className={cls('task-section-wrapper', isDragging && 'task-section-wrapper--dragging')}
+      >
+        <TasksSection {...props} />
+      </div>
+    )}
+  </SortableElement>
 );
 
 export default DraggableTaskSection;

@@ -6,9 +6,9 @@ import { isEmpty } from 'common/utils/collection';
 import { ModelsState } from 'models';
 import { tasksSelector, TaskUIEntity } from 'store/selectors';
 import { taskActions } from '../../models/task';
-import { DNDDestinationItem, DNDSourceItem } from '../../vendor/dnd';
+import { DraggableItem } from 'vendor/dnd/react-dnd';
 import { ShortcutIcon } from './ShortcutIcon';
-import { Layouts as Workspace, Tags as WorkspaceTags, DroppableTaskList } from '../Workspace';
+import { Layouts as Workspace, Tags as WorkspaceTags, SortableTaskList } from '../Workspace';
 import './style.scss';
 
 
@@ -51,9 +51,9 @@ const ShortcutWorkspace = ({ code }) => {
   }, {});
   const parentIds = Object.keys(groups);
   const dispatch = useDispatch();
-  const onTaskDrop = useCallback((sourceItem: DNDSourceItem, destinationItem: DNDDestinationItem) => {
+  const onTaskMove = useCallback((sourceItem: DraggableItem, position: number) => {
     dispatch(taskActions.move(sourceItem.id, {
-      position: destinationItem.index,
+      position,
     }));
   }, []);
 
@@ -70,19 +70,19 @@ const ShortcutWorkspace = ({ code }) => {
       </Workspace.Row>
       <Workspace.BodyRow className={'shortcut__body'}>
         {isEmpty(tasks) && <EmptyShortcutContent code={code} />}
-        <DroppableTaskList
+        <SortableTaskList
           id={`task-group-wo-parent`}
           tasks={woParent}
-          onTaskDrop={onTaskDrop}
+          onTaskMove={onTaskMove}
           orderBy={'order2'}
         />
         {parentIds.map(parentId => (
           <div key={parentId} className={'task-group'}>
             { parentId && <ProjectName id={parentId} /> }
-            <DroppableTaskList
+            <SortableTaskList
               id={`task-group-${parentId}`}
               tasks={groups[parentId]}
-              onTaskDrop={onTaskDrop}
+              onTaskMove={onTaskMove}
               orderBy={'order2'}
             />
           </div>

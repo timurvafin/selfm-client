@@ -1,6 +1,6 @@
 import { DropResult } from 'react-beautiful-dnd';
 import { decodeDroppableId } from './utils';
-import { DropHandler } from '../types';
+import { DropHandler } from './types';
 
 
 export default (dropHandlersRegistry: Map<string, DropHandler>) => (result: DropResult) => {

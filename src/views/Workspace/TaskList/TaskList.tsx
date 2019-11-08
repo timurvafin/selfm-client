@@ -1,7 +1,6 @@
 import React from 'react';
 import cs from 'classnames';
 import { TaskUIEntity } from 'store/selectors';
-import { DroppableComponentProps } from 'vendor/dnd';
 import Task, { DraggableTask } from '../Task';
 import './tasks.scss';
 
@@ -12,9 +11,8 @@ export interface Props {
   droppable?: boolean;
 }
 
-const TasksList = ({ tasks, orderBy, droppable, isDraggingOver }: Props & DroppableComponentProps) => {
+const TasksList = ({ tasks, orderBy, droppable }: Props) => {
   const cls = cs('task-list', {
-    ['task-list--dragging-over']: isDraggingOver,
   });
 
   if (orderBy) {

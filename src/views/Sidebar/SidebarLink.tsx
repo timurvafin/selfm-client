@@ -1,10 +1,10 @@
-import React, { ReactNode, useCallback } from 'react';
 import cs from 'classnames';
-import { WorkspaceEntity } from 'models/workspace';
-import { DNDSourceItem, Droppable, DroppableComponentProps } from 'vendor/dnd';
 import { Shortcut, UIComponentType, WorkspaceTypes } from 'common/constants';
-import { useDispatch } from 'react-redux';
 import { taskActions } from 'models/task';
+import { WorkspaceEntity } from 'models/workspace';
+import React, { ReactNode, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { Droppable, DraggableItem } from 'vendor/dnd/react-dnd';
 
 
 export interface Props {
@@ -15,9 +15,10 @@ export interface Props {
   className?: string;
   workspace: WorkspaceEntity;
   count?: number;
+  isDraggingOver?: boolean;
 }
 
-const SidebarLink = ({ caption, onSelect, isSelected, icon, className, count, isDraggingOver }: Props & DroppableComponentProps) => {
+const SidebarLink = ({ caption, onSelect, isSelected, icon, className, count, isDraggingOver }: Props) => {
   const cls = cs('sidebar-link', className, {
     ['sidebar-link--selected']: isSelected,
     ['sidebar-link--dragging-over']: isDraggingOver,
@@ -30,14 +31,14 @@ const SidebarLink = ({ caption, onSelect, isSelected, icon, className, count, is
     >
       <div className="sidebar-link__icon">{icon}</div>
       <div className="sidebar-link__caption">{caption}</div>
-      { count && <div className="sidebar-link__count">{count}</div> }
+      {count && <div className="sidebar-link__count">{count}</div>}
     </div>
   );
 };
 
-const DroppableLink = (props: Props) => {
+const DroppableLink = ({ type, ...props }: Props & { type: UIComponentType }) => {
   const dispatch = useDispatch();
-  const onDrop = useCallback((sourceItem: DNDSourceItem) => {
+  const onDrop = useCallback((sourceItem: DraggableItem) => {
     if (sourceItem.type === UIComponentType.TASK) {
       if (props.workspace.type === WorkspaceTypes.PROJECT) {
         dispatch(taskActions.move(sourceItem.id, { parentId: props.workspace.code, sectionId: null }));
@@ -52,13 +53,20 @@ const DroppableLink = (props: Props) => {
   return (
     <Droppable
       id={`${props.workspace.type}-${props.workspace.code}`}
-      // Disable move task to the same project
-      isDisabled={props.workspace.type === WorkspaceTypes.PROJECT && props.isSelected}
-      mode={'copy'}
+      type={type}
+      // Disable move task to the same workspace
+      canDrop={() => !props.isSelected}
       onDrop={onDrop}
       accept={UIComponentType.TASK}
     >
-      <SidebarLink {...props} />
+      {({ setRef, isOver }) => (
+        <div ref={setRef}>
+          <SidebarLink
+            {...props}
+            isDraggingOver={isOver}
+          />
+        </div>
+      )}
     </Droppable>
   );
 };

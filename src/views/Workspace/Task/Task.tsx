@@ -13,7 +13,6 @@ import { isEmpty } from 'common/utils/collection';
 import { TaskUIEntity } from 'store/selectors';
 import { taskActions } from 'models/task';
 import { workspaceActions } from 'models/workspace';
-import { DraggableComponentProps } from 'vendor/dnd';
 
 import './task.scss';
 
@@ -51,7 +50,7 @@ export interface Props {
   task: TaskUIEntity;
 }
 
-const Task = ({ task, isDragging }: Props & DraggableComponentProps) => {
+const Task = ({ task }: Props) => {
   const { completed, notes, isOpen, isSelected, caption, isNew } = task;
 
   const actions = useActions(task);
@@ -76,7 +75,7 @@ const Task = ({ task, isDragging }: Props & DraggableComponentProps) => {
     ['task--open']: isOpen,
     ['task--completed']: completed,
     ['task--selected']: isSelected,
-    ['task--dragging']: isDragging,
+    // ['task--dragging']: isDragging,
     // ['task--can-combined']: canCombined,
   });
 
@@ -100,7 +99,6 @@ const Task = ({ task, isDragging }: Props & DraggableComponentProps) => {
 
   return (
     <div
-      data-caption={task.caption}
       className={classNames}
       ref={outsideClickHandlerRef}
       onClick={onClick}

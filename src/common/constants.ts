@@ -39,6 +39,7 @@ export enum UIComponentType {
   TASK = 'task',
   PROJECT = 'project',
   TASK_SECTION = 'task-section',
+  TASK_GROUP = 'task-group',
   TASK_LIST = 'task-list',
   SIDEBAR_PROJECT = 'sidebar-project',
   SIDEBAR_SHORTCUT = 'sidebar-shortcut',

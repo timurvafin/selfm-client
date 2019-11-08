@@ -6,12 +6,11 @@ import { WorkspaceEntity } from 'models/workspace';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { taskSectionsSelector, tasksSelector, TaskUIEntity } from 'store/selectors';
-import { DNDSourceItem } from 'vendor/dnd';
-import Droppable from 'vendor/dnd/beautiful-dnd/Droppable';
-import { DNDDestinationItem } from 'vendor/dnd/types';
-import { DroppableTaskList } from 'views/Workspace';
+import { SortableTaskList } from 'views/Workspace';
 import { isEmpty } from '../../../common/utils/collection';
 import { taskActions } from '../../../models/task';
+import { DraggableItem } from '../../../vendor/dnd/react-dnd';
+import { MoveHandler, Sortable } from '../../../vendor/dnd/react-dnd/sortable';
 import TasksSection from './TasksSection';
 
 
@@ -25,10 +24,10 @@ const TaskSections = ({ workspace }: Props) => {
   const sections = useSelector(state => taskSectionsSelector(state, workspace));
 
   const dispatch = useDispatch();
-  const onTaskDrop = useCallback((sourceItem: DNDSourceItem, destinationItem: DNDDestinationItem) => {
+  const onTaskMove: MoveHandler = useCallback((sourceItem: DraggableItem, position: number) => {
     dispatch(taskActions.move(sourceItem.id, {
       sectionId: null,
-      position: destinationItem.index,
+      position,
     }));
   }, []);
 
@@ -36,11 +35,11 @@ const TaskSections = ({ workspace }: Props) => {
     <div>
       { !isEmpty(woSection) && (
         <div className={'task-section-wrap'}>
-          <DroppableTaskList
+          <SortableTaskList
             tasks={woSection}
             id={'empty-section-task-list'}
             orderBy={'order'}
-            onTaskDrop={onTaskDrop}
+            onTaskMove={onTaskMove}
           />
         </div>
       )}
@@ -64,22 +63,27 @@ const TaskSections = ({ workspace }: Props) => {
 
 const DroppableTaskGroups = (props: Props) => {
   const dispatch = useDispatch();
-  const onDrop = useCallback((sourceItem: DNDSourceItem, destinationItem: DNDDestinationItem) => {
+  const onMove: MoveHandler = useCallback((sourceItem: DraggableItem, position: number) => {
     if (sourceItem.type === UIComponentType.TASK_SECTION) {
       dispatch(sectionActions.move(sourceItem.id, {
-        position: destinationItem.index,
+        position,
       }));
     }
   }, []);
 
   return (
-    <Droppable
+    <Sortable
       id={workspaceId(props.workspace)}
+      type={UIComponentType.TASK_GROUP}
       accept={UIComponentType.TASK_SECTION}
-      onDrop={onDrop}
+      onMove={onMove}
     >
-      <TaskSections {...props} />
-    </Droppable>
+      {({ setRef }) => (
+        <div ref={setRef}>
+          <TaskSections {...props} />
+        </div>
+      )}
+    </Sortable>
   );
 };
 

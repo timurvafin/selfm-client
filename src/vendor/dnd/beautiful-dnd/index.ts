@@ -1,6 +1,6 @@
-import Draggable from './beautiful-dnd/Draggable';
-import Droppable from './beautiful-dnd/Droppable';
-import DNDContainer from './beautiful-dnd/DNDContainer';
+import Draggable from './Draggable';
+import Droppable from './Droppable';
+import DNDContainer from './DNDContainer';
 import { DNDId, DNDSourceItem, DNDDestinationItem, DraggableComponentProps, DroppableComponentProps, DraggableProps, DroppableProps } from './types';
 
 

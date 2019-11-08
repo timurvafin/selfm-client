@@ -16,6 +16,7 @@ module.exports =  {
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/ban-ts-ignore": "off",
+    "@typescript-eslint/no-empty-interface": "off",
     "react/prop-types": [0],
     // BASE
     "semi": ["warn", "always"],

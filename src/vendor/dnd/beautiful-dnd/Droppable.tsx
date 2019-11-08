@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Droppable as DropppableImpl, DroppableStateSnapshot } from 'react-beautiful-dnd';
-import { DroppableProps } from '../types';
+import { DroppableProps } from './types';
 import { DNDContext } from './DNDContainer';
 
 

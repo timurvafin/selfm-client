@@ -1,4 +1,4 @@
-import { DNDId } from '../types';
+import { DNDId } from './types';
 
 
 export const encodeDraggableId = (id: string, type: string): string => JSON.stringify({ id, type });

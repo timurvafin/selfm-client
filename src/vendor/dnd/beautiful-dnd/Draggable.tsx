@@ -1,7 +1,7 @@
 import React from 'react';
 import { Draggable as DraggableImpl, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
 import { encodeDraggableId } from './utils';
-import { DraggableProps } from '../types';
+import { DraggableProps } from './types';
 
 
 const Draggable = ({ index, id, type, isDisabled, className, children }: DraggableProps) => (

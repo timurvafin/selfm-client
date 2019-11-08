@@ -1,7 +1,7 @@
 import Workspace from './Workspace';
 import Tags from './Tags';
 import Task, { DraggableTask } from './Task';
-import TaskList, { DroppableTaskList } from './TaskList';
+import TaskList, { SortableTaskList } from './TaskList';
 import * as Layouts from './Layouts';
 
 
@@ -10,7 +10,7 @@ export {
   Task,
   DraggableTask,
   TaskList,
-  DroppableTaskList,
+  SortableTaskList,
   Layouts,
 };
 export default Workspace;

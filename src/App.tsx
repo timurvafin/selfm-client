@@ -8,7 +8,7 @@ import WorkspaceRouter from './views/Workspace/WorkSpace';
 import { sectionActions } from './models/section';
 import { projectActions } from './models/project';
 import { taskActions } from './models/task';
-import { DNDContainer } from './vendor/dnd';
+import { DNDContainer } from './vendor/dnd/react-dnd';
 
 
 const App = () => {

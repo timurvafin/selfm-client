@@ -1,6 +1,6 @@
 import TaskList from './TaskList';
-import DroppableTaskList from './DroppableTaskList';
+import SortableTaskList from './SortableTaskList';
 
 
-export { DroppableTaskList };
+export { SortableTaskList };
 export default TaskList;
