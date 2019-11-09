@@ -1,7 +1,7 @@
 import React from 'react';
 import { UIComponentType } from 'common/constants';
 import { SortableElement } from 'vendor/dnd/react-dnd/sortable';
-import { DraggableContentProps } from '../../../vendor/dnd/react-dnd';
+import { DraggableContentProps } from 'vendor/dnd/react-dnd';
 import Task, { Props } from './Task';
 
 

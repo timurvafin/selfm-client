@@ -12,7 +12,7 @@ import { ShortcutIcon } from 'views/ShortcutWorkspace/ShortcutIcon';
 import { projectActions } from 'models/project';
 import { workspaceActions, WorkspaceEntity } from 'models/workspace';
 import { taskSelectors } from '../../models/task';
-import SidebarLink from './SidebarLink';
+import SidebarLink from './DroppableLink';
 import { isWorkspacesEqual } from 'common/utils/common';
 
 

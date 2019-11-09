@@ -24,12 +24,16 @@ import {
 import './icon.scss';
 
 
-const asIcon = (FiIcon): React.FC<HTMLProps<HTMLElement>> => ({ className, ...props }: { className?: string }) => (
-  <FiIcon
-    className={cs('icon', className)}
-    {...props}
-  />
-);
+const asIcon = (ConcreteIcon): React.FC<HTMLProps<HTMLElement>> => {
+  const Icon = ({ className, ...props }: { className?: string }) => (
+    <ConcreteIcon
+      className={cs('icon', className)}
+      {...props}
+    />
+  );
+
+  return React.memo(Icon);
+};
 
 // @link https://react-icons.netlify.com/#/icons/fi
 export const PlusIcon = asIcon(FiPlus);

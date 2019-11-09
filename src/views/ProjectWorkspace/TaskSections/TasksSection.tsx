@@ -7,15 +7,13 @@ import { sectionActions, SectionEntity } from 'models/section';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { sectionSelector, TaskUIEntity } from 'store/selectors';
-import { UIComponentType } from 'common/constants';
 import { ID } from 'common/types';
 import { SortableTaskList } from 'views/Workspace';
 import { taskActions } from 'models/task';
 import { DraggableItem } from 'vendor/dnd/react-dnd';
-import { SortableElement } from 'vendor/dnd/react-dnd/sortable';
 
 
-interface Props {
+export interface Props {
   id: ID;
   index: number;
   tasks: Array<TaskUIEntity>;
@@ -74,21 +72,4 @@ const TasksSection = ({ id, tasks }: Props) => {
   );
 };
 
-const DraggableTaskSection = (props: Props) => (
-  <SortableElement
-    index={props.index}
-    id={props.id}
-    type={UIComponentType.TASK_SECTION}
-  >
-    {({ setRef, isDragging }) => (
-      <div
-        ref={setRef}
-        className={cls('task-section-wrapper', isDragging && 'task-section-wrapper--dragging')}
-      >
-        <TasksSection {...props} />
-      </div>
-    )}
-  </SortableElement>
-);
-
-export default DraggableTaskSection;
+export default React.memo(TasksSection);

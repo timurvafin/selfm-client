@@ -196,4 +196,4 @@ const Task = ({ task }: Props) => {
   );
 };
 
-export default Task;
+export default React.memo(Task);
