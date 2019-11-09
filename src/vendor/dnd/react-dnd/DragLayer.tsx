@@ -32,7 +32,6 @@ function getWrapperStyle(
     width: nodeRect.width,
     height: nodeRect.height,
     transform,
-    position: 'relative',
   };
 }
 

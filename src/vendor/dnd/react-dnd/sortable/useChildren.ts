@@ -1,5 +1,5 @@
 import { OrderedMap } from 'immutable';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { arrayMove, ChildInfo, makeChildrenInfo, recalulateOffsets } from './helpers';
 
 
@@ -19,84 +19,91 @@ const useChildren = (parentNode, draggableItem) => {
     return { x: parentRect.left, y: parentRect.top };
   };
 
-  const setChildNode = (id, node) => {
-    childrenNodes.current = childrenNodes.current.set(id, node);
-  };
-
-  const getChild = id => childrenInfo.find(info => info.id === id);
-
-  const getOrder = id => {
-    return childrenInfo.findIndex(info => info.id === id);
-  };
-
-  const getOffset = index => {
-    if (index <= 0 || !childrenInfo[index]) {
-      return getParentOffset();
-    }
-
-    return childrenInfo[index].offset;
-  };
-
   const recalulateChildren = (children) => {
     const newChildren = recalulateOffsets(children, getParentOffset());
     setChildrenInfo(newChildren);
   };
 
-  const addChild = (id, position, { width, height }) => {
-    const copy = [...childrenInfo];
-    copy.splice(position, 0, {
-      id,
-      width: width,
-      height: height,
-      index: position,
-      offset: null,
-    });
-
-    recalulateChildren(copy);
+  const setChildNode = (id, node) => {
+    childrenNodes.current = childrenNodes.current.set(id, node);
   };
 
-  const removeChild = (id) => {
-    setTimeout(() => {
-      const arr = childrenInfo.filter(info => info.id !== id);
-      recalulateChildren(arr);
-    }, 200);
-  };
+  const actions = useMemo(() => {
+    const getChild = id => childrenInfo.find(info => info.id === id);
 
-  const moveChild = (sourceId, targetPosition) => {
-    const sourcePosition = getOrder(sourceId);
-    const reordered = arrayMove(childrenInfo, sourcePosition, targetPosition);
-    recalulateChildren(reordered);
-  };
+    const getOrder = id => {
+      return childrenInfo.findIndex(info => info.id === id);
+    };
 
-  const findDropPosition = (mouseY, draggableId) => {
-    let position = 0;
-
-    for (const info of childrenInfo) {
-      if (info.id === draggableId) {
-        continue;
+    const getOffset = index => {
+      if (index <= 0 || !childrenInfo[index]) {
+        return getParentOffset();
       }
 
-      const middleY = info.offset.y + info.height / 2;
-      if (mouseY > middleY) {
-        position++;
-      } else {
-        return position;
+      return childrenInfo[index].offset;
+    };
+
+    const addChild = (id, position, { width, height }) => {
+      const copy = [...childrenInfo];
+      copy.splice(position, 0, {
+        id,
+        width: width,
+        height: height,
+        index: position,
+        offset: null,
+      });
+
+      recalulateChildren(copy);
+    };
+
+    const removeChild = (id) => {
+      setTimeout(() => {
+        const arr = childrenInfo.filter(info => info.id !== id);
+        recalulateChildren(arr);
+      }, 200);
+    };
+
+    const moveChild = (sourceId, targetPosition) => {
+      const sourcePosition = getOrder(sourceId);
+      const reordered = arrayMove(childrenInfo, sourcePosition, targetPosition);
+      recalulateChildren(reordered);
+    };
+
+    const findDropPosition = (mouseY, draggableId) => {
+      if (childrenInfo.length <= 0) {
+        return 0;
       }
-    }
 
-    return Math.min(position, childrenInfo.length - 1);
-  };
+      let position = 0;
+      for (const info of childrenInfo) {
+        if (info.id === draggableId) {
+          continue;
+        }
 
-  return {
-    setChildNode,
-    addChild,
-    removeChild,
-    moveChild,
-    getOffset,
-    getChild,
-    getOrder,
-    findDropPosition,
-  };
+        const middleY = info.offset.y + info.height / 2;
+        if (mouseY > middleY) {
+          position++;
+        } else {
+          return position;
+        }
+      }
+
+      return Math.min(position, childrenInfo.length);
+    };
+
+    return {
+      setChildNode,
+      addChild,
+      removeChild,
+      moveChild,
+      getOffset,
+      getChild,
+      getOrder,
+      findDropPosition,
+    };
+  }, [childrenInfo]);
+
+  return actions;
 };
 
 export default useChildren;

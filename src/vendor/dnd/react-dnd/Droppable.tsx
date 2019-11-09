@@ -1,8 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import DNDContext from './Context';
-import { DroppableProps } from './types';
+import { DroppableItem, DroppableProps } from './types';
 
+
+export const DroppableContext = React.createContext<{ item: DroppableItem }>({ item: null });
 
 const Droppable = ({
   id,
@@ -15,14 +17,19 @@ const Droppable = ({
   onLeave,
   children,
 }: DroppableProps) => {
+  const droppableContext = useMemo(() => ({
+    item: { id, type },
+  }), [id, type]);
+
   const dndContext = useContext(DNDContext);
-  const [{ isOver, draggableItem }, drop] = useDrop({
+  const [{ isOver, draggableItem, didDrop }, drop] = useDrop({
     accept: accept,
     hover: onHover ? (item, monitor) => onHover(item, monitor.getClientOffset()) : null,
     drop: onDrop,
     collect: (monitor: DropTargetMonitor) => ({
       isOver: monitor.isOver(),
       draggableItem: monitor.getItem(),
+      didDrop: monitor.didDrop(),
     }),
     canDrop,
   });
@@ -30,11 +37,14 @@ const Droppable = ({
   const [prevIsOver, setPrevIsOver] = useState(false);
   useEffect(
     () => {
-      if (prevIsOver && !isOver) {
+      if (prevIsOver && !isOver && !didDrop) {
         onLeave && onLeave(draggableItem);
+        dndContext.setDropTarget(null);
       }
 
-      if (!prevIsOver && isOver) {
+      if (!prevIsOver && isOver && !didDrop) {
+        // setTimeout для того, чтобы dndContext.setDropTarget(null) не перезатирал значение
+        setTimeout(() => dndContext.setDropTarget({ id, type }));
         onEnter && onEnter(draggableItem);
       }
 
@@ -43,22 +53,17 @@ const Droppable = ({
     [isOver, draggableItem]
   );
 
-  useEffect(
-    () => {
-      if (isOver) {
-        setTimeout(() => dndContext.setDropTarget({ id, type }));
-      } else {
-        dndContext.setDropTarget(null);
+  return (
+    <DroppableContext.Provider value={droppableContext}>
+      {
+        children({
+          setRef: drop,
+          isOver,
+          draggableItem,
+        })
       }
-    },
-    [isOver]
+    </DroppableContext.Provider>
   );
-
-  return children({
-    setRef: drop,
-    isOver,
-    draggableItem,
-  });
 };
 
 export default Droppable;

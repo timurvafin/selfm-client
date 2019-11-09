@@ -141,8 +141,8 @@ const modelSpec: ModelSpec<TasksState, typeof actions> = {
         // TODO [opt] update only changed entities
         yield put(actions.batchUpdate(fieldsMap));
 
-        const isParentChanged = actionDestination.parentId && task.parentId !== actionDestination.parentId;
-        const isSectionChanged = actionDestination.sectionId && task.sectionId !== actionDestination.sectionId;
+        const isParentChanged = !isUndefined(actionDestination.parentId) && task.parentId !== actionDestination.parentId;
+        const isSectionChanged = !isUndefined(actionDestination.sectionId) && task.sectionId !== actionDestination.sectionId;
 
         if (isParentChanged || isSectionChanged) {
           yield put(actions.update(id, { parentId: destination.parentId, sectionId: destination.sectionId }));

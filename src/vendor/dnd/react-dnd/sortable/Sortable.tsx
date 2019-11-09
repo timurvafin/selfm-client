@@ -1,50 +1,16 @@
-import React, { useContext, useMemo, useRef } from 'react';
+import React, { useCallback, useContext, useMemo, useRef } from 'react';
 import DNDContext from '../Context';
 import Droppable from '../Droppable';
-import { DroppableContentProps, XYCoords } from '../types';
+import { DraggableItem, DroppableContentProps } from '../types';
+import { getEmptyPlaceholderStyle, getPlaceholderStyle, getSortableItemStyle } from './helpers';
 import { SortableProps } from './index';
 import useChildren from './useChildren';
 
 
-const getItemStyle = (orderDelta, draggableItem) => {
-  if (!draggableItem) {
-    return {};
-  }
-
-  return {
-    transition: 'transform 200ms ease-in-out',
-    transform: `translateY(${orderDelta * draggableItem.nodeRect.height}px)`,
-  };
-};
-
-const getPlaceholderStyle = (draggableInfo, offset?: XYCoords) => {
-  if (!draggableInfo) {
-    return {};
-  }
-
-  return {
-    width: draggableInfo.width,
-    height: draggableInfo.height,
-    pointerEvents: 'none',
-    position: 'fixed',
-    left: offset ? offset.x : null,
-    top: offset ? offset.y : null,
-    backgroundColor: '#f7f7f7',
-  };
-};
-
-const DropPlaceholder = ({ style }) => {
-  return (
-    <div
-      className="drop-placeholder"
-      style={style}
-    />
-  );
-};
-
 export const SortableContext = React.createContext(null);
 
 const DroppableContent = ({
+  droppableId,
   setRef,
   setChildNode,
   isOver,
@@ -54,17 +20,26 @@ const DroppableContent = ({
   getOffset,
   children,
 }) => {
+  const getItemStyle = useCallback((id, index) => {
+    return getSortableItemStyle(getOrder(id) - index, draggableItem);
+  }, [getOrder, draggableItem]);
+
   const context = useMemo(() => ({
     setChildNode,
-    getItemStyle: (id, index) => {
-      return getItemStyle(getOrder(id) - index, draggableItem);
-    },
-  }), [isOver, getOrder]);
+    getItemStyle,
+  }), [setChildNode, getItemStyle]);
 
   const draggableInfo = draggableItem ? getChild(draggableItem.id) : null;
+  const isForeign = draggableItem && draggableItem.parentDroppable.id !== droppableId;
 
-  const placeholder = isOver && draggableInfo && (
-    <DropPlaceholder style={getPlaceholderStyle(draggableInfo, getOffset(getOrder(draggableInfo.id)))} />
+  const dropPlaceholder = isOver && draggableInfo && (
+    // @ts-ignore
+    <div style={getPlaceholderStyle(draggableInfo, getOffset(getOrder(draggableInfo.id)))} />
+  );
+
+  const emptyPlaceholder = isOver && draggableInfo && isForeign && (
+    // @ts-ignore
+    <div style={getEmptyPlaceholderStyle(draggableInfo)} />
   );
 
   return (
@@ -73,10 +48,11 @@ const DroppableContent = ({
         children({
           setRef,
           isOver,
-          placeholder,
           draggableItem,
+          placeholder: emptyPlaceholder,
         })
       }
+      { dropPlaceholder }
     </SortableContext.Provider>
   );
 };
@@ -84,6 +60,7 @@ const DroppableContent = ({
 const Sortable = ({ children, id, type, onMove, accept }: SortableProps) => {
   const ref = useRef<HTMLDivElement>();
   const dndContext = useContext(DNDContext);
+  const draggableItem: DraggableItem = dndContext.draggableItem;
 
   const {
     setChildNode,
@@ -94,7 +71,7 @@ const Sortable = ({ children, id, type, onMove, accept }: SortableProps) => {
     getOrder,
     getOffset,
     findDropPosition,
-  } = useChildren(ref.current, dndContext.draggableItem);
+  } = useChildren(ref.current, draggableItem);
 
   const lastTimeRef = useRef(0);
   const onHover = (item: any, mouseOffset) => {
@@ -136,6 +113,7 @@ const Sortable = ({ children, id, type, onMove, accept }: SortableProps) => {
     >
       {({ setRef, isOver, draggableItem }: DroppableContentProps) => (
         <DroppableContent
+          droppableId={id}
           isOver={isOver}
           draggableItem={draggableItem}
           getOrder={getOrder}

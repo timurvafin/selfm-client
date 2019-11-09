@@ -9,6 +9,7 @@ export type XYCoords = {
 export type DraggableItem = {
   id: string;
   type: string;
+  parentDroppable: DroppableItem;
 };
 
 export type DroppableItem = {

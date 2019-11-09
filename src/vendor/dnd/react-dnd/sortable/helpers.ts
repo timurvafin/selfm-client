@@ -72,3 +72,45 @@ export const arrayMove = (arr: Array<any>, fromIndex, toIndex) => {
   copy.splice(toIndex, 0, copy.splice(fromIndex, 1)[0]);
   return copy;
 };
+
+export const getSortableItemStyle = (orderDelta, draggableItem) => {
+  if (!draggableItem) {
+    return {};
+  }
+
+  return {
+    transition: 'transform 200ms cubic-bezier(0.2, 0, 0, 1)',
+    transform: `translateY(${orderDelta * draggableItem.nodeRect.height}px)`,
+  };
+};
+
+export const getEmptyPlaceholderStyle = (draggableInfo) => {
+  if (!draggableInfo) {
+    return {};
+  }
+
+  return {
+    width: draggableInfo.width,
+    height: draggableInfo.height,
+    pointerEvents: 'none',
+    visibility: 'hidden',
+  };
+};
+
+export const getPlaceholderStyle = (draggableInfo, offset?: XYCoords) => {
+  if (!draggableInfo) {
+    return {};
+  }
+
+  return {
+    width: draggableInfo.width,
+    height: draggableInfo.height,
+    pointerEvents: 'none',
+    position: 'fixed',
+    left: offset ? offset.x : null,
+    top: offset ? offset.y : null,
+    backgroundColor: 'rgb(237, 247, 255)',
+    border: '1px dashed #0081e8',
+    borderRadius: 3,
+  };
+};

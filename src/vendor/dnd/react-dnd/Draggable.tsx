@@ -2,7 +2,8 @@ import { useContext, useEffect, useMemo, useRef } from 'react';
 import { DragSourceMonitor, useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import DNDContext from './Context';
-import { DraggableProps } from './types';
+import { DroppableContext } from './Droppable';
+import { DraggableItem, DraggableProps } from './types';
 
 
 const Draggable = ({
@@ -12,18 +13,18 @@ const Draggable = ({
   children,
 }: DraggableProps) => {
   const ref = useRef<HTMLDivElement>();
+  const droppableContext = useContext(DroppableContext);
   const dndContext = useContext(DNDContext);
-  const nodeRect = useMemo(() => ref.current ? ref.current.getBoundingClientRect() : null, [ref.current]);
+  const nodeRect = ref.current ? ref.current.getBoundingClientRect() : null;
 
-  useEffect(
-    () => {
-      dndContext.draggableComponentsRegistry.set(id, children);
-    },
-    []
-  );
+  const item: DraggableItem = useMemo(() => ({
+    type,
+    id,
+    nodeRect,
+    parentDroppable: droppableContext.item,
+  }), [id, type, nodeRect, droppableContext.item]);
 
-  const item = { type, id, nodeRect };
-  const [collectedProps, drag, previewRef] = useDrag({
+  const [collectedProps, connectDrag, connectPreview] = useDrag({
     begin: () => {
       dndContext.setDraggableItem(item);
     },
@@ -42,15 +43,16 @@ const Draggable = ({
 
   useEffect(
     () => {
-      previewRef(getEmptyImage(), { captureDraggingState: false });
+      dndContext.draggableComponentsRegistry.set(id, children);
+      connectPreview(getEmptyImage(), { captureDraggingState: false });
     },
-    [],
+    []
   );
 
   return children({
     setRef: (node) => {
       ref.current = node;
-      drag(node);
+      connectDrag(node);
     },
     componentRect: nodeRect,
     style: collectedProps.isDragging ? { opacity: 0 } : {},
