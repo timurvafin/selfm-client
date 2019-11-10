@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo, useRef } from 'react';
 import { DragSourceMonitor, useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
+import { Event } from './constants';
 import DNDContext from './Context';
 import { DroppableContext } from './Droppable';
 import { DraggableItem, DraggableProps } from './types';
@@ -21,15 +22,15 @@ const Draggable = ({
     type,
     id,
     nodeRect,
-    parentDroppable: droppableContext.item,
+    parent: droppableContext.item,
   }), [id, type, nodeRect, droppableContext.item]);
 
   const [collectedProps, connectDrag, connectPreview] = useDrag({
     begin: () => {
-      dndContext.setDraggableItem(item);
+      dndContext.eventRouter.fire(Event.BEGIN_DRAG, item);
     },
     end: () => {
-      dndContext.setDraggableItem(null);
+      dndContext.eventRouter.fire(Event.END_DRAG, item);
     },
     item: item,
     collect: (monitor: DragSourceMonitor) => ({
@@ -43,7 +44,9 @@ const Draggable = ({
 
   useEffect(
     () => {
-      dndContext.draggableComponentsRegistry.set(id, children);
+      // Регистрируем компонент для отрисовки превью.
+      dndContext.draggableComponents.set(id, children);
+      // Скрываем коробочное превью react-dnd.
       connectPreview(getEmptyImage(), { captureDraggingState: false });
     },
     []
@@ -56,8 +59,8 @@ const Draggable = ({
     },
     componentRect: nodeRect,
     style: collectedProps.isDragging ? { opacity: 0 } : {},
-    dropTarget: dndContext.dropTarget,
     ...collectedProps,
+    // Всегда false, true придет из DragLayer'a
     isDragging: false,
   });
 };

@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import EventRouter from './EventRouter';
 
 
 export type XYCoords = {
@@ -9,7 +10,7 @@ export type XYCoords = {
 export type DraggableItem = {
   id: string;
   type: string;
-  parentDroppable: DroppableItem;
+  parent: DroppableItem;
 };
 
 export type DroppableItem = {
@@ -17,12 +18,12 @@ export type DroppableItem = {
   type: string;
 };
 
-export type SetNode = (node: HTMLDivElement) => void;
+export type SetRef = (node: HTMLDivElement) => void;
 
 export interface DraggableContentProps {
-  setRef: SetNode;
+  setRef: SetRef;
   style?: object;
-  dropTarget: DroppableItem;
+  dropTarget?: DroppableItem;
   isDragging: boolean;
   canDrag: boolean;
   componentRect: ClientRect;
@@ -39,10 +40,10 @@ export interface DraggableProps {
   canDrag?: boolean | (() => boolean);
 }
 
-export type DroppableEventHandler = (draggable: DraggableItem) => void;
+export type DraggableEventHandler = (draggable: DraggableItem) => void;
 
 export interface DroppableContentProps {
-  setRef: SetNode;
+  setRef: SetRef;
   isOver: boolean;
   draggableItem: DraggableItem;
 }
@@ -57,10 +58,20 @@ export interface DroppableProps {
   accept: string | [string];
   canDrop?: (draggable: DraggableItem) => boolean;
   onHover?: DroppableHoverHandler;
-  onEnter?: DroppableEventHandler;
-  onLeave?: DroppableEventHandler;
-  onDrop?: DroppableEventHandler;
+  onEnter?: DraggableEventHandler;
+  onLeave?: DraggableEventHandler;
+  onBeginDrag?: DraggableEventHandler;
+  onEndDrag?: DraggableEventHandler;
+  onDrop?: DraggableEventHandler;
   // canDrop?: () => boolean;
   children: DroppableRenderer;
 }
 
+export interface DroppableContextShape {
+  item: DroppableItem;
+}
+
+export interface IDNDContext {
+  eventRouter: EventRouter;
+  draggableComponents: Map<string, DraggableRenderer>;
+}

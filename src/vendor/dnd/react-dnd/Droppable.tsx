@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
+import { Event } from './constants';
 import DNDContext from './Context';
-import { DroppableItem, DroppableProps } from './types';
+import { DroppableContextShape, DroppableProps } from './types';
 
 
-export const DroppableContext = React.createContext<{ item: DroppableItem }>({ item: null });
+export const DroppableContext = React.createContext<DroppableContextShape>({ item: null });
 
 const Droppable = ({
   id,
@@ -37,14 +38,14 @@ const Droppable = ({
   const [prevIsOver, setPrevIsOver] = useState(false);
   useEffect(
     () => {
-      if (prevIsOver && !isOver && !didDrop) {
+      if (prevIsOver && !isOver && !didDrop && draggableItem) {
         onLeave && onLeave(draggableItem);
-        dndContext.setDropTarget(null);
+        dndContext.eventRouter.fire(Event.DRAG_LEAVE);
       }
 
-      if (!prevIsOver && isOver && !didDrop) {
+      if (!prevIsOver && isOver && !didDrop && draggableItem) {
         // setTimeout для того, чтобы dndContext.setDropTarget(null) не перезатирал значение
-        setTimeout(() => dndContext.setDropTarget({ id, type }));
+        setTimeout(() => dndContext.eventRouter.fire(Event.DRAG_LEAVE, { id, type }));
         onEnter && onEnter(draggableItem);
       }
 

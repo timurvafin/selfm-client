@@ -1,64 +1,6 @@
-import { XYCoords } from '../types';
+import { DraggableItem, XYCoords } from '../types';
+import { SortableNode } from './useStore';
 
-
-export type ChildInfo = {
-  id: any;
-  width: number;
-  height: number;
-  index: number;
-  offset: XYCoords;
-}
-
-export const isMouseOver = (mouseOffset: XYCoords, child: ChildInfo) => {
-  const isOverY = mouseOffset.y > child.offset.y && mouseOffset.y < child.offset.y + child.height;
-  const isOverX = mouseOffset.x > child.offset.x && mouseOffset.x < child.offset.x + child.width;
-
-  return isOverY && isOverX;
-};
-
-export const makeChildrenInfo = (childrenRefs) => {
-  const notEmptyNodes = childrenRefs.filter((node) => !!node);
-
-  let index = 0;
-  return notEmptyNodes.map((node, id) => {
-    if (!node) {
-      return null;
-    }
-
-    const box: ClientRect = node.getBoundingClientRect();
-
-    return {
-      id,
-      width: box.width,
-      height: box.height,
-      index: index++,
-      offset: { y: box.top, x: box.left },
-    };
-  }).toList().toArray();
-};
-
-export const recalulateOffsets = (items, parentOffset) => {
-  const newChildren = [];
-
-  items.forEach((info, index) => {
-    let offset;
-
-    if (index === 0) {
-      offset = parentOffset;
-    } else {
-      const prev = newChildren[index - 1];
-      offset = { x: prev.offset.x, y: prev.offset.y + prev.height };
-    }
-
-    newChildren.push({
-      ...info,
-      index,
-      offset,
-    });
-  });
-
-  return newChildren;
-};
 
 export const arrayMove = (arr: Array<any>, fromIndex, toIndex) => {
   const copy = [...arr];
@@ -73,7 +15,7 @@ export const arrayMove = (arr: Array<any>, fromIndex, toIndex) => {
   return copy;
 };
 
-export const getSortableItemStyle = (orderDelta, draggableItem) => {
+export const getItemStyle = (orderDelta, draggableItem) => {
   if (!draggableItem) {
     return {};
   }
@@ -84,27 +26,27 @@ export const getSortableItemStyle = (orderDelta, draggableItem) => {
   };
 };
 
-export const getEmptyPlaceholderStyle = (draggableInfo) => {
-  if (!draggableInfo) {
+export const getEmptyPlaceholderStyle = (draggable: SortableNode) => {
+  if (!draggable) {
     return {};
   }
 
   return {
-    width: draggableInfo.width,
-    height: draggableInfo.height,
+    width: draggable.rect.width,
+    height: draggable.rect.height,
     pointerEvents: 'none',
     visibility: 'hidden',
   };
 };
 
-export const getPlaceholderStyle = (draggableInfo, offset?: XYCoords) => {
-  if (!draggableInfo) {
+export const getPlaceholderStyle = (sortableItem: SortableNode, offset?: XYCoords) => {
+  if (!sortableItem) {
     return {};
   }
 
   return {
-    width: draggableInfo.width,
-    height: draggableInfo.height,
+    width: sortableItem.rect.width,
+    height: sortableItem.rect.height,
     pointerEvents: 'none',
     position: 'fixed',
     left: offset ? offset.x : null,
@@ -113,4 +55,35 @@ export const getPlaceholderStyle = (draggableInfo, offset?: XYCoords) => {
     border: '1px dashed #0081e8',
     borderRadius: 3,
   };
+};
+
+// Вычисляет позицию, куда нужно поместить элемент на основе заданного положения мыши.
+export const findDropPosition = (sortableItems: Array<SortableNode>, mouseY, draggableId) => {
+  if (sortableItems.length <= 0) {
+    return 0;
+  }
+
+  let position = 0;
+  for (const item of sortableItems) {
+    if (item.id === draggableId) {
+      continue;
+    }
+
+    const middleY = item.offset.y + item.rect.height / 2;
+    if (mouseY > middleY) {
+      position++;
+    } else {
+      return position;
+    }
+  }
+
+  return Math.min(position, sortableItems.length);
+};
+
+export const accepts = (accept, draggable: DraggableItem) => {
+  if (Array.isArray(accept)) {
+    return accept.includes(draggable.type);
+  }
+
+  return accept === draggable.type;
 };

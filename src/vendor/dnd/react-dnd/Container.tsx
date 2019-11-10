@@ -1,28 +1,29 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 import DragLayer from './DragLayer';
 import DNDContext from './Context';
-import { DraggableItem, DraggableRenderer, DroppableItem } from './types';
+import EventRouter from './EventRouter';
+import { DraggableRenderer, IDNDContext } from './types';
 import { DndProvider } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
 
 
-export const Container = ({ children }) => {
-  const [dropTarget, setDropTarget] = useState<DroppableItem>(null);
-  const [draggableItem, setDraggableItem] = useState<DraggableItem>(null);
-  const draggableComponentsRegistry = useRef(new Map<string, DraggableRenderer>());
+/**
+ * Содержит:
+ *  - EventRouter, через который могут общаться между собой отедльные компоненты (Sortable, Droppable, DragLayer и тп)
+ *  - draggableComponents - хранилище компонентов, которые рендерят Draggable контент. Нужен для отрисовки drag preview в DragLayer'e.
+ */
+export const Container = ({ children, backend }) => {
+  const draggableComponents = useRef(new Map<string, DraggableRenderer>());
+  const eventRouter = useRef(new EventRouter());
 
-  const context = useMemo(() => ({
-    dropTarget,
-    setDropTarget,
-    draggableItem,
-    setDraggableItem,
-    draggableComponentsRegistry: draggableComponentsRegistry.current,
-  }), [draggableItem, dropTarget]);
+  const context: IDNDContext = useMemo(() => ({
+    eventRouter: eventRouter.current,
+    draggableComponents: draggableComponents.current,
+  }), [draggableComponents.current.size]);
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndProvider backend={backend}>
       <DNDContext.Provider value={context}>
-        { draggableComponentsRegistry.current.size > 0 && <DragLayer /> }
+        <DragLayer />
         { children }
       </DNDContext.Provider>
     </DndProvider>

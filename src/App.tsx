@@ -9,6 +9,7 @@ import { sectionActions } from './models/section';
 import { projectActions } from './models/project';
 import { taskActions } from './models/task';
 import { DNDContainer } from './vendor/dnd/react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 
 const App = () => {
@@ -21,7 +22,7 @@ const App = () => {
   });
 
   return (
-    <DNDContainer>
+    <DNDContainer backend={HTML5Backend}>
       <div id={'app'}>
         <Sidebar />
         <WorkspaceRouter />

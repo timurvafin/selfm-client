@@ -6,6 +6,7 @@ import {
   DroppableProps,
   DraggableProps,
 } from '../types';
+import { getItemStyle } from './helpers';
 import Sortable from "./Sortable";
 import SortableElement from "./SortableElement";
 
@@ -33,6 +34,13 @@ export type SortableItemRenderer = (props: SortableItemContentProps) => ReactEle
 export interface SortableItemProps extends DraggableProps {
   children: SortableItemRenderer;
   index: number;
+}
+
+type UnregisterNode = () => void;
+
+export interface ISortableContext {
+  registerNode: (id: string, rect: ClientRect) => UnregisterNode;
+  getItemStyle: (id, index) => object;
 }
 
 export {

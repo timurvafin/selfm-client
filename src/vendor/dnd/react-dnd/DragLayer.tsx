@@ -1,5 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useDragLayer } from 'react-dnd';
+import { Event } from './constants';
 import DNDContext from './Context';
 import { DraggableContentProps } from './types';
 
@@ -37,7 +38,23 @@ function getWrapperStyle(
 
 const DragLayer = () => {
   const dndContext = useContext(DNDContext);
-  const dropTarget = dndContext.dropTarget;
+  const [dropTarget, setDropTarget] = useState(null);
+
+  useEffect(
+    () => {
+      const onDragEnter = (droppable) => setDropTarget(droppable);
+      const onDragLeave = (droppable) => setDropTarget(droppable);
+
+      const unsubscribeEnterHandler = dndContext.eventRouter.addHandler(Event.DRAG_ENTER, onDragEnter);
+      const unsubscribeLeaveHandler = dndContext.eventRouter.addHandler(Event.DRAG_LEAVE, onDragLeave);
+
+      return () => {
+        unsubscribeEnterHandler();
+        unsubscribeLeaveHandler();
+      };
+    },
+    [dndContext.eventRouter]
+  );
 
   const {
     isDragging,
@@ -57,12 +74,12 @@ const DragLayer = () => {
     return null;
   }
 
-  function renderItem() {
+  function renderDragPreview() {
     if (!item || !startMousePosition || !startComponentPosition) {
       return false;
     }
 
-    const DraggableComponent = dndContext.draggableComponentsRegistry.get(item.id);
+    const DraggableComponent = dndContext.draggableComponents.get(item.id);
 
     if (!DraggableComponent) {
       return false;
@@ -86,7 +103,7 @@ const DragLayer = () => {
   return (
     <div style={layerStyles}>
       <div style={getWrapperStyle(item.nodeRect, startComponentPosition, currentComponentPosition)}>
-        {renderItem()}
+        {renderDragPreview()}
       </div>
     </div>
   );

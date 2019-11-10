@@ -1,105 +1,90 @@
-import React, { useCallback, useContext, useMemo, useRef } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Event } from '../constants';
 import DNDContext from '../Context';
 import Droppable from '../Droppable';
 import { DraggableItem, DroppableContentProps } from '../types';
-import { getEmptyPlaceholderStyle, getPlaceholderStyle, getSortableItemStyle } from './helpers';
-import { SortableProps } from './index';
-import useChildren from './useChildren';
+import { accepts, findDropPosition, getEmptyPlaceholderStyle, getItemStyle, getPlaceholderStyle } from './helpers';
+import { ISortableContext, SortableProps } from './index';
+import useStore from './useStore';
 
 
 export const SortableContext = React.createContext(null);
 
-const DroppableContent = ({
-  droppableId,
-  setRef,
-  setChildNode,
-  isOver,
-  getOrder,
-  draggableItem,
-  getChild,
-  getOffset,
-  children,
-}) => {
-  const getItemStyle = useCallback((id, index) => {
-    return getSortableItemStyle(getOrder(id) - index, draggableItem);
-  }, [getOrder, draggableItem]);
-
-  const context = useMemo(() => ({
-    setChildNode,
-    getItemStyle,
-  }), [setChildNode, getItemStyle]);
-
-  const draggableInfo = draggableItem ? getChild(draggableItem.id) : null;
-  const isForeign = draggableItem && draggableItem.parentDroppable.id !== droppableId;
-
-  const dropPlaceholder = isOver && draggableInfo && (
-    // @ts-ignore
-    <div style={getPlaceholderStyle(draggableInfo, getOffset(getOrder(draggableInfo.id)))} />
-  );
-
-  const emptyPlaceholder = isOver && draggableInfo && isForeign && (
-    // @ts-ignore
-    <div style={getEmptyPlaceholderStyle(draggableInfo)} />
-  );
-
-  return (
-    <SortableContext.Provider value={context}>
-      {
-        children({
-          setRef,
-          isOver,
-          draggableItem,
-          placeholder: emptyPlaceholder,
-        })
-      }
-      { dropPlaceholder }
-    </SortableContext.Provider>
-  );
-};
-
 const Sortable = ({ children, id, type, onMove, accept }: SortableProps) => {
   const ref = useRef<HTMLDivElement>();
   const dndContext = useContext(DNDContext);
-  const draggableItem: DraggableItem = dndContext.draggableItem;
+  const store = useStore();
+  const [dragSource, setDragSource] = useState<DraggableItem>(null);
 
-  const {
-    setChildNode,
-    addChild,
-    removeChild,
-    moveChild,
-    getChild,
-    getOrder,
-    getOffset,
-    findDropPosition,
-  } = useChildren(ref.current, draggableItem);
+  useEffect(
+    () => {
+      const onBeginDrag = (draggable) => {
+        if (accepts(accept, draggable)) {
+          setDragSource(draggable);
+          store.init(ref.current.getBoundingClientRect());
+        }
+      };
+
+      const onEndDrag = (draggable) => {
+        if (accepts(accept, draggable)) {
+          setDragSource(null);
+          store.reset();
+        }
+      };
+
+      const unsubsribeBeginHandler = dndContext.eventRouter.addHandler(Event.BEGIN_DRAG, onBeginDrag);
+      const unsubsribeEndHandler = dndContext.eventRouter.addHandler(Event.END_DRAG, onEndDrag);
+
+      return () => {
+        unsubsribeBeginHandler();
+        unsubsribeEndHandler();
+      };
+    },
+    [dndContext.eventRouter]
+  );
+
+  const context = useMemo<ISortableContext>(() => ({
+    registerNode: (id, rect) => {
+      store.registerNode(id, rect);
+      return () => store.unregisterNode(id);
+    },
+    getItemStyle: (id, index) => getItemStyle(store.getItemPosition(id) - index, dragSource),
+  }), [store, dragSource]);
 
   const lastTimeRef = useRef(0);
   const onHover = (item: any, mouseOffset) => {
-    const draggableInfo = getChild(item.id);
-    const position = findDropPosition(mouseOffset.y, draggableInfo && draggableInfo.id);
+    const sortableItem = store.getItem(item.id);
+    const position = findDropPosition(store.getItems(), mouseOffset.y, item.id);
 
-    if (!draggableInfo) {
-      return addChild(item.id, position, { width: item.nodeRect.width, height: item.nodeRect.height });
+    // Если элемента нет в сторе, значит этот элемент перемещен из чужого списка. Добавлем его.
+    if (!sortableItem) {
+      return store.addItem(item.id, position, item.nodeRect);
     }
 
-    /*if (isMouseOver(mouseOffset, draggableInfo)) {
-      return;
-    }*/
-
-    if (position === draggableInfo.index) {
+    const sortablePosition = store.getItemPosition(item.id);
+    // Ничего не делаем если позиция не изменилась
+    if (position === sortablePosition) {
       return;
     }
 
+    // Во избежания слишком частых вызовов ставим лимит
     if (Date.now() - lastTimeRef.current < 100) {
       return;
     }
 
     lastTimeRef.current = Date.now();
-    moveChild(draggableInfo.id, position);
+    store.moveItem(item.id, position);
   };
 
   const onDrop = (draggableItem) => {
-    onMove(draggableItem, getOrder(draggableItem.id));
+    onMove(draggableItem, store.getItemPosition(draggableItem.id));
+    // Сохраняем состояние сортировки в основной массив
+    store.commit();
+  };
+
+  const onLeave = (draggableItem) => {
+    // Если элемент покидает список, то удаляем его данные о положении.
+    store.removeItem(draggableItem.id);
   };
 
   return (
@@ -109,25 +94,39 @@ const Sortable = ({ children, id, type, onMove, accept }: SortableProps) => {
       accept={accept}
       onHover={onHover}
       onDrop={onDrop}
-      onLeave={(draggableItem) => removeChild(draggableItem.id)}
+      onLeave={onLeave}
     >
-      {({ setRef, isOver, draggableItem }: DroppableContentProps) => (
-        <DroppableContent
-          droppableId={id}
-          isOver={isOver}
-          draggableItem={draggableItem}
-          getOrder={getOrder}
-          getChild={getChild}
-          getOffset={getOffset}
-          setChildNode={setChildNode}
-          setRef={node => {
-            setRef(node);
-            ref.current = node;
-          }}
-        >
-          {children}
-        </DroppableContent>
-      )}
+      {({ setRef: setDroppableRef, isOver, draggableItem }: DroppableContentProps) => {
+        const sortableItem = draggableItem ? store.getItem(draggableItem.id) : null;
+        const isForeign = draggableItem && draggableItem.parent.id !== id;
+
+        const dropPlaceholder = isOver && sortableItem && (
+          // @ts-ignore
+          <div style={getPlaceholderStyle(sortableItem, store.getItemOffset(sortableItem.id))} />
+        );
+
+        const emptyPlaceholder = isOver && sortableItem && isForeign && (
+          // @ts-ignore
+          <div style={getEmptyPlaceholderStyle(sortableItem)} />
+        );
+
+        return (
+          <SortableContext.Provider value={context}>
+            {
+              children({
+                setRef: node => {
+                  setDroppableRef(node);
+                  ref.current = node;
+                },
+                isOver,
+                draggableItem,
+                placeholder: emptyPlaceholder,
+              })
+            }
+            { dropPlaceholder }
+          </SortableContext.Provider>
+        );
+      }}
     </Droppable>
   );
 };

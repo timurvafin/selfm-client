@@ -1,13 +1,22 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import Draggable from '../Draggable';
-import { SortableItemProps } from './index';
+import { ISortableContext, SortableItemProps } from './index';
 import { SortableContext } from './Sortable';
 
 
 const SortableElement = ({ id, type, index, canDrag, children }: SortableItemProps) => {
-  const sortableContext = useContext(SortableContext);
-  const setNode = sortableContext.setChildNode;
+  const ref = useRef<HTMLDivElement>();
+  const sortableContext = useContext<ISortableContext>(SortableContext);
   const style = sortableContext.getItemStyle(id, index);
+
+  useEffect(
+    () => {
+      // Регистрируем элемент для фиксации размеров.
+      const unregister = sortableContext.registerNode(id, ref.current.getBoundingClientRect());
+      return unregister;
+    },
+    []
+  );
 
   return (
     <Draggable
@@ -16,9 +25,9 @@ const SortableElement = ({ id, type, index, canDrag, children }: SortableItemPro
       canDrag={canDrag}
     >
       {({ setRef: setDraggableRef, style: draggableStyle, ...draggableContentProps }) => children({
-        setRef: draggableContentProps.isDragging ? null : (node) => {
+        setRef: (node) => {
           setDraggableRef(node);
-          setNode(id, node);
+          ref.current = node;
         },
         style: { ...draggableStyle, ...style },
         ...draggableContentProps,
