@@ -61,7 +61,10 @@ const ProjectWorkspace = ({ id }: { id: ID }) => {
           />
         </Workspace.Caption>
 
-        <Menu className={styles.menu} items={menuItems} />
+        <Menu
+          className={styles.menu}
+          items={menuItems}
+        />
       </Workspace.CaptionRow>
 
       <Workspace.Row className={styles.rowNotes}>

@@ -9,11 +9,13 @@ $orange: orange;
 $green: green;
 $yellow: #ffe67a;
 $lgray: lightgray;
+$app_bg: #f7f5f9;
 
 /* ------------ sizes ------------ */
-$base_font_size: 13px;
+$task_side_padding: .6rem;
+$task_side_margin: .5rem;
 
-/* ------------ vars ------------ */
-$app_bg: #f7f5f9;
+/* ------------ fonts ------------ */
+$fz_base: 13px;
 $ff_base: 'Verdana', sans-serif;
 $ff_title: 'Arial', sans-serif;

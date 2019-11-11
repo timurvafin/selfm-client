@@ -4,6 +4,10 @@
   margin-top: 2.5em;
 }
 
+.caption {
+
+}
+
 .icon {
   font-size: 120%;
   $shortcut_icon_colors: (inbox: #21adf8, today: #ffc300, plans: #fc3369, anytime: #37a69b, someday: #cbbf7c);
@@ -17,5 +21,40 @@
       color: $color;
     }
   }
+}
+
+.group {
+
+}
+
+.groupHeader {
+  position: relative;
+  display: flex;
+  margin-bottom: 1em;
+
+  &:after {
+    content: '';
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: -.5em;
+    height: 1px;
+    background-color: #eee;
+  }
+}
+
+.groupIcon {
+  margin-right: $task_side_margin;
+  margin-left: .1rem;
+}
+
+.groupCaption {
+  font-weight: bold;
+  color: $clr_lvl2;
+  font-size: 13px;
+}
+
+.group + .group {
+  margin-top: 2rem;
 }
 

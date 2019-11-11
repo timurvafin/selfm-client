@@ -38,7 +38,6 @@ const DragPreview = (props: Partial<DraggableContentProps>) => {
 
 const DraggableTask = (props: Props) => (
   <SortableElement
-    index={props.index}
     id={props.task.id}
     type={UIComponentType.TASK}
     canDrag={!props.task.isOpen}

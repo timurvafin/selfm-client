@@ -1,20 +1,23 @@
 /* eslint-disable arrow-body-style */
+import { call, put, select } from '@redux-saga/core/effects';
+import { Shortcut, WorkspaceTypes } from 'common/constants';
+import { ID } from 'common/types';
+import { isUndefined } from 'common/utils/common';
 import { Map } from 'immutable';
+import Api from 'service/api';
 import {
   createActionCreators,
   createBaseEntity,
-  EntitiesMap,
+  createBaseEntityActions,
+  createBaseEntityEffects,
   createBaseEntityReducers,
+  EntitiesMap,
   getNextOrder,
-  ModelSpec, createBaseEntityEffects, createBaseEntityActions, makeOrderFieldsMap,
+  makeOrderFieldsMap,
+  ModelSpec,
 } from '../common';
-import { ID } from 'common/types';
-import { call, put, select } from '@redux-saga/core/effects';
-import Api from 'service/api';
 import { ModelsState } from '../index';
 import { workspaceActions, WorkspaceEntity, workspaceSelectors } from '../workspace';
-import { Shortcut, WorkspaceTypes } from 'common/constants';
-import { isUndefined } from 'common/utils/common';
 import { TaskEntity, TasksState, TodoEntity } from './index';
 import * as selectors from './selectors';
 import { extractFieldsValuesFromStr, getEntityFieldsByWorkspace, mergeCollectionFieldValues } from './utils';
@@ -27,6 +30,7 @@ const actions = createActionCreators({
   ...createBaseEntityActions<TaskEntity>(),
   create: (workspace?: WorkspaceEntity, sectionId?: ID) => ({ workspace, sectionId }),
   move: (id: ID, destination: { parentId?: ID; sectionId?: ID; position?: number }) => ({ id, destination }),
+  reorder: (ids: Array<ID>, orderBy: string) => ({ ids, orderBy }),
   setShortcut: (taskId: ID, shortcutCode: Shortcut) => ({ taskId, shortcutCode }),
   updateCaption: (id: ID, caption: string) => ({ id, caption }),
   // todos
@@ -107,47 +111,33 @@ const modelSpec: ModelSpec<TasksState, typeof actions> = {
       }));
     },
     setShortcut: function* ({ taskId, shortcutCode }) {
-      yield put(actions.update(taskId, getEntityFieldsByWorkspace({ code: shortcutCode, type: WorkspaceTypes.SHORTCUT })));
+      yield put(actions.update(taskId, getEntityFieldsByWorkspace({
+        code: shortcutCode,
+        type: WorkspaceTypes.SHORTCUT,
+      })));
+    },
+    reorder: function* ({ ids, orderBy }) {
+      const fieldsMap = makeOrderFieldsMap(ids, orderBy);
+      // TODO [opt] update only changed entities
+      yield put(actions.batchUpdate(fieldsMap));
     },
     move: function* ({ id, destination: actionDestination }) {
       const task: TaskEntity = yield select(state => selectors.byId(state, id));
       const workspace: WorkspaceEntity = yield select(workspaceSelectors.selectedWorkspace);
       const orderBy = workspace.type === WorkspaceTypes.SHORTCUT ? 'order2' : 'order';
 
-      const destination = {
-        parentId: isUndefined(actionDestination.parentId) ? task.parentId : actionDestination.parentId,
-        sectionId: isUndefined(actionDestination.sectionId) ? task.sectionId : actionDestination.sectionId,
-        position: actionDestination.position,
-      };
+      const parentId = isUndefined(actionDestination.parentId) ? task.parentId : actionDestination.parentId;
+      let sectionId;
 
-      const targetSiblings: EntitiesMap<TaskEntity> = yield select(state => selectors.siblings(state, workspace, destination.sectionId));
-
-      // move
-      if (actionDestination.position == null) {
-        const order = getNextOrder(targetSiblings.toList(), orderBy);
-        yield put(actions.update(id, { parentId: destination.parentId, sectionId: destination.sectionId, order }));
+      if (isUndefined(actionDestination.sectionId)) {
+        sectionId = isUndefined(actionDestination.parentId) ? task.sectionId : null;
       } else {
-        let orderedSiblings = targetSiblings.sortBy(task => task[orderBy]).toList();
-        const sourceIndex = orderedSiblings.findIndex(task => task.id === id);
-
-        if (sourceIndex !== -1) {
-          orderedSiblings = orderedSiblings.delete(sourceIndex);
-        }
-
-        orderedSiblings = orderedSiblings.insert(actionDestination.position, task);
-        const ids = orderedSiblings.map(task => task.id).toArray();
-
-        const fieldsMap = makeOrderFieldsMap(ids, orderBy);
-        // TODO [opt] update only changed entities
-        yield put(actions.batchUpdate(fieldsMap));
-
-        const isParentChanged = !isUndefined(actionDestination.parentId) && task.parentId !== actionDestination.parentId;
-        const isSectionChanged = !isUndefined(actionDestination.sectionId) && task.sectionId !== actionDestination.sectionId;
-
-        if (isParentChanged || isSectionChanged) {
-          yield put(actions.update(id, { parentId: destination.parentId, sectionId: destination.sectionId }));
-        }
+        sectionId = actionDestination.sectionId;
       }
+
+      const targetSiblings: EntitiesMap<TaskEntity> = yield select(state => selectors.siblings(state, workspace, sectionId));
+      const order = getNextOrder(targetSiblings.toList(), orderBy);
+      yield put(actions.update(id, { parentId, sectionId, [orderBy]: order }));
     },
   },
 };

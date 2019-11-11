@@ -23,7 +23,7 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   transition-duration: $transition_duration;
   transition-timing-function: $transition_timing_func;
   border-radius: 3px;
-  padding: 0 .5rem;
+  padding: 0 #{$task_side_padding + 0.1rem};
 
   position: relative;
   outline: none;
@@ -49,16 +49,7 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .checkbox {
-  width: .5em;
-  flex-shrink: 0;
-
-  &:before {
-    border-radius: 3px;
-  }
-
-  &:checked {
-    // opacity: $completed_task_opacity;
-  }
+  margin-right: $task_side_margin;
 }
 
 .caption {
@@ -135,6 +126,7 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .task {
+  // white bg when open
   &:before {
     left: 0;
     top: 0;
@@ -151,6 +143,7 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
     width: 100%;
     height: 100%;
     box-sizing: content-box;
+    border-radius: 3px;
   }
 }
 
@@ -160,9 +153,9 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
 
   &:before {
-    left: -1em;
-    top: -1em;
-    padding: 1em;
+    top: -1rem;
+    left: -.1rem;
+    padding: 1rem .1rem;
     box-shadow: 0 0 8px #e0e0e0;
     background-color: #fff;
   }

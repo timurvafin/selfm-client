@@ -16,20 +16,20 @@
   font-family: Verdana, sans-serif;
 }
 
-.sidebar__shortcuts {
+.shortcuts {
   margin: 1rem 0;
+
+  .inbox {
+    margin-bottom: 1em;
+  }
 }
 
-.sidebar__shortcut-inbox {
-  margin-bottom: 1em;
-}
-
-.sidebar__projects {
+.projects {
   margin: 1rem 0;
   flex: 1;
 }
 
-.sidebar__actions {
+.actions {
   &:before {
     content: '';
     width: 100%;
@@ -46,7 +46,7 @@
   font-size: 90%;
 }
 
-.sidebar__action {
+.action {
   @include clickable();
   color: #777;
   padding: .8em 0;
@@ -63,7 +63,7 @@
   }
 }
 
-.sidebar-link {
+.link {
   @include unselectable();
   @include clickable();
 
@@ -81,24 +81,24 @@
   @include overflow-dots();
 }
 
-.sidebar-link__icon {
+.link__icon {
   width: 1.4rem;
   display: flex;
   align-items: center;
 }
 
-.sidebar-link__caption {
+.link__caption {
   flex: 1;
 }
 
-.sidebar-link__count {
+.link__count {
   color: $clr_lvl3;
 }
 
-.sidebar-link--dragging-over {
+.linkDraggingOver {
   border-color: $clr_accent;
 }
 
-.sidebar-link--selected {
+.linkSelected {
   background-color: rgba(220, 220, 220, 0.64);
 }

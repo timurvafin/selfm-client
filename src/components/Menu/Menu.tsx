@@ -6,7 +6,7 @@ import styles from './menu.scss';
 import { MoreIcon } from '../Icon';
 
 
-export default class Menu extends Component<{ items: any }, { menuOpen: boolean }> {
+export default class Menu extends Component<any, any> {
   private popupEl;
 
   constructor(props) {
@@ -41,11 +41,11 @@ export default class Menu extends Component<{ items: any }, { menuOpen: boolean 
   }
   
   render() {
-    const { items } = this.props;
+    const { items, className } = this.props;
     
     return (
       <div
-        className={cs('project__menu', { ['project__menu--open']: this.state.menuOpen })}
+        className={cs(className, 'project__menu', { ['project__menu--open']: this.state.menuOpen })}
         ref={popup => this.popupEl = popup}
         tabIndex={-1}
         onBlur={this.showMenu.bind(this, false)}

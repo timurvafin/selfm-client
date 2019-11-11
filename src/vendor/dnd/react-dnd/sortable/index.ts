@@ -5,8 +5,8 @@ import {
   DroppableContentProps,
   DroppableProps,
   DraggableProps,
+  ID,
 } from '../types';
-import { getItemStyle } from './helpers';
 import Sortable from "./Sortable";
 import SortableElement from "./SortableElement";
 
@@ -17,13 +17,20 @@ export interface SortableContentProps extends DroppableContentProps {
 
 export type SortableItem = DraggableItem & { index: number };
 
-export type MoveHandler = (draggableSource: DraggableItem, targetPosition: number) => void;
+export type DropResult = {
+  item: DraggableItem;
+  position: number;
+  isNew: boolean;
+  newOrder: Array<ID>;
+};
+
+export type DropHandler = (dropResult: DropResult) => void;
 
 export type SortableRenderer = (props: SortableContentProps) => ReactElement;
 
 export interface SortableProps extends Omit<DroppableProps, 'onHover'> {
   children: SortableRenderer;
-  onMove: MoveHandler;
+  onItemDrop: DropHandler;
 }
 
 export interface SortableItemContentProps extends DraggableContentProps {
@@ -33,14 +40,13 @@ export type SortableItemRenderer = (props: SortableItemContentProps) => ReactEle
 
 export interface SortableItemProps extends DraggableProps {
   children: SortableItemRenderer;
-  index: number;
 }
 
 type UnregisterNode = () => void;
 
 export interface ISortableContext {
-  registerNode: (id: string, rect: ClientRect) => UnregisterNode;
-  getItemStyle: (id, index) => object;
+  registerNode: (id: ID, rect: ClientRect) => UnregisterNode;
+  getItemStyle: (id: ID) => object;
 }
 
 export {

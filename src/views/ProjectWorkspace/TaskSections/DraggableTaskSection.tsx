@@ -8,7 +8,6 @@ import * as styles from './task-sections.scss';
 
 const DraggableTaskSection = (props: Props) => (
   <SortableElement
-    index={props.index}
     id={props.id}
     type={UIComponentType.TASK_SECTION}
   >

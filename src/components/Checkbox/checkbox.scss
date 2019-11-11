@@ -4,9 +4,10 @@
   -webkit-appearance: none;
   outline: none;
   position: relative;
-  margin: 0 .9em 0 0;
-  height: .9em;
   cursor: pointer;
+  flex-shrink: 0;
+  width: $size;
+  height: $size;
 
   &:before {
     transition: all .1s ease-in-out;
@@ -21,6 +22,7 @@
     height: $size;
 
     border: $border_width solid $border_clr;
+    border-radius: 3px;
 
     @if ($round) {
       border-radius: 50%;

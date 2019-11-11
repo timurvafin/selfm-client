@@ -23,11 +23,10 @@ const TasksList = ({ tasks, orderBy, droppable }: Props) => {
 
   return (
     <div className={cls}>
-      {tasks.map((task, index) => (
+      {tasks.map((task) => (
         <TaskComponent
           key={task.id}
           task={task}
-          index={index}
         />
       ))}
     </div>

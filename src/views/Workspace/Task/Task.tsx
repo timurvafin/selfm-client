@@ -16,7 +16,6 @@ import useActions from './useActions';
 
 
 export interface Props {
-  index: number;
   task: TaskUIEntity;
 }
 

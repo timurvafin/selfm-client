@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { Shortcut, UIComponentType, WorkspaceTypes } from '../../common/constants';
-import { taskActions } from '../../models/task';
-import { DraggableItem, Droppable } from '../../vendor/dnd/react-dnd';
+import { Shortcut, UIComponentType, WorkspaceTypes } from 'common/constants';
+import { taskActions } from 'models/task';
+import { DraggableItem, Droppable } from 'vendor/dnd/react-dnd';
 import SidebarLink, { Props } from './SidebarLink';
 
 

@@ -4,10 +4,10 @@ import { ISortableContext, SortableItemProps } from './index';
 import { SortableContext } from './Sortable';
 
 
-const SortableElement = ({ id, type, index, canDrag, children }: SortableItemProps) => {
+const SortableElement = ({ id, type, canDrag, children }: SortableItemProps) => {
   const ref = useRef<HTMLDivElement>();
   const sortableContext = useContext<ISortableContext>(SortableContext);
-  const style = sortableContext.getItemStyle(id, index);
+  const style = sortableContext.getItemStyle(id);
 
   useEffect(
     () => {

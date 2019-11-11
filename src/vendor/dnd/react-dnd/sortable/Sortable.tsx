@@ -10,7 +10,7 @@ import useStore from './useStore';
 
 export const SortableContext = React.createContext(null);
 
-const Sortable = ({ children, id, type, onMove, accept }: SortableProps) => {
+const Sortable = ({ children, id, type, onItemDrop, accept }: SortableProps) => {
   const ref = useRef<HTMLDivElement>();
   const dndContext = useContext(DNDContext);
   const store = useStore();
@@ -48,7 +48,7 @@ const Sortable = ({ children, id, type, onMove, accept }: SortableProps) => {
       store.registerNode(id, rect);
       return () => store.unregisterNode(id);
     },
-    getItemStyle: (id, index) => getItemStyle(store.getItemPosition(id) - index, dragSource),
+    getItemStyle: (id) => getItemStyle(store.getPositionDelta(id), dragSource),
   }), [store, dragSource]);
 
   const lastTimeRef = useRef(0);
@@ -76,8 +76,13 @@ const Sortable = ({ children, id, type, onMove, accept }: SortableProps) => {
     store.moveItem(item.id, position);
   };
 
-  const onDrop = (draggableItem) => {
-    onMove(draggableItem, store.getItemPosition(draggableItem.id));
+  const onDrop = (draggableItem: DraggableItem) => {
+    onItemDrop({
+      item: draggableItem,
+      position: store.getItemPosition(draggableItem.id),
+      newOrder: store.getItemPositions(),
+      isNew: draggableItem.parent.id !== id,
+    });
     // Сохраняем состояние сортировки в основной массив
     store.commit();
   };

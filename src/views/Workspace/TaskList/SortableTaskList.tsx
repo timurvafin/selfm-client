@@ -1,25 +1,27 @@
 import React, { useCallback } from 'react';
 import { UIComponentType } from 'common/constants';
-import { DraggableItem } from 'vendor/dnd/react-dnd';
-import { MoveHandler, Sortable, SortableContentProps } from 'vendor/dnd/react-dnd/sortable';
+import { DropResult, Sortable, SortableContentProps } from 'vendor/dnd/react-dnd/sortable';
+import { ID } from 'common/types';
 import TasksList, { Props } from './TaskList';
 
 import * as styles from './tasks.scss';
 
 
-const SortableTaskList = ({ onTaskMove, id, ...props }: Props & { id: string; onTaskMove: MoveHandler }) => {
-  const onMove = useCallback((sourceItem: DraggableItem, position: number) => {
-    if (sourceItem.type === UIComponentType.TASK) {
-      onTaskMove(sourceItem, position);
+type TaskDropHandler = (id: ID, dropResult: DropResult) => void;
+
+const SortableTaskList = ({ onTaskDrop, id, ...props }: Props & { id: string; onTaskDrop: TaskDropHandler }) => {
+  const onItemDrop = useCallback((dropResult: DropResult) => {
+    if (dropResult.item.type === UIComponentType.TASK) {
+      onTaskDrop(dropResult.item.id, dropResult);
     }
-  }, [onTaskMove]);
+  }, [onTaskDrop]);
 
   return (
     <Sortable
       id={id}
       type={UIComponentType.TASK_LIST}
       accept={UIComponentType.TASK}
-      onMove={onMove}
+      onItemDrop={onItemDrop}
     >
       {({ setRef, placeholder }: SortableContentProps) => (
         <div

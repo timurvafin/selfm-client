@@ -2,19 +2,21 @@ import { ReactElement } from 'react';
 import EventRouter from './EventRouter';
 
 
+export type ID = string;
+
 export type XYCoords = {
   x: number;
   y: number;
 }
 
 export type DraggableItem = {
-  id: string;
+  id: ID;
   type: string;
   parent: DroppableItem;
 };
 
 export type DroppableItem = {
-  id: string;
+  id: ID;
   type: string;
 };
 
@@ -34,7 +36,7 @@ export interface DraggableContentProps {
 export type DraggableRenderer = (props: DraggableContentProps) => ReactElement
 
 export interface DraggableProps {
-  id: string;
+  id: ID;
   type: string;
   children: DraggableRenderer;
   canDrag?: boolean | (() => boolean);
@@ -53,7 +55,7 @@ export type DroppableRenderer = (props: DroppableContentProps) => ReactElement
 export type DroppableHoverHandler = (draggable: DraggableItem, mouseOffset: XYCoords) => void;
 
 export interface DroppableProps {
-  id: string;
+  id: ID;
   type: string;
   accept: string | [string];
   canDrop?: (draggable: DraggableItem) => boolean;

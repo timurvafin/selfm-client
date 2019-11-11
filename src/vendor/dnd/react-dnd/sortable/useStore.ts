@@ -22,19 +22,27 @@ export type State = {
   sortableItems: Array<SortableNode>;
 };
 
-export const initialState = {
+const initialState = {
   parentRect: null,
   nodes: [],
   sortableItems: [],
 };
 
-export const getItem = (state, id) => state.sortableItems.find(info => info.id === id);
+const getItem = (state, id) => state.sortableItems.find(info => info.id === id);
 
-export const getItemPosition = (state, id) => {
+const getItemPosition = (state, id) => {
   return state.sortableItems.findIndex(info => info.id === id);
 };
 
-export const getItemOffset = (state, id) => {
+const getInitialItemPosition = (state, id) => {
+  return state.nodes.findIndex(info => info.id === id);
+};
+
+const getItemPositions = (state) => {
+  return state.sortableItems.map(info => info.id);
+};
+
+const getItemOffset = (state, id) => {
   const item = state.sortableItems.find(info => info.id === id);
 
   return item ? item.offset : null;
@@ -151,6 +159,8 @@ export default function useStore() {
     getItems: () => state.sortableItems,
     getItemOffset: id => getItemOffset(state, id),
     getItemPosition: id => getItemPosition(state, id),
+    getPositionDelta: id => getItemPosition(state, id) - getInitialItemPosition(state, id),
+    getItemPositions: () => getItemPositions(state),
   }), [state]);
 
   return actions;

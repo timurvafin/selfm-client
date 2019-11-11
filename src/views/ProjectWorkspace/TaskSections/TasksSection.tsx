@@ -10,7 +10,7 @@ import { sectionSelector, TaskUIEntity } from 'store/selectors';
 import { ID } from 'common/types';
 import { SortableTaskList } from 'views/Workspace';
 import { taskActions } from 'models/task';
-import { DraggableItem } from 'vendor/dnd/react-dnd';
+import { DropResult } from 'vendor/dnd/react-dnd/sortable';
 
 import * as styles from './task-sections.scss';
 
@@ -35,12 +35,15 @@ const TasksSection = ({ id, tasks }: Props) => {
     // dispatch(TaskActions.create(projectId, section.id));
   };
 
-  const onTaskMove = useCallback((sourceItem: DraggableItem, position: number) => {
-    dispatch(taskActions.move(sourceItem.id, {
-      sectionId: id,
-      position,
-    }));
-  }, []);
+  const onTaskDrop = useCallback((taskId: ID, dropResult: DropResult) => {
+    if (dropResult.isNew) {
+      dispatch(taskActions.move(taskId, {
+        sectionId: id,
+      }));
+    }
+
+    dispatch(taskActions.reorder(dropResult.newOrder, 'order'));
+  }, [id]);
 
   const menuItems = [
     { action: addTask, name: 'Add task', icon: <PlusIcon />, className: 'action--add' },
@@ -51,23 +54,25 @@ const TasksSection = ({ id, tasks }: Props) => {
     // ['task-section--dragging']: isDragging,
   });
 
-  return section && (
+  return (
     <div className={classNames}>
-      <div className={styles['header']}>
-        <TextField
-          transparent
-          value={section.caption}
-          onMouseDown={stopPropagation}
-          className={styles['caption']}
-          autoFocus={section.isNew}
-          onChange={caption => update({ caption })}
-        />
-        <Menu items={menuItems} />
-      </div>
+      { section && (
+        <div className={styles['header']}>
+          <TextField
+            transparent
+            value={section.caption}
+            onMouseDown={stopPropagation}
+            className={styles['caption']}
+            autoFocus={section.isNew}
+            onChange={caption => update({ caption })}
+          />
+          <Menu items={menuItems} />
+        </div>
+      )}
       <SortableTaskList
         tasks={tasks}
-        id={`task-list-${id}`}
-        onTaskMove={onTaskMove}
+        id={id}
+        onTaskDrop={onTaskDrop}
         orderBy={'order'}
       />
     </div>
