@@ -6,9 +6,29 @@
 }
 
 .list {
-
+  &:hover .inlineFieldContainer {
+    opacity: 1;
+  }
 }
 
 .listDraggingOver {
 
+}
+
+.inlineFieldContainer {
+  margin-top: .2rem;
+  border-radius: 3px;
+  // opacity: 0;
+  transition: opacity .2s;
+  display: flex;
+}
+
+.inlineField {
+  width: 100%;
+  padding: .5rem 12px;
+  transition: background-color .2s;
+
+  &:hover, &:focus {
+    background: #f0f0f0;
+  }
 }

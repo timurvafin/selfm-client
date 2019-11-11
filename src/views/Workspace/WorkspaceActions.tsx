@@ -23,7 +23,7 @@ const WorkspaceActions = () => {
   const dispatch = useDispatch();
 
   const addTask = () => {
-    dispatch(taskActions.create(workspace, null));
+    dispatch(taskActions.createAndOpen(workspace));
   };
   const addSection = () => {
     dispatch(sectionActions.create(workspace));

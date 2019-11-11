@@ -2,6 +2,7 @@ import { Map } from 'immutable';
 import { createSelector } from 'reselect';
 import { Shortcut, WorkspaceTypes } from '../../common/constants';
 import { ID } from '../../common/types';
+import { isUndefined } from '../../common/utils/common';
 import { EntitiesMap } from '../common';
 import { ModelsState } from '../index';
 import { TaskEntity } from './index';
@@ -52,6 +53,12 @@ export const byWorkspace = createSelector(
 
 export const siblings = createSelector(
   byWorkspace,
-  (s, w, sectionId?: ID) => sectionId,
-  (entities: EntitiesMap<TaskEntity>, sectionId) => entities.filter(entity => entity.sectionId == sectionId)
+  (state, workspace, parentId?: ID) => parentId,
+  (state, workspace, parentId?: ID, sectionId?: ID) => sectionId,
+  (entities: EntitiesMap<TaskEntity>, parentId, sectionId) => entities.filter(entity => {
+    const parentMatched = isUndefined(parentId) || entity.parentId == parentId;
+    const sectionMatched = isUndefined(sectionId) || entity.sectionId == sectionId;
+
+    return parentMatched || sectionMatched;
+  })
 );

@@ -11,6 +11,7 @@ import { ID } from 'common/types';
 import { SortableTaskList } from 'views/Workspace';
 import { taskActions } from 'models/task';
 import { DropResult } from 'vendor/dnd/react-dnd/sortable';
+import { useSelectedWorkspace } from '../../../common/hooks';
 
 import * as styles from './task-sections.scss';
 
@@ -23,6 +24,7 @@ export interface Props {
 
 const TasksSection = ({ id, tasks }: Props) => {
   const section: SectionEntity = useSelector(state => sectionSelector(state, id));
+  const workspace = useSelectedWorkspace();
 
   const dispatch = useDispatch();
   const update = useCallback((values) => {
@@ -44,6 +46,10 @@ const TasksSection = ({ id, tasks }: Props) => {
 
     dispatch(taskActions.reorder(dropResult.newOrder, 'order'));
   }, [id]);
+
+  const createTask = useCallback((caption) => {
+    dispatch(taskActions.create(workspace, { caption, sectionId: id }));
+  }, []);
 
   const menuItems = [
     { action: addTask, name: 'Add task', icon: <PlusIcon />, className: 'action--add' },
@@ -74,6 +80,7 @@ const TasksSection = ({ id, tasks }: Props) => {
         id={id}
         onTaskDrop={onTaskDrop}
         orderBy={'order'}
+        onTaskCreate={createTask}
       />
     </div>
   );

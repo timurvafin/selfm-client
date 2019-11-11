@@ -1,4 +1,4 @@
-import BasicWorkspace from "./AnytimeWorkspace";
+import BasicWorkspace from "./BasicWorkspace";
 // import SomedayWorkspace from "./SomedayWorkspace";
 import TodayWorkspace from "./TodayWorkspace";
 

@@ -28,7 +28,8 @@ const taskApi = new Api(namespace);
 
 const actions = createActionCreators({
   ...createBaseEntityActions<TaskEntity>(),
-  create: (workspace?: WorkspaceEntity, sectionId?: ID) => ({ workspace, sectionId }),
+  create: (workspace?: WorkspaceEntity, fields?: Partial<TaskEntity>) => ({ workspace, fields: fields || {}, open }),
+  createAndOpen: (workspace?: WorkspaceEntity, fields?: Partial<TaskEntity>) => ({ workspace, fields: fields || {}, open }),
   move: (id: ID, destination: { parentId?: ID; sectionId?: ID; position?: number }) => ({ id, destination }),
   reorder: (ids: Array<ID>, orderBy: string) => ({ ids, orderBy }),
   setShortcut: (taskId: ID, shortcutCode: Shortcut) => ({ taskId, shortcutCode }),
@@ -39,6 +40,47 @@ const actions = createActionCreators({
   updateTodo: (parentId, id: ID, fields: Partial<TodoEntity>) => ({ parentId, id, fields }),
   removeTodo: (parentId, id: ID) => ({ parentId, id }),
 }, namespace);
+
+const isSmartCaption = caption => caption.includes(' // ');
+
+const extractFieldsFromCaption = (caption) => {
+  const [cleanCaption, stringToParse] = caption.split(' // ');
+  let fields = { caption: cleanCaption };
+
+  if (stringToParse) {
+    const extractedValues = extractFieldsValuesFromStr(stringToParse);
+    fields = { ...fields, ...extractedValues };
+  }
+
+  return fields;
+};
+
+const createEffect = function* ({ workspace, fields }) {
+  const state: ModelsState = yield select();
+  const siblings: EntitiesMap<TaskEntity> = selectors.siblings(state, workspace, fields.parentId, fields.sectionId);
+
+  if (fields.caption && isSmartCaption(fields.caption)) {
+    const extractedValues = extractFieldsFromCaption(fields.caption);
+    const values = mergeCollectionFieldValues(extractedValues, fields);
+    fields = { ...fields, ...values };
+  }
+
+  const entityToAdd = {
+    ...getEntityFieldsByWorkspace(workspace),
+    caption: '',
+    completed: false,
+    tags: [],
+    order: getNextOrder(siblings.toList(), 'order'),
+    order2: getNextOrder(siblings.toList(), 'order2'),
+    todoList: [],
+    ...fields,
+  };
+
+  const entity: TaskEntity = yield call(taskApi.add, entityToAdd);
+  yield put(actions.add(entity));
+
+  return entity.id;
+};
 
 const modelSpec: ModelSpec<TasksState, typeof actions> = {
   namespace,
@@ -66,39 +108,28 @@ const modelSpec: ModelSpec<TasksState, typeof actions> = {
     ...createBaseEntityEffects<TaskEntity>(namespace, actions),
     updateCaption: function* ({ id, caption }) {
       if (!caption) {
-        yield put(actions.update(id, { caption: '' }));
+        return yield put(actions.update(id, { caption: '' }));
       }
 
-      const [cleanCaption, stringToParse] = caption.split(' // ');
-      let fieldsToUpdate = { caption: cleanCaption };
-
-      if (stringToParse) {
+      let fieldsToUpdate;
+      if (isSmartCaption(caption)) {
         const task: TaskEntity = yield select(state => selectors.byId(state, id));
-        const extractedValues = extractFieldsValuesFromStr(stringToParse);
+        const extractedValues = extractFieldsFromCaption(caption);
         const values = mergeCollectionFieldValues(extractedValues, task);
-        fieldsToUpdate = { ...fieldsToUpdate, ...values };
+        fieldsToUpdate = { ...extractedValues, ...values };
+      } else {
+        fieldsToUpdate = { caption };
       }
 
       yield put(actions.update(id, fieldsToUpdate));
     },
-    create: function* ({ workspace, sectionId }) {
-      const state: ModelsState = yield select();
-      const siblings: EntitiesMap<TaskEntity> = selectors.byWorkspace(state, workspace, sectionId);
+    create: createEffect,
+    createAndOpen: function* ({ workspace, fields }) {
+      const id = yield* createEffect({ workspace, fields });
 
-      const entityToAdd = {
-        ...getEntityFieldsByWorkspace(workspace),
-        caption: '',
-        sectionId,
-        completed: false,
-        tags: [],
-        order: getNextOrder(siblings.toList(), 'order'),
-        order2: getNextOrder(siblings.toList(), 'order2'),
-        todoList: [],
-      };
-
-      const entity: TaskEntity = yield call(taskApi.add, entityToAdd);
-      yield put(actions.add(entity));
-      yield put(workspaceActions.setTaskOpen(entity.id, true));
+      if (open) {
+        yield put(workspaceActions.setTaskOpen(id, true));
+      }
     },
     createTodo: function* ({ parentId }) {
       const baseEntity = createBaseEntity();

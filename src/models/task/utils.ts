@@ -34,11 +34,14 @@ export const extractFieldsValuesFromStr = (str: string) => {
   return filterObjectValues(values, v => !!v);
 };
 
-export const mergeCollectionFieldValues = (fieldValues: Partial<TaskEntity>, entity: TaskEntity) => {
-  return {
-    ...fieldValues,
-    tags: fieldValues.tags ? [...entity.tags, ...fieldValues.tags] : entity.tags,
-  };
+export const mergeCollectionFieldValues = (fieldValues: Partial<TaskEntity>, entity: Partial<TaskEntity>) => {
+  const newValues = { ...fieldValues };
+
+  if (fieldValues.tags) {
+    newValues.tags = entity.tags ? [...entity.tags, ...fieldValues.tags] : fieldValues.tags;
+  }
+
+  return newValues;
 };
 
 export const getEntityFieldsByWorkspace = (workspace: WorkspaceEntity) => {

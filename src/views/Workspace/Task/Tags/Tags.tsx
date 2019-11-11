@@ -21,7 +21,7 @@ const TagItem = ({ tag, onRemove, readonly }) => (
 interface Props {
   tags: Array<string>;
   readonly?: boolean;
-  onChange: (tags: Array<string>) => void;
+  onChange?: (tags: Array<string>) => void;
 }
 
 const Tags = ({ tags, onChange, readonly }: Props) => {

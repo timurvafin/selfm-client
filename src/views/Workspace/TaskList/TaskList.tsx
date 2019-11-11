@@ -2,16 +2,18 @@ import React from 'react';
 import cs from 'classnames';
 import { TaskUIEntity } from 'store/selectors';
 import Task, { DraggableTask } from '../Task';
+import InlineTaskCreationField from './InlineTaskCreationField';
 import styles from './tasks.scss';
 
 
 export interface Props {
   tasks: Array<TaskUIEntity>;
+  onTaskCreate?: (caption: string) => void;
   orderBy?: string;
   droppable?: boolean;
 }
 
-const TasksList = ({ tasks, orderBy, droppable }: Props) => {
+const TasksList = ({ tasks, orderBy, droppable, onTaskCreate }: Props) => {
   const cls = cs(styles.list, {
   });
 
@@ -29,6 +31,8 @@ const TasksList = ({ tasks, orderBy, droppable }: Props) => {
           task={task}
         />
       ))}
+
+      { onTaskCreate && <InlineTaskCreationField onCreate={onTaskCreate} /> }
     </div>
   );
 };

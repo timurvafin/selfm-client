@@ -3,6 +3,7 @@ import { ModelsState } from 'models';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { taskActions } from 'models/task';
+import { SHORTCUT_WORKSPACES } from '../../common/constants';
 import { ID } from '../../common/types';
 import RadialProgressBar from '../../components/RadialProgressBar';
 import { projectSelector, ProjectUIEntity } from '../../store/selectors';
@@ -28,7 +29,7 @@ const ProjectHeader = ({ id }) => {
   );
 };
 
-const BasicWorkspaceBody = ({ tasks }) => {
+const BasicWorkspaceBody = ({ code, tasks }) => {
   const woParent = [];
   const groups = tasks.reduce((map, task) => {
     if (!task.parentId) {
@@ -57,6 +58,10 @@ const BasicWorkspaceBody = ({ tasks }) => {
     dispatch(taskActions.reorder(dropResult.newOrder, 'order2'));
   }, []);
 
+  const createTask = useCallback((parentId, caption) => {
+    dispatch(taskActions.create(SHORTCUT_WORKSPACES[code], { caption, parentId }));
+  }, []);
+
   return (
     <>
       <div className={styles.group}>
@@ -65,6 +70,7 @@ const BasicWorkspaceBody = ({ tasks }) => {
           tasks={woParent}
           onTaskDrop={(taskId, dropResult) => onTaskDrop(taskId, null, dropResult)}
           orderBy={'order2'}
+          onTaskCreate={caption => createTask(null, caption)}
         />
       </div>
       {parentIds.map(parentId => (
@@ -75,6 +81,7 @@ const BasicWorkspaceBody = ({ tasks }) => {
             tasks={groups[parentId]}
             onTaskDrop={(taskId, dropResult) => onTaskDrop(taskId, parentId, dropResult)}
             orderBy={'order2'}
+            onTaskCreate={caption => createTask(parentId, caption)}
           />
         </div>
       ))}
@@ -84,7 +91,7 @@ const BasicWorkspaceBody = ({ tasks }) => {
 
 const BasicWorkspace = ({ code }) => (
   <ShortcutWorkspaceLayout code={code}>
-    {({ tasks }) => <BasicWorkspaceBody tasks={tasks} />}
+    {({ code, tasks }) => <BasicWorkspaceBody code={code} tasks={tasks} />}
   </ShortcutWorkspaceLayout>
 );
 
