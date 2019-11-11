@@ -8,7 +8,7 @@ import ProjectWorkspace from '../ProjectWorkspace';
 import { Shortcut, WorkspaceTypes } from 'common/constants';
 
 import {
-  AnytimeWorkspace,
+  BasicWorkspace,
   // SomedayWorkspace,
   TodayWorkspace,
 } from '../ShortcutWorkspace';
@@ -20,19 +20,19 @@ const WorkspaceRouter = () => (
   <div className={styles.container}>
     <Switch>
       <Route path={`/${WorkspaceTypes.SHORTCUT}/${Shortcut.INBOX}`}>
-        <AnytimeWorkspace code={Shortcut.INBOX} />
+        <BasicWorkspace code={Shortcut.INBOX} />
       </Route>
       <Route path={`/${WorkspaceTypes.SHORTCUT}/${Shortcut.TODAY}`}>
         <TodayWorkspace code={Shortcut.TODAY} />
       </Route>
       <Route path={`/${WorkspaceTypes.SHORTCUT}/${Shortcut.PLANS}`}>
-        <AnytimeWorkspace code={Shortcut.PLANS} />
+        <BasicWorkspace code={Shortcut.PLANS} />
       </Route>
       <Route path={`/${WorkspaceTypes.SHORTCUT}/${Shortcut.ANYTIME}`}>
-        <AnytimeWorkspace code={Shortcut.ANYTIME} />
+        <BasicWorkspace code={Shortcut.ANYTIME} />
       </Route>
       <Route path={`/${WorkspaceTypes.SHORTCUT}/${Shortcut.SOMEDAY}`}>
-        <AnytimeWorkspace code={Shortcut.SOMEDAY} />
+        <BasicWorkspace code={Shortcut.SOMEDAY} />
       </Route>
       <Route path={`/${WorkspaceTypes.PROJECT}/:id`}>
         { ({ match }) => <ProjectWorkspace id={match.params.id} />}

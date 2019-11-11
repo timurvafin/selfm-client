@@ -28,7 +28,7 @@ const ProjectHeader = ({ id }) => {
   );
 };
 
-const AnytimeBody = ({ tasks }) => {
+const BasicWorkspaceBody = ({ tasks }) => {
   const woParent = [];
   const groups = tasks.reduce((map, task) => {
     if (!task.parentId) {
@@ -82,10 +82,10 @@ const AnytimeBody = ({ tasks }) => {
   );
 };
 
-const AnytimeWorkspace = ({ code }) => (
+const BasicWorkspace = ({ code }) => (
   <ShortcutWorkspaceLayout code={code}>
-    {({ tasks }) => <AnytimeBody tasks={tasks} />}
+    {({ tasks }) => <BasicWorkspaceBody tasks={tasks} />}
   </ShortcutWorkspaceLayout>
 );
 
-export default AnytimeWorkspace;
+export default BasicWorkspace;
