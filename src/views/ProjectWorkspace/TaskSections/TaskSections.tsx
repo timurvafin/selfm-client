@@ -6,6 +6,7 @@ import { WorkspaceEntity } from 'models/workspace';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { taskSectionsSelector, tasksSelector, TaskUIEntity } from 'store/selectors';
+import { useSelectedTag } from '../../../common/hooks';
 import { isEmpty } from '../../../common/utils/collection';
 import { DropHandler, DropResult, Sortable } from '../../../vendor/dnd/react-dnd/sortable';
 import TasksSection from './TasksSection';
@@ -17,6 +18,7 @@ interface Props {
 
 const TaskSections = ({ workspace }: Props) => {
   const tasks = useSelector<ModelsState, Array<TaskUIEntity>>(state => tasksSelector(state, workspace));
+  const selectedTag = useSelectedTag();
   const woSection = tasks.filter(task => !task.sectionId);
   const sections = useSelector(state => taskSectionsSelector(state, workspace));
 
@@ -33,19 +35,24 @@ const TaskSections = ({ workspace }: Props) => {
         </div>
       )}
 
-      {sections.map((section, index) => (
-        <div
-          className={styles.sectionWrapper}
-          key={section.id}
-        >
-          <TasksSection
+      {sections.map((section, index) => {
+        const sectionTasks = tasks.filter(task => task.sectionId == section.id);
+        const shouldHide = selectedTag && isEmpty(sectionTasks);
+
+        return !shouldHide && (
+          <div
+            className={styles.sectionWrapper}
             key={section.id}
-            id={section.id}
-            index={index}
-            tasks={tasks.filter(task => task.sectionId == section.id)}
-          />
-        </div>
-      ))}
+          >
+            <TasksSection
+              key={section.id}
+              id={section.id}
+              index={index}
+              tasks={sectionTasks}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };
