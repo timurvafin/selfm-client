@@ -21,13 +21,13 @@ import {
   FaLayerGroup,
 } from 'react-icons/fa';
 
-import './icon.scss';
+import styles from './icon.scss';
 
 
 const asIcon = (ConcreteIcon): React.FC<HTMLProps<HTMLElement>> => {
   const Icon = ({ className, ...props }: { className?: string }) => (
     <ConcreteIcon
-      className={cs('icon', className)}
+      className={cs(styles.icon, className)}
       {...props}
     />
   );

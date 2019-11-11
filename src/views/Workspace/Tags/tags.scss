@@ -1,10 +1,10 @@
 @import 'include';
 
-.workspace-tags {
+.tags {
   display: flex;
 }
 
-.workspace-tag {
+.tag {
   @include clickable();
 
   border-radius: 1em;
@@ -13,7 +13,7 @@
   color: $clr_lvl3;
 }
 
-.workspace-tag--selected {
+.tagSelected {
   background-color: $clr_lvl3;
   color: #fff;
 }

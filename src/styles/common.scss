@@ -21,7 +21,7 @@ input, textarea {
   font-family: inherit;
 }
 
-#app {
+:global #app {
   max-width: 900px;
   margin: 1em auto;
   border-radius: 3px;

@@ -5,7 +5,7 @@ $hover_bc: #fafafa;
 $transition_duration: .2s;
 $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 
-.task-outer {
+.taskOuter {
   display: flex;
   align-items: center;
   position: relative;
@@ -13,19 +13,6 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 
   .task {
     flex: 1;
-  }
-}
-
-.task-outer__drag-handle {
-  opacity: 0;
-  outline: none;
-  position: absolute;
-  left: -1em;
-}
-
-.task-outer:hover {
-  .task-outer__drag-handle {
-    opacity: .2;
   }
 }
 
@@ -42,26 +29,26 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   outline: none;
 }
 
-.task__row {
+.row {
   padding-left: 1.5em;
   position: relative;
 }
 
-.task__row--caption {
+.rowCaption {
   padding: .5em 0;
   display: flex;
   align-items: center;
 }
 
-.task__row--details {
+.rowDetails {
   display: none;
 }
 
-.task__row--controls {
+.rowControls {
 
 }
 
-%checkbox {
+.checkbox {
   width: .5em;
   flex-shrink: 0;
 
@@ -74,11 +61,7 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 
-.task__checkbox {
-  @extend %checkbox;
-}
-
-.task__caption {
+.caption {
   @include unselectable();
 
   line-height: 1.4;
@@ -86,7 +69,7 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   font-weight: 500;
 }
 
-.task__notes {
+.notes {
   display: none;
 
   color: #333;
@@ -95,7 +78,7 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   line-height: 1.4;
 }
 
-.task__controls {
+.controls {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -103,35 +86,24 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   font-size: 15px;
 }
 
-.task__controls .action {
+.controls .action {
   @include clickable();
 
   opacity: .8;
 
   color: #666;
   cursor: pointer;
-  margin-left: 1em;
+  margin-left: .5rem;
 
   &:hover {
     opacity: 1;
   }
 }
 
-.task__drag-placeholder {
-  display: none;
-  background-color: $hover_bc;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 2;
-  width: 100%;
-}
-
 /* -------------- 2.2 TASK STATES -------------- */
 
-.task--completed {
-  .task__caption {
+.taskCompleted {
+  .caption {
     // @include strikethrough();
     text-decoration: line-through;
     opacity: $completed_task_opacity;
@@ -139,55 +111,27 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 
-.task--dragging {
-  opacity: .5;
-}
-
-.task:not(.task--open) {
+.task:not(.taskOpen) {
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  .task__row--caption {
+  .rowCaption {
     flex: 1;
   }
 
-  .task__row--controls {
+  .rowControls {
     opacity: 0;
     transition: all .2s;
   }
 
-  &:hover, &.task--selected .task__row--controls {
+  &:hover, &.taskSelected .rowControls {
     opacity: 1;
   }
 }
 
-.task--selected, .task--dragging {
+.taskSelected {
   background-color: #f7f7f7;
-}
-
-.task--can-combined {
-  border: 1px solid red;
-}
-
-.task-outer--dragging {
-  // opacity: .5;
-  position: relative;
-
-  &:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #f3f3f3;
-    z-index: 10;
-  }
-
-  .task__controls {
-    display: none;
-  }
 }
 
 .task {
@@ -210,7 +154,7 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 
-.task--open {
+.taskOpen {
   display: block;
   margin: 2em 0;
   position: relative;
@@ -223,32 +167,23 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
     background-color: #fff;
   }
 
-  .task__row + .task__row {
+  .row + .row {
     margin-top: 1.5em;
   }
 
-  .task__row--details {
+  .rowDetails {
     display: block;
   }
 
-  .task__caption {
+  .caption {
     cursor: text;
   }
 
-  .task__notes {
+  .notes {
     display: block;
   }
 }
 
-.task:not(.task--completed) .task__checkbox:hover:before {
+.task:not(.taskCompleted) .checkbox:hover:before {
   background-color: #f5f5f5;
-}
-
-.drag-preview {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  background-color: #1d67fd;
-  opacity: .5;
 }

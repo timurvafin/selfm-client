@@ -3,7 +3,7 @@ import cs from 'classnames';
 import TextArea from 'react-textarea-autosize';
 import { KeyCode } from 'common/constants';
 
-import './textfield.scss';
+import styles from './textfield.scss';
 
 
 // @ts-ignore
@@ -114,9 +114,9 @@ const TextField = ({
     [cancel, onEnter, props.onKeyDown, props.onCancel]
   );
 
-  const cls = cs('textfield', className, {
-    'textfield--multiline': multiline,
-    'textfield--transparent': transparent,
+  const cls = cs(styles.textfield, className, {
+    [styles.textfieldMultiline]: multiline,
+    [styles.textfieldTransparent]: transparent,
   });
 
   const commonProps = {

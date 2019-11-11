@@ -6,11 +6,11 @@
   outline: none;
 }
 
-.project__menu--open .popup-menu {
+.menuOpen .popupMenu {
   visibility: visible;
 }
 
-.project__menu__icon {
+.menu__icon {
   cursor: pointer;
   opacity: .7;
 
@@ -19,7 +19,7 @@
   }
 }
 
-.popup-menu {
+.popupMenu {
   visibility: hidden;
   position: absolute;
   z-index: 900;
@@ -34,7 +34,7 @@
   transition: transform 0.1s ease-out, opacity 0.1s ease-out;
 }
 
-.popup-menu .action {
+.popupMenu .action {
   background: none;
   border: 0 none;
   overflow: visible;
@@ -53,17 +53,17 @@
   white-space: nowrap;
 }
 
-.popup-menu__items {
+.popupMenu__items {
   outline: none;
 }
 
-.popup-menu--divider {
+.popupMenuDivider {
   height: 1px;
   background-color: $lgray;
   width: 100%;
 }
 
-.popup-menu__triangle {
+.popupMenu__triangle {
   position: absolute;
   top: -10px;
   left: 12px;
@@ -73,8 +73,8 @@
   overflow: hidden;
 }
 
-.popup-menu__triangle:before,
-.popup-menu__triangle:after {
+.popupMenu__triangle:before,
+.popupMenu__triangle:after {
   content: '';
   display: inline-block;
 
@@ -84,7 +84,7 @@
   line-height: 1;
 }
 
-.popup-menu__triangle:before {
+.popupMenu__triangle:before {
   border-bottom: 10px solid #ccc;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
@@ -94,7 +94,7 @@
   width: auto;
 }
 
-.popup-menu__triangle:after {
+.popupMenu__triangle:after {
   top: 2px;
   left: 1px;
   border-left: 9px solid transparent;
@@ -102,25 +102,25 @@
   border-bottom: 9px solid #fff;
 }
 
-.popup-menu__items {
+.popupMenu__items {
   margin: 0;
   list-style: none;
   padding: 0;
 }
 
-.popup-menu__item {
+.popupMenu__item {
   display: block;
 }
 
-.popup-menu .action {
+.popupMenu .action {
 
 }
 
-.popup-menu__item:hover .action {
+.popupMenu__item:hover .action {
   background-color: $clr_accent;
   color: #fff;
 }
 
-.project__action--remove {
+.project__actionRemove {
   color: red;
 }

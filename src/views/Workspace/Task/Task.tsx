@@ -1,49 +1,19 @@
 import React, { MutableRefObject, useCallback, useEffect, useState } from 'react';
-import classnames from 'classnames';
+import cs from 'classnames';
 import Action from 'components/Action';
 import TextField from 'components/Textfield';
 import Checkbox from 'components/Checkbox';
 import TodoList from './TodoList/TodoList';
-import { useDispatch } from 'react-redux';
 import { useOutsideClickHandler } from 'common/hooks';
 import { stopPropagation } from 'common/utils/component';
 import { CalendarIcon, ListIcon, TagIcon } from 'components/Icon';
 import Tags from './Tags/Tags';
 import { isEmpty } from 'common/utils/collection';
 import { TaskUIEntity } from 'store/selectors';
-import { taskActions } from 'models/task';
-import { workspaceActions } from 'models/workspace';
 
-import './task.scss';
+import styles from './task.scss';
+import useActions from './useActions';
 
-
-const useActions = ({ id, isOpen, isSelected, completed }: TaskUIEntity) => {
-  const dispatch = useDispatch();
-
-  return {
-    update: useCallback((values) => {
-      dispatch(taskActions.update(id, values));
-    }, [id]),
-    updateCaption: useCallback((caption) => {
-      dispatch(taskActions.updateCaption(id, caption));
-    }, [id]),
-    setComplete: useCallback((completed) => {
-      dispatch(taskActions.update(id, { completed }));
-    }, [id, completed]),
-    /*remove: useCallback(() => {
-      dispatch(TaskActions.remove(id));
-    }, [id]),*/
-    setOpen: useCallback((value) => {
-      isOpen !== value && dispatch(workspaceActions.setTaskOpen(id, value));
-    }, [isOpen]),
-    setSelected: useCallback((value) => {
-      value !== isSelected && dispatch(workspaceActions.setTaskSelected(id, value));
-    }, [isSelected]),
-    createTodo: useCallback(() => {
-      dispatch(taskActions.createTodo(id));
-    }, [id]),
-  };
-};
 
 export interface Props {
   index: number;
@@ -61,22 +31,13 @@ const Task = ({ task }: Props) => {
     () => {
       setShowTags(!isEmpty(task.tags));
     },
-    [task.tags]
-  );
-
-  useEffect(
-    () => {
-      setShowTags(!isEmpty(task.tags));
-    },
     [task]
   );
 
-  const classNames = classnames('task', {
-    ['task--open']: isOpen,
-    ['task--completed']: completed,
-    ['task--selected']: isSelected,
-    // ['task--dragging']: isDragging,
-    // ['task--can-combined']: canCombined,
+  const classNames = cs(styles.task, {
+    [styles.taskOpen]: isOpen,
+    [styles.taskCompleted]: completed,
+    [styles.taskSelected]: isSelected,
   });
 
   const onClickOutside = useCallback(
@@ -104,13 +65,13 @@ const Task = ({ task }: Props) => {
       onClick={onClick}
       onDoubleClick={() => actions.setOpen(true)}
     >
-      <div className="task__row task__row--caption">
+      <div className={cs(styles.row, styles.rowCaption)}>
         <Checkbox
           value={completed}
           onClick={stopPropagation}
           onChange={actions.setComplete}
           tabIndex={-1}
-          className="task__checkbox"
+          className={styles['checkbox']}
         />
         { isOpen ? (
           <TextField
@@ -122,7 +83,7 @@ const Task = ({ task }: Props) => {
             onCancel={() => setCaptionInputValue(caption)}
             onMouseDown={stopPropagation}
             tabIndex={-1}
-            className="task__caption"
+            className={styles['caption']}
             autoFocus={isNew}
             onBlur={() => {
               actions.updateCaption(captionInputValue);
@@ -134,23 +95,23 @@ const Task = ({ task }: Props) => {
             }}
           />
         ) : (
-          <div className="task__caption">{caption}</div>
+          <div className={styles['caption']}>{caption}</div>
         )}
       </div>
 
-      <div className="task__row task__row--details">
+      <div className={cs(styles.row, styles.rowDetails)}>
         <TextField
           multiline
           transparent
           value={notes}
-          className="task__notes"
+          className={styles['notes']}
           placeholder="Add notes"
           onChange={notes => actions.update({ notes })}
         />
       </div>
 
       { showTags && (
-        <div className="task__row task__row--tags">
+        <div className={cs(styles.row, styles.rowTags)}>
           <Tags
             readonly={!isOpen}
             tags={task.tags}
@@ -159,17 +120,18 @@ const Task = ({ task }: Props) => {
         </div>
       ) }
 
-      <div className="task__row task__row--details">
+      <div className={cs(styles.row, styles.rowDetails)}>
         <TodoList
           parentId={task.id}
           todoList={task.todoList}
         />
       </div>
 
-      <div className="task__row task__row--controls">
-        <div className="task__controls">
+      <div className={cs(styles.row, styles.rowControls)}>
+        <div className={styles['controls']}>
           { isEmpty(task.todoList) && (
             <Action
+              className={styles.action}
               icon={<ListIcon />}
               hoverClr="blue"
               action={actions.createTodo}
@@ -177,6 +139,7 @@ const Task = ({ task }: Props) => {
             />
           )}
           <Action
+            className={styles.action}
             icon={<CalendarIcon />}
             hoverClr="orange"
             title="Calendar"
@@ -184,6 +147,7 @@ const Task = ({ task }: Props) => {
           />
           { !showTags && (
             <Action
+              className={styles.action}
               icon={<TagIcon />}
               hoverClr="yellow"
               title="Tag"

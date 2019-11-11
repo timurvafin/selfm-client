@@ -1,3 +1,9 @@
-import ShortcutWorkspace from './ShortcutWorkspace';
+import AnytimeWorkspace from "./AnytimeWorkspace";
+// import SomedayWorkspace from "./SomedayWorkspace";
+import TodayWorkspace from "./TodayWorkspace";
 
-export default ShortcutWorkspace;
+export {
+  AnytimeWorkspace,
+  // SomedayWorkspace,
+  TodayWorkspace,
+};

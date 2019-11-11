@@ -2,7 +2,7 @@ import React from 'react';
 import cs from 'classnames';
 import { TaskUIEntity } from 'store/selectors';
 import Task, { DraggableTask } from '../Task';
-import './tasks.scss';
+import styles from './tasks.scss';
 
 
 export interface Props {
@@ -12,7 +12,7 @@ export interface Props {
 }
 
 const TasksList = ({ tasks, orderBy, droppable }: Props) => {
-  const cls = cs('task-list', {
+  const cls = cs(styles.list, {
   });
 
   if (orderBy) {

@@ -1,6 +1,6 @@
 @import 'include';
 
-.workspace-container {
+.container {
   flex: 1;
   position: relative;
   background-color: #fff;
@@ -14,7 +14,7 @@
   height: 100%;
 }
 
-.workspace__row {
+.row {
   margin-bottom: 1.5rem;
   padding: 0 2rem;
 
@@ -23,7 +23,7 @@
   }
 }
 
-.workspace__row--body {
+.rowBody {
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1;
@@ -33,28 +33,28 @@
   }
 }
 
-.workspace-empty-content {
+.emptyContent {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 60%;
 }
 
-.workspace__row--caption {
+.rowCaption {
   display: flex;
   align-items: center;
   margin-top: 1rem;
   font-size: 1.5em;
 }
 
-.workspace__caption {
+.caption {
   margin-left: .8rem;
   font-weight: bold;
   border-bottom: 1px solid transparent;
   font-family: $ff_title;
 }
 
-.workspace-actions {
+.actions {
   display: flex;
   justify-content: space-around;
   padding: 0 4.5em;
@@ -65,11 +65,11 @@
   box-shadow: 3px 0 3px #ccc;
 }
 
-.workspace-action {
+.action {
   font-size: 1.2rem;
   padding: .4rem;
 }
 
-.workspace-action--remove {
+.actionRemove {
   font-size: 1.1rem;
 }

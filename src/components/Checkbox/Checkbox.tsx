@@ -1,7 +1,7 @@
 import React, { HTMLProps, useCallback } from 'react';
 import cs from 'classnames';
 
-import './checkbox.scss';
+import styles from './checkbox.scss';
 
 
 // @ts-ignore
@@ -17,8 +17,8 @@ const Checkbox = ({ onChange, round, className, value, ...props }: Props) => {
     [onChange],
   );
 
-  const cls = cs('checkbox', className, {
-    'checkbox--round': round,
+  const cls = cs(styles.checkbox, className, {
+    [styles.checkboxRound]: round,
   });
 
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import cs from 'classnames';
-import './radial-progress-bar.scss';
+import styles from './radial-progress-bar.scss';
 import { Motion, spring } from 'react-motion';
 
 
@@ -59,14 +59,14 @@ const RadialProgressBar = ({ size, className, progress, color }: { size: number;
       className={cls}
       style={{ width: size + 'px', height: size + 'px' }}>
       <svg
-        className="rpb__svg"
+        className={styles['rpb__svg']}
         width={size}
         height={size}
         version="1.1"
         viewBox={`0 0 ${size} ${size}`}
         xmlns="http://www.w3.org/2000/svg">
         <circle
-          className="rpb__svg__outline"
+          className={styles['rpb__svg__outline']}
           cx={center}
           cy={center}
           r={outerR}
@@ -79,7 +79,7 @@ const RadialProgressBar = ({ size, className, progress, color }: { size: number;
           style={motionStyle}>
           {style => (
             <Sector
-              className="rpb__svg__sector"
+              className={styles['rpb__svg__sector']}
               radius={innerR}
               center={center}
               angle={style.angle}

@@ -12,6 +12,8 @@ import { SortableTaskList } from 'views/Workspace';
 import { taskActions } from 'models/task';
 import { DraggableItem } from 'vendor/dnd/react-dnd';
 
+import * as styles from './task-sections.scss';
+
 
 export interface Props {
   id: ID;
@@ -45,18 +47,18 @@ const TasksSection = ({ id, tasks }: Props) => {
     { action: remove, name: 'Remove', icon: <CrossIcon />, className: 'action--remove' },
   ];
 
-  const classNames = cls('task-section', {
+  const classNames = cls(styles, {
     // ['task-section--dragging']: isDragging,
   });
 
   return section && (
     <div className={classNames}>
-      <div className="task-section__header">
+      <div className={styles['header']}>
         <TextField
           transparent
           value={section.caption}
           onMouseDown={stopPropagation}
-          className="task-section__caption"
+          className={styles['caption']}
           autoFocus={section.isNew}
           onChange={caption => update({ caption })}
         />

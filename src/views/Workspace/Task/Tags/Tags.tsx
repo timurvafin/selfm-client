@@ -3,18 +3,18 @@ import cs from 'classnames';
 import { CrossIcon, HashIcon } from 'components/Icon';
 import TextField from 'components/Textfield';
 
-import './tags.scss';
+import styles from './tags.scss';
 import Action from 'components/Action';
 
 
 const TagItem = ({ tag, onRemove, readonly }) => (
-  <div className={cs('tag', readonly && 'tag--readonly')}>
+  <div className={cs(styles.tag, readonly && styles.tagReadonly)}>
     <Action action={onRemove}>
-      <CrossIcon className={'tag__cross'} />
+      <CrossIcon className={styles['tag__cross']} />
     </Action>
 
-    <HashIcon className={'tag__hash'} />
-    <span className={'tag__caption'}>{tag}</span>
+    <HashIcon className={styles['tag__hash']} />
+    <span className={styles['tag__caption']}>{tag}</span>
   </div>
 );
 
@@ -45,14 +45,14 @@ const Tags = ({ tags, onChange, readonly }: Props) => {
   ));
 
   return (
-    <div className="tags">
+    <div className={styles['tags']}>
       {tagItems}
       { !readonly && (
         <TextField
           autosize
           controlled
           transparent
-          className="tags__input"
+          className={styles['tags__input']}
           onEnter={onAdd}
           value={inputValue}
           placeholder={tags.length <= 0 ? 'Add tags' : ''}

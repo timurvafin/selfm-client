@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import cn from 'classnames';
+import * as styles from './workspace.scss';
 
 
 interface LayoutProps {
@@ -7,7 +8,7 @@ interface LayoutProps {
   className?: string;
 }
 
-export const Container = ({ children, className }: LayoutProps) => <div className={cn('workspace', className)}>{children}</div>;
+export const Container = ({ children, className }: LayoutProps) => <div className={cn(styles.workspace, className)}>{children}</div>;
 
 export const Row = ({ children, className }: LayoutProps) => {
   if (!children) {
@@ -15,11 +16,13 @@ export const Row = ({ children, className }: LayoutProps) => {
   }
 
   return (
-    <div className={cn('workspace__row', className)}>
+    <div className={cn(styles.row, className)}>
       {children}
     </div>
   );
 };
 
-export const CaptionRow = ({ children, className }: LayoutProps) => <Row className={cn('workspace__row--caption', className)}>{children}</Row>;
-export const BodyRow = ({ children, className }: LayoutProps) => <Row className={cn('workspace__row--body', className)}>{children}</Row>;
+export const CaptionRow = ({ children, className }: LayoutProps) => <Row className={cn(styles.rowCaption, className)}>{children}</Row>;
+export const Caption = ({ children, className }: LayoutProps) => <div className={cn(styles.caption, className)}>{children}</div>;
+export const BodyRow = ({ children, className }: LayoutProps) => <Row className={cn(styles.rowBody, className)}>{children}</Row>;
+export const EmptyBody = ({ children, className }: LayoutProps) => <Row className={cn(styles.emptyContent, className)}>{children}</Row>;

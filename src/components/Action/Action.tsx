@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback } from 'react';
 import cs from 'classnames';
 
-import './action.scss';
+import styles from './action.scss';
 
 
 interface Props {
@@ -28,12 +28,12 @@ export default function Action({ className, action, icon, name, children }: Prop
 
   return (
     <span
-      className={cs('action', className)}
+      className={cs(styles.action, className)}
       onMouseDown={onClick}
     >
       {icon || null}
       {children}
-      {name && <span className="action__name">{name}</span>}
+      {name && <span className={styles['name']}>{name}</span>}
     </span>
   );
 }

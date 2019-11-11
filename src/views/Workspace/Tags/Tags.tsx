@@ -6,13 +6,13 @@ import { tagsSelector } from 'store/selectors';
 import { isEmpty } from 'common/utils/collection';
 import { workspaceActions, WorkspaceEntity, workspaceSelectors } from 'models/workspace';
 
-import './tags.scss';
+import styles from './tags.scss';
 
 
 const Tag = ({ tag, isSelected, onSelect }) => (
   <div
     onClick={onSelect}
-    className={cs('workspace-tag', isSelected && 'workspace-tag--selected')}
+    className={cs(styles.tag, isSelected && styles.tagSelected)}
   >{tag}</div>
 );
 
@@ -37,7 +37,7 @@ const Tags = ({ workspace }: { workspace: WorkspaceEntity }) => {
   });
 
   return !isEmpty(tags) && (
-    <div className={'workspace-tags'}>
+    <div className={styles.tags}>
       <Tag
         tag={'All'}
         onSelect={() => selectTag(null)}

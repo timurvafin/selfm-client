@@ -8,11 +8,11 @@
   }
 }
 
-.project__progress-bar {
+.progressBar {
   margin-right: .7rem;
 }
 
-.project__name {
+.name {
   margin-right: .7rem;
   font-size: 1.5em;
   font-weight: 500;
@@ -20,55 +20,23 @@
   font-family: $ff_title;
 }
 
-.project__name--textfield {
+.nameTextfield {
   padding: 0;
 }
 
-.project__name, .project__notes {
+.name, .notes {
   display: block;
   border: 0;
   outline: none;
 }
 
-.project__notes {
+.notes {
   width: 100%;
   resize: none;
   font-size: 13px;
   line-height: 1.4;
 }
 
-.project__row--notes {
+.rowNotes {
   margin-bottom: 3.5em;
-}
-
-.task-section__header {
-  margin-bottom: 1em;
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  &:after {
-    content: '';
-    width: 100%;
-    position: absolute;
-    left: 0;
-    bottom: -.5em;
-    height: 1px;
-    background-color: #f7f7f7;
-  }
-}
-
-.task-section__caption {
-  font-weight: bold;
-  color: $clr_accent;
-  font-size: 13px;
-}
-
-.task-section-wrap:empty {
-  display: none;
-}
-
-.task-section-wrap + .task-section-wrap {
-  margin-top: 2rem;
 }

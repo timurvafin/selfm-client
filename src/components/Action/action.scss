@@ -6,7 +6,7 @@
   display: inline-flex;
   align-items: center;
 
-  * + .action__name {
+  * + .name {
     margin-left: .3em;
   }
 }

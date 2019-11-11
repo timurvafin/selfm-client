@@ -12,7 +12,7 @@ import { taskActions } from '../../../models/task';
 import { DraggableItem } from '../../../vendor/dnd/react-dnd';
 import { MoveHandler, Sortable } from '../../../vendor/dnd/react-dnd/sortable';
 import TasksSection from './TasksSection';
-
+import * as styles from './task-sections.scss';
 
 interface Props {
   workspace: WorkspaceEntity;
@@ -34,7 +34,7 @@ const TaskSections = ({ workspace }: Props) => {
   return (
     <div>
       { !isEmpty(woSection) && (
-        <div className={'task-section-wrap'}>
+        <div className={styles.sectionWrapper}>
           <SortableTaskList
             tasks={woSection}
             id={'empty-section-task-list'}
@@ -46,7 +46,7 @@ const TaskSections = ({ workspace }: Props) => {
 
       {sections.map((section, index) => (
         <div
-          className={'task-section-wrap'}
+          className={styles.sectionWrapper}
           key={section.id}
         >
           <TasksSection

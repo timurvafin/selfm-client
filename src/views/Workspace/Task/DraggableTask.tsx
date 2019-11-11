@@ -1,8 +1,10 @@
-import React from 'react';
 import { UIComponentType } from 'common/constants';
-import { SortableElement } from 'vendor/dnd/react-dnd/sortable';
+import React from 'react';
 import { DraggableContentProps } from 'vendor/dnd/react-dnd';
+import { SortableElement } from 'vendor/dnd/react-dnd/sortable';
 import Task, { Props } from './Task';
+import * as styles from './task.scss';
+import { PointerEventsProperty, PositionProperty } from 'csstype';
 
 
 const getPreviewStyle = ({ componentRect, startMousePosition, startComponentPosition, dropTarget }: Partial<DraggableContentProps>) => {
@@ -13,6 +15,13 @@ const getPreviewStyle = ({ componentRect, startMousePosition, startComponentPosi
     transformOrigin: `${transformOrigin[0]}% ${transformOrigin[1]}% 0`,
     transition: 'transform .2s',
     transform: dropTarget && dropTarget.type === UIComponentType.SIDEBAR_SHORTCUT ? ' scale(.2, .5)' : '',
+    // static
+    position: ('absolute' as PositionProperty),
+    width: '100%',
+    height: '100%',
+    pointerEvents: ('none' as PointerEventsProperty),
+    backgroundColor: '#1d67fd',
+    opacity: '.5',
   };
 };
 
@@ -22,7 +31,7 @@ const DragPreview = (props: Partial<DraggableContentProps>) => {
   return (
     <div
       style={style}
-      className="drag-preview"
+      className={styles['drag-preview']}
     />
   );
 };
@@ -46,7 +55,7 @@ const DraggableTask = (props: Props) => (
         <div
           ref={setRef}
           style={style}
-          className={'task-outer'}
+          className={styles.taskOuter}
         >
           <Task {...props} />
         </div>

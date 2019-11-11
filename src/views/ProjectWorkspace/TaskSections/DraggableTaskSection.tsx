@@ -3,6 +3,7 @@ import cn from 'classnames';
 import { UIComponentType } from 'common/constants';
 import { SortableElement } from 'vendor/dnd/react-dnd/sortable';
 import TasksSection, { Props } from './TasksSection';
+import * as styles from './task-sections.scss';
 
 
 const DraggableTaskSection = (props: Props) => (
@@ -14,7 +15,7 @@ const DraggableTaskSection = (props: Props) => (
     {({ setRef, isDragging }) => (
       <div
         ref={setRef}
-        className={cn('task-section-wrapper', isDragging && 'task-section-wrapper--dragging')}
+        className={cn(styles.draggable, isDragging && styles.draggableDragging)}
       >
         <TasksSection {...props} />
       </div>

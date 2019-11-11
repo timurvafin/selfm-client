@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Action from 'components/Action';
 import cs from 'classnames';
 
-import './menu.scss';
+import styles from './menu.scss';
 import { MoreIcon } from '../Icon';
 
 
@@ -30,10 +30,10 @@ export default class Menu extends Component<{ items: any }, { menuOpen: boolean 
     return items.map((item, key) => (
       <li
         key={key}
-        className="popup-menu__item"
+        className={styles['popupMenu__item']}
       >
         {item === 'divider' ?
-          <div className="popup-menu--divider" /> :
+          <div className={styles['popupMenuDivider']} /> :
           <Action {...item} />
         }
       </li>
@@ -51,13 +51,13 @@ export default class Menu extends Component<{ items: any }, { menuOpen: boolean 
         onBlur={this.showMenu.bind(this, false)}
       >
         <MoreIcon
-          className="project__menu__icon"
+          className={styles['project__menu__icon']}
           onClick={this.showMenu.bind(this, true)}
         />
         
-        <div className="popup-menu">
-          <div className="popup-menu__triangle" />
-          <ul className="popup-menu__items">
+        <div className={styles['popupMenu']}>
+          <div className={styles['popupMenu__triangle']} />
+          <ul className={styles['popupMenu__items']}>
             {this.renderItems(items)}
           </ul>
         </div>

@@ -7,13 +7,13 @@ import { useActions, useSelectedWorkspace } from 'common/hooks';
 import { PlusIcon } from 'components/Icon';
 import { Shortcut, SHORTCUT_CAPTIONS, SHORTCUT_WORKSPACES, UIComponentType, WorkspaceTypes } from 'common/constants';
 
-import './sidebar.scss';
 import { ShortcutIcon } from 'views/ShortcutWorkspace/ShortcutIcon';
 import { projectActions } from 'models/project';
 import { workspaceActions, WorkspaceEntity } from 'models/workspace';
 import { taskSelectors } from '../../models/task';
 import SidebarLink from './DroppableLink';
 import { isWorkspacesEqual } from 'common/utils/common';
+import styles from './sidebar.scss';
 
 
 const ProjectIcon = ({ progress }) => (
@@ -31,7 +31,7 @@ const LinkList = ({ specs, isWorkspaceSelected, selectWorkspace, type }) => spec
     workspace={spec.workspace}
     onSelect={() => selectWorkspace(spec.workspace)}
     icon={spec.icon}
-    className={`sidebar__shortcut-${spec.workspace.code}`}
+    className={styles[spec.workspace.code]}
     caption={spec.caption}
     isSelected={isWorkspaceSelected(spec.workspace)}
     count={spec.count}
@@ -86,8 +86,8 @@ const Sidebar = () => {
   }));
 
   return (
-    <div className="sidebar">
-      <div className="sidebar__shortcuts">
+    <div className={styles.sidebar}>
+      <div className={styles.shortcuts}>
         <LinkList
           type={UIComponentType.SIDEBAR_SHORTCUT}
           specs={shortcutWorkspaceSpecs}
@@ -96,7 +96,7 @@ const Sidebar = () => {
         />
       </div>
 
-      <div className="sidebar__projects">
+      <div className={styles.projects}>
         <LinkList
           type={UIComponentType.SIDEBAR_PROJECT}
           specs={projectsSpecs}
@@ -105,12 +105,12 @@ const Sidebar = () => {
         />
       </div>
 
-      <div className="sidebar__actions">
+      <div className={styles.actions}>
         <Action
           name="New project"
           icon={<PlusIcon />}
           action={actions.createProject}
-          className="sidebar__action sidebar__action--add"
+          className={styles.action}
         />
       </div>
     </div>

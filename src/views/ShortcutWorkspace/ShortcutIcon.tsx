@@ -1,8 +1,8 @@
 import React from 'react';
 import { ArchiveIcon, CalendarIcon, InboxIcon, LayersIcon, StarIcon } from 'components/Icon';
 import { Shortcut } from 'common/constants';
-
-import './style.scss';
+import cs from 'classnames';
+import styles from './style.scss';
 
 
 const COMPONENTS = {
@@ -30,7 +30,7 @@ export const ShortcutIcon = ({ code, className, size, color }: Props) => {
   return (
     <Icon
       style={style}
-      className={`shortcut-icon shortcut-icon--${code} ${className}`}
+      className={cs(styles.icon, styles[code], className)}
     />
   );
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import cs from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   PlusIcon,
@@ -13,7 +14,7 @@ import { WorkspaceTypes } from 'common/constants';
 import { taskActions } from 'models/task';
 import { workspaceActions, WorkspaceEntity, workspaceSelectors } from 'models/workspace';
 import { sectionActions } from 'models/section';
-
+import * as styles from './workspace.scss';
 
 const WorkspaceActions = () => {
   // @ts-ignore
@@ -36,37 +37,37 @@ const WorkspaceActions = () => {
     <Action
       key={'move'}
       action={addTask}
-      className="workspace-action"
+      className={styles.action}
       icon={<ArrowRightIcon />}
     />,
     <Action
       key={'remove'}
       action={removeTask}
-      className="workspace-action workspace-action--remove"
+      className={cs(styles.action, styles.actionRemove)}
       icon={<TrashIcon />}
     />,
     <Action
       key={'more'}
       action={addTask}
-      className="workspace-action"
+      className={styles.action}
       icon={<MoreIcon />}
     />
   ];
 
   return (
-    <div className="workspace-actions">
+    <div className={styles.actions}>
       {selectedTaskId && taskActionElems}
       {!selectedTaskId && (
         <Action
           action={addTask}
-          className="workspace-action"
+          className={styles.action}
           icon={<PlusIcon />}
         />
       )}
       {workspace && workspace.type === WorkspaceTypes.PROJECT && !selectedTaskId && (
         <Action
           action={addSection}
-          className="workspace-action"
+          className={styles.action}
           icon={<ListIcon />}
         />
       )}

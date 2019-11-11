@@ -1,0 +1,33 @@
+@import 'include';
+
+.header {
+  margin-bottom: 1em;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:after {
+    content: '';
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: -.5em;
+    height: 1px;
+    background-color: #f7f7f7;
+  }
+}
+
+.caption {
+  font-weight: bold;
+  color: $clr_accent;
+  font-size: 13px;
+}
+
+.sectionWrapper:empty {
+  display: none;
+}
+
+.sectionWrapper + .sectionWrapper {
+  margin-top: 2rem;
+}

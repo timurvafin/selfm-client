@@ -1,21 +1,21 @@
 @import 'include';
 
-.shortcut__body {
+.body {
   margin-top: 2.5em;
 }
 
-.shortcut-icon {
+.icon {
   font-size: 120%;
-}
+  $shortcut_icon_colors: (inbox: #21adf8, today: #ffc300, plans: #fc3369, anytime: #37a69b, someday: #cbbf7c);
 
-.shortcut-icon-today {
-  font-size: 130%;
-}
+  &.today {
+    font-size: 130%;
+  }
 
-$shortcut_icon_colors: (inbox: #21adf8, today: #ffc300, plans: #fc3369, anytime: #37a69b, someday: #cbbf7c);
-
-@each $name, $color in $shortcut_icon_colors {
-  .shortcut-icon--#{$name} {
-    color: $color;
+  @each $name, $color in $shortcut_icon_colors {
+    &.#{$name} {
+      color: $color;
+    }
   }
 }
+

@@ -7,14 +7,14 @@ import { useDispatch } from 'react-redux';
 import { taskActions, TodoEntity } from 'models/task';
 import { ID } from 'common/types';
 
-import './todolist.scss';
+import styles from './todolist.scss';
 
 
 const TodoItem = ({ onRemove, onCreate, onUpdate, todo, autoFocus }) => {
   const { caption, completed } = todo;
 
-  const cls = cs('todo', {
-    ['todo--done']: completed,
+  const cls = cs(styles.todo, {
+    [styles.todoDone]: completed,
   });
 
   const onKeyDown = useCallback(
@@ -34,14 +34,14 @@ const TodoItem = ({ onRemove, onCreate, onUpdate, todo, autoFocus }) => {
   return (
     <div className={cls}>
       <Checkbox
-        className="todo__checkbox"
+        className={styles.todo__checkbox}
         value={completed}
         onChange={completed => onUpdate({ completed })}
       />
 
       <TextField
         autoFocus={autoFocus}
-        className="todo__caption"
+        className={styles.todo__caption}
         onChange={caption => onUpdate({ caption })}
         onKeyDown={onKeyDown}
         value={caption}
@@ -92,7 +92,7 @@ const TodoList = ({ todoList, parentId }: Props) => {
   });
 
   return (
-    <div className="todo-list">
+    <div className={styles.list}>
       {todoItems}
     </div>
   );
