@@ -38,6 +38,8 @@ const TextField = ({
   useEffect(() => {
     if (autoFocus) {
       ref.current.focus();
+      // place caret at the input end
+      ref.current.selectionStart = ref.current.selectionEnd = ref.current.value.length;
     }
   }, [autoFocus]);
 

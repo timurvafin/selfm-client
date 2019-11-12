@@ -1,4 +1,5 @@
 @import "include";
+@import "checkbox";
 
 $completed_task_opacity: .5;
 $hover_bc: #fafafa;
@@ -49,6 +50,7 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .checkbox {
+  @include checkbox($clr_accent, .9em, $border_width: 1px, $border_clr: $lgray);
   margin-right: $task_side_margin;
 }
 

@@ -2,12 +2,11 @@
 import { call, put, select } from '@redux-saga/core/effects';
 import { Shortcut, WorkspaceTypes } from 'common/constants';
 import { ID } from 'common/types';
-import { isUndefined } from 'common/utils/common';
+import { isUndefined, randomString } from 'common/utils/common';
 import { Map } from 'immutable';
 import Api from 'service/api';
 import {
   createActionCreators,
-  createBaseEntity,
   createBaseEntityActions,
   createBaseEntityEffects,
   createBaseEntityReducers,
@@ -35,10 +34,9 @@ const actions = createActionCreators({
   setShortcut: (taskId: ID, shortcutCode: Shortcut) => ({ taskId, shortcutCode }),
   updateCaption: (id: ID, caption: string) => ({ id, caption }),
   // todos
-  createTodo: (parentId: ID) => ({ parentId }),
-  addTodo: (entity: TodoEntity) => ({ entity }),
-  updateTodo: (parentId, id: ID, fields: Partial<TodoEntity>) => ({ parentId, id, fields }),
-  removeTodo: (parentId, id: ID) => ({ parentId, id }),
+  createTodo: (parentId: ID, position?: number) => ({ parentId, position }),
+  updateTodo: (parentId, uid: ID, fields: Partial<TodoEntity>) => ({ parentId, uid, fields }),
+  removeTodo: (parentId, uid: ID) => ({ parentId, uid }),
 }, namespace);
 
 const isSmartCaption = caption => caption.includes(' // ');
@@ -92,15 +90,6 @@ const modelSpec: ModelSpec<TasksState, typeof actions> = {
   reducers: {
     entities: {
       ...createBaseEntityReducers<TaskEntity>(),
-      addTodo: (state: EntitiesMap<TaskEntity>, { entity }) => {
-        return state.mergeIn([entity.id, 'todoList'], [entity]);
-      },
-      updateTodo: (state: EntitiesMap<TaskEntity>, { parentId, id, fields }) => {
-        return state.mergeIn([parentId, 'todoList', id], fields);
-      },
-      removeTodo: (state: EntitiesMap<TaskEntity>, { parentId, id }) => {
-        return state.deleteIn([parentId, 'todoList', id]);
-      },
     },
     ui: {},
   },
@@ -131,15 +120,35 @@ const modelSpec: ModelSpec<TasksState, typeof actions> = {
         yield put(workspaceActions.setTaskOpen(id, true));
       }
     },
-    createTodo: function* ({ parentId }) {
-      const baseEntity = createBaseEntity();
+    createTodo: function* ({ parentId, position }) {
+      const task: TaskEntity = yield select(state => selectors.byId(state, parentId));
+      const todoList = [...task.todoList];
 
-      yield put(actions.addTodo({
-        ...baseEntity,
+      const newTodo = {
+        id: null,
+        uid: randomString(),
         caption: '',
-        parentId,
         completed: false,
-      }));
+      };
+
+      if (!isUndefined(position)) {
+        todoList.splice(position, 0, newTodo);
+      } else {
+        todoList.push(newTodo);
+      }
+
+      yield put(actions.update(parentId, { todoList }));
+    },
+    updateTodo: function* ({ parentId, uid, fields }) {
+      const task: TaskEntity = yield select(state => selectors.byId(state, parentId));
+      const todoList = (task.todoList || []).map(todo => todo.uid === uid ? { ...todo, ...fields } : todo);
+
+      yield put(actions.update(parentId, { todoList }));
+    },
+    removeTodo: function* ({ parentId, uid }) {
+      const task: TaskEntity = yield select(state => selectors.byId(state, parentId));
+      const todoList = (task.todoList || []).filter(todo => todo.uid !== uid);
+      yield put(actions.update(parentId, { todoList }));
     },
     setShortcut: function* ({ taskId, shortcutCode }) {
       yield put(actions.update(taskId, getEntityFieldsByWorkspace({

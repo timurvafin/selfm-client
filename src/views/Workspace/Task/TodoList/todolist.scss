@@ -1,7 +1,7 @@
 @import "include";
+@import "checkbox";
 
 .todo {
-  padding: .2em 0;
   border-bottom: 1px solid #e0e0e0;
   display: flex;
   align-items: center;
@@ -13,11 +13,20 @@
 }
 
 .todoDone {
-  opacity: .3;
-
   .todo__caption {
+    opacity: .5;
     text-decoration: line-through;
   }
+
+  .todo__checkbox {
+    opacity: .5;
+  }
+}
+
+.todo__checkbox {
+  @include checkbox($clr: #4F526B, $size: 11px, $border_width: 2px, $border_clr: #8478e8, $round: true);
+
+  margin-right: .4rem;
 }
 
 .todo__caption {
@@ -26,4 +35,51 @@
   color: #666;
   font-weight: 300;
   outline: none;
+}
+
+.checkbox {
+  $size: 24px;
+  $circle_size: 5;
+
+  fill: transparent;
+  width: $size;
+  height: $size;
+
+  .outerCircle, .innerCircle {
+    cx: 50%;
+    cy: 50%;
+  }
+
+  .outerCircle {
+    r: $circle_size;
+    stroke-width: 1px;
+    stroke: rgba(79, 82, 107, 1);
+    transition: stroke-width .5s;
+  }
+
+  .innerCircle {
+    r: 0;
+    fill: rgba(79, 82, 107, 0.29);
+    stroke: transparent;
+    transition: r .3s;
+    transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  &.accent {
+    .outerCircle {
+      stroke-width: 2px;
+    }
+  }
+
+  &.checked {
+    .innerCircle {
+      r: $circle_size;
+    }
+  }
+
+  &.active:not(.checked), &:hover:not(.checked) {
+    .innerCircle {
+      r: 1;
+    }
+  }
 }

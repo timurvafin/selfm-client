@@ -1,40 +1,62 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import TextField from 'components/Textfield';
-import Checkbox from 'components/Checkbox';
-import { KeyCode } from 'common/constants';
 import cs from 'classnames';
-import { useDispatch } from 'react-redux';
-import { taskActions, TodoEntity } from 'models/task';
+import { KeyCode } from 'common/constants';
 import { ID } from 'common/types';
+import TextField from 'components/Textfield';
+import { taskActions, TodoEntity } from 'models/task';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { isEmpty } from '../../../../common/utils/collection';
 
 import styles from './todolist.scss';
 
 
-const TodoItem = ({ onRemove, onCreate, onUpdate, todo, autoFocus }) => {
+const TodoCheckbox = ({ value, onChange, accent }) => {
+  const [isActive, setIsActive] = useState(false);
+  const cls = cs(styles.checkbox, {
+    [styles.checked]: value,
+    [styles.active]: isActive,
+    [styles.accent]: accent,
+  });
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className={cls}
+      onMouseDown={() => setIsActive(true)}
+      onMouseUp={() => {
+        onChange(!value);
+        setIsActive(false);
+      }}
+    >
+      <circle
+        className={styles.outerCircle}
+      />
+      <circle
+        className={styles.innerCircle}
+      />
+    </svg>
+  );
+};
+
+const TodoItem = ({
+  onRemove,
+  accent,
+  onKeyDown,
+  onUpdate,
+  todo,
+  onFocus,
+  autoFocus,
+}) => {
   const { caption, completed } = todo;
 
   const cls = cs(styles.todo, {
     [styles.todoDone]: completed,
   });
 
-  const onKeyDown = useCallback(
-    (e) => {
-      if (e.keyCode === KeyCode.BACKSPACE) {
-        if (!e.target.value) {
-          e.preventDefault();
-          onRemove();
-        }
-      } else if (e.keyCode === KeyCode.ENTER) {
-        onCreate();
-      }
-    },
-    [onRemove],
-  );
-
   return (
     <div className={cls}>
-      <Checkbox
-        className={styles.todo__checkbox}
+      <TodoCheckbox
+        accent={accent}
         value={completed}
         onChange={completed => onUpdate({ completed })}
       />
@@ -44,6 +66,12 @@ const TodoItem = ({ onRemove, onCreate, onUpdate, todo, autoFocus }) => {
         className={styles.todo__caption}
         onChange={caption => onUpdate({ caption })}
         onKeyDown={onKeyDown}
+        onFocus={onFocus}
+        onBlur={(e) => {
+          if (!e.target.value) {
+            onRemove(false);
+          }
+        }}
         value={caption}
       />
     </div>
@@ -51,42 +79,115 @@ const TodoItem = ({ onRemove, onCreate, onUpdate, todo, autoFocus }) => {
 };
 
 interface Props {
+  autoFocus: boolean;
   parentId: ID;
   todoList: Array<TodoEntity>;
 }
 
+const useFocusedPosition = () => {
+  const [focusedPosition, setFocusedPosition] = useState(null);
+
+  return {
+    focusedPosition,
+    focusNext: (position) => {
+      setFocusedPosition(position + 1);
+    },
+    focusPrev: (position) => {
+      if (position > 0) {
+        setFocusedPosition(position - 1);
+      }
+    },
+    focusPosition: (position) => {
+      setFocusedPosition(position);
+    },
+  };
+};
+
 const TodoList = ({ todoList, parentId }: Props) => {
   const dispatch = useDispatch();
-  const [isAutoFocusEnabled, setAutoFocusEnabled] = useState(false);
+  const {
+    focusedPosition,
+    focusNext,
+    focusPrev,
+    focusPosition,
+  } = useFocusedPosition();
+
+  const accentTodoUid = useMemo(() => {
+    if (isEmpty(todoList)) {
+      return null;
+    }
+
+    const uncompletedTodo = todoList.find(todo => !todo.completed);
+
+    return uncompletedTodo && uncompletedTodo.uid;
+  }, [todoList]);
 
   const actions = useMemo(
     () => ({
-      create: () => {
-        setAutoFocusEnabled(true);
-        dispatch(taskActions.createTodo(parentId));
+      create: (position) => {
+        dispatch(taskActions.createTodo(parentId, position));
       },
-      update: (id, values) => {
-        dispatch(taskActions.updateTodo(parentId, id, values));
+      update: (uid, values) => {
+        dispatch(taskActions.updateTodo(parentId, uid, values));
       },
-      remove: (id) => {
-        dispatch(taskActions.removeTodo(parentId, id));
-        setAutoFocusEnabled(true);
+      remove: (uid) => {
+        dispatch(taskActions.removeTodo(parentId, uid));
       },
     }),
-    [todoList]
+    [todoList],
   );
 
-  const todoItems = (todoList || []).map((todo, index, array) => {
-    const isLast = index === array.length - 1;
+  const keyHandlers = {
+    [KeyCode.BACKSPACE]: (e: KeyboardEvent, uid, index) => {
+      // @ts-ignore
+      if (!e.target.value) {
+        e.preventDefault();
+        actions.remove(uid);
+        focusPrev(index);
+      }
+    },
+    [KeyCode.ENTER]: (e: KeyboardEvent, _, index) => {
+      const position = e.shiftKey ? index : index + 1;
+      actions.create(position);
+      focusPosition(position);
+      e.preventDefault();
+    },
+    [KeyCode.ARROW_UP]: (_, uid, index) => {
+      focusPrev(index);
+    },
+    [KeyCode.ARROW_DOWN]: (_, uid, index) => {
+      focusNext(index);
+    },
+  };
+
+  const onItemKeyDown = useCallback(
+    (e, uid, index) => {
+      const handler = keyHandlers[e.keyCode];
+
+      if (handler) {
+        return handler(e, uid, index);
+      }
+    },
+    [keyHandlers],
+  );
+
+  const todoItems = (todoList || []).map((todo, index) => {
+    const uid = todo.uid;
+    const isNew = !todo.caption;
+    const isFocused = isNew || focusedPosition === index;
 
     return (
       <TodoItem
-        key={index}
+        key={uid}
+        accent={accentTodoUid === uid}
         todo={todo}
-        autoFocus={isAutoFocusEnabled && isLast}
-        onCreate={actions.create}
-        onUpdate={actions.update.bind(null, todo.id)}
-        onRemove={actions.remove.bind(null, todo.id)}
+        autoFocus={isFocused}
+        onKeyDown={(e) => onItemKeyDown(e, uid, index)}
+        onFocus={() => {
+          focusPosition(null);
+        }}
+        onUpdate={actions.update.bind(null, uid)}
+        onRemove={actions.remove.bind(null, uid)}
       />
     );
   });

@@ -1,7 +1,4 @@
-import { ArchiveIcon, CalendarIcon, InboxIcon, LayersIcon, StarIcon } from '../components/Icon';
-import React from 'react';
 import { WorkspaceEntity } from '../models/workspace';
-import { ShortcutIcon } from '../views/ShortcutWorkspace/ShortcutIcon';
 
 
 export const ENTER_KEY = 'Enter';
@@ -12,6 +9,8 @@ export enum KeyCode {
   ENTER = 13,
   BACKSPACE = 8,
   ESCAPE = 27,
+  ARROW_UP = 38,
+  ARROW_DOWN = 40,
 }
 
 export enum WorkspaceTypes {

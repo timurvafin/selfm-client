@@ -25,6 +25,7 @@ const Task = ({ task }: Props) => {
   const actions = useActions(task);
   const [showTags, setShowTags] = useState(!isEmpty(task.tags));
   const [captionInputValue, setCaptionInputValue] = useState(caption);
+  const [isTodosFocused, setIsTodosFocused] = useState(false);
 
   useEffect(
     () => {
@@ -121,6 +122,7 @@ const Task = ({ task }: Props) => {
 
       <div className={cs(styles.row, styles.rowDetails)}>
         <TodoList
+          autoFocus={isTodosFocused}
           parentId={task.id}
           todoList={task.todoList}
         />
@@ -142,7 +144,10 @@ const Task = ({ task }: Props) => {
             icon={<CalendarIcon />}
             hoverClr="orange"
             title="Calendar"
-            action={actions.createTodo}
+            action={() => {
+              actions.createTodo();
+              setIsTodosFocused(true);
+            }}
           />
           { !showTags && (
             <Action

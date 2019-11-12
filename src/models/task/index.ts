@@ -5,7 +5,7 @@ import * as selectors from './selectors';
 
 
 export interface TodoEntity extends BaseEntity {
-  id: ID;
+  uid: ID;
   caption: string;
   completed: boolean;
 }
