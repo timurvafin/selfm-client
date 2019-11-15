@@ -15,14 +15,14 @@ export const arrayMove = (arr: Array<any>, fromIndex, toIndex) => {
   return copy;
 };
 
-export const getItemStyle = (orderDelta, draggableItem) => {
+export const getItemStyle = (orderDelta, draggableItem: DraggableItem) => {
   if (!draggableItem) {
     return {};
   }
 
   return {
     transition: 'transform 200ms cubic-bezier(0.2, 0, 0, 1)',
-    transform: `translateY(${orderDelta * draggableItem.nodeRect.height}px)`,
+    transform: `translateY(${orderDelta * draggableItem.size.height}px)`,
   };
 };
 
@@ -32,8 +32,8 @@ export const getEmptyPlaceholderStyle = (draggable: SortableNode) => {
   }
 
   return {
-    width: draggable.rect.width,
-    height: draggable.rect.height,
+    width: draggable.size.width,
+    height: draggable.size.height,
     pointerEvents: 'none',
     visibility: 'hidden',
   };
@@ -45,8 +45,8 @@ export const getPlaceholderStyle = (sortableItem: SortableNode, offset?: XYCoord
   }
 
   return {
-    width: sortableItem.rect.width,
-    height: sortableItem.rect.height,
+    width: sortableItem.size.width,
+    height: sortableItem.size.height,
     pointerEvents: 'none',
     position: 'fixed',
     left: offset ? offset.x : null,
@@ -69,7 +69,7 @@ export const findDropPosition = (sortableItems: Array<SortableNode>, mouseY, dra
       continue;
     }
 
-    const middleY = item.offset.y + item.rect.height / 2;
+    const middleY = item.offset.y + item.size.height / 2;
     if (mouseY > middleY) {
       position++;
     } else {

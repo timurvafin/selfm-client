@@ -1,16 +1,16 @@
 import { Reducer, useMemo, useReducer } from 'react';
-import { XYCoords } from '../types';
+import { Size, XYCoords } from '../types';
 import { arrayMove } from './helpers';
 
 
 export type NodeItem = {
   id: string;
-  rect: ClientRect;
+  size: Size;
 };
 
 export type SortableNode = {
   id: string;
-  rect: ClientRect;
+  size: Size;
   offset: XYCoords;
 }
 
@@ -59,7 +59,7 @@ const makeSortableItems = (nodes: Array<NodeItem>, parentRect: ClientRect) => {
     if (!prevOffset) {
       offset = parentOffset;
     } else {
-      offset = { x: prevOffset.x, y: prevOffset.y + prevItem.rect.height };
+      offset = { x: prevOffset.x, y: prevOffset.y + prevItem.size.height };
     }
 
     prevItem = item;
@@ -75,10 +75,10 @@ const makeSortableItems = (nodes: Array<NodeItem>, parentRect: ClientRect) => {
 export const reducer = (state: State, action) => {
   switch (action.type) {
     case 'registerNode': {
-      const { id, rect } = action;
+      const { id, size } = action;
       const nodes = [...state.nodes, {
         id,
-        rect,
+        size,
       }];
 
       return {
@@ -95,11 +95,11 @@ export const reducer = (state: State, action) => {
       };
     }
     case 'addItem': {
-      const { id, rect, position } = action;
+      const { id, size, position } = action;
       const sortableItemsCopy = [...state.sortableItems];
       sortableItemsCopy.splice(position, 0, {
         id,
-        rect,
+        size,
         offset: null,
       });
 
@@ -130,7 +130,7 @@ export const reducer = (state: State, action) => {
     case 'commit': {
       return {
         ...state,
-        nodes: state.sortableItems.map(({ id, rect }) => ({ id, rect })) };
+        nodes: state.sortableItems.map(({ id, size }) => ({ id, size })) };
     }
     case 'reset': {
       return {
@@ -147,9 +147,9 @@ export default function useStore() {
   const [state, dispatch] = useReducer<Reducer<State, any>>(reducer, initialState);
 
   const actions = useMemo(() => ({
-    registerNode: (id, rect) => dispatch({ type: 'registerNode', id, rect }),
+    registerNode: (id, size) => dispatch({ type: 'registerNode', id, size }),
     unregisterNode: (id) => dispatch({ type: 'unregisterNode', id }),
-    addItem: (id, position, rect) => dispatch({ type: 'addItem', id, rect, position }),
+    addItem: (id, position, size) => dispatch({ type: 'addItem', id, size, position }),
     removeItem: (id) => dispatch({ type: 'removeItem', id }),
     moveItem: (id, position) => dispatch({ type: 'moveItem', id, position }),
     init: (parentRect: ClientRect) => dispatch({ type: 'init', parentRect }),

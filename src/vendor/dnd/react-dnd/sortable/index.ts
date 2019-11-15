@@ -6,6 +6,7 @@ import {
   DroppableProps,
   DraggableProps,
   ID,
+  Size,
 } from '../types';
 import Sortable from "./Sortable";
 import SortableElement from "./SortableElement";
@@ -45,7 +46,7 @@ export interface SortableItemProps extends DraggableProps {
 type UnregisterNode = () => void;
 
 export interface ISortableContext {
-  registerNode: (id: ID, rect: ClientRect) => UnregisterNode;
+  registerNode: (id: ID, size: Size) => UnregisterNode;
   getItemStyle: (id: ID) => object;
 }
 

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useDragLayer } from 'react-dnd';
 import { Event } from './constants';
 import DNDContext from './Context';
-import { DraggableContentProps } from './types';
+import { DragPreviewProps, Size } from './types';
 
 
 const layerStyles: React.CSSProperties = {
@@ -16,7 +16,7 @@ const layerStyles: React.CSSProperties = {
 };
 
 function getWrapperStyle(
-  nodeRect: ClientRect,
+  size: Size,
   startComponentPosition,
   currentComponentPosition,
 ) {
@@ -30,8 +30,8 @@ function getWrapperStyle(
 
   const transform = `translate(${x}px, ${y}px)`;
   return {
-    width: nodeRect.width,
-    height: nodeRect.height,
+    width: size.width,
+    height: size.height,
     transform,
   };
 }
@@ -53,7 +53,7 @@ const DragLayer = () => {
         unsubscribeLeaveHandler();
       };
     },
-    [dndContext.eventRouter]
+    [dndContext.eventRouter],
   );
 
   const {
@@ -70,41 +70,29 @@ const DragLayer = () => {
     isDragging: monitor.isDragging(),
   }));
 
-  if (!isDragging || !item) {
+  if (!isDragging || !item || !startMousePosition || !startComponentPosition) {
     return null;
   }
 
-  function renderDragPreview() {
-    if (!item || !startMousePosition || !startComponentPosition) {
-      return false;
-    }
+  const DragPreviewComponent = dndContext.dragPreviewComponents.get(item.id);
 
-    const DraggableComponent = dndContext.draggableComponents.get(item.id);
-
-    if (!DraggableComponent) {
-      return false;
-    }
-
-    const draggableProps: DraggableContentProps = {
-      setRef: () => {},
-      isDragging: true,
-      canDrag: false,
-      dropTarget,
-      componentRect: item.nodeRect,
-      startComponentPosition,
-      startMousePosition,
-    };
-
-    return (
-      <DraggableComponent {...draggableProps} />
-    );
+  if (!DragPreviewComponent) {
+    return null;
   }
+
+  const draggableProps: DragPreviewProps = {
+    item,
+    currentComponentPosition,
+    dropTarget,
+    startComponentPosition,
+    startMousePosition,
+    componentSize: item.size,
+    wrapperStyle: getWrapperStyle(item.size, startComponentPosition, currentComponentPosition),
+  };
 
   return (
     <div style={layerStyles}>
-      <div style={getWrapperStyle(item.nodeRect, startComponentPosition, currentComponentPosition)}>
-        {renderDragPreview()}
-      </div>
+      <DragPreviewComponent {...draggableProps} />
     </div>
   );
 };

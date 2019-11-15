@@ -10,20 +10,29 @@ import { DraggableItem, DraggableProps } from './types';
 const Draggable = ({
   id,
   type,
+  payload,
   canDrag,
   children,
+  useHandle,
+  previewComponent,
 }: DraggableProps) => {
   const ref = useRef<HTMLDivElement>();
   const droppableContext = useContext(DroppableContext);
   const dndContext = useContext(DNDContext);
-  const nodeRect = ref.current ? ref.current.getBoundingClientRect() : null;
+
+  const size = useMemo(() => {
+    const nodeRect = ref.current ? ref.current.getBoundingClientRect() : {};
+    // @ts-ignore
+    return nodeRect ? { width: nodeRect.width, height: nodeRect.height } : { width: 0, height: 0 };
+  }, [ref.current]);
 
   const item: DraggableItem = useMemo(() => ({
     type,
     id,
-    nodeRect,
+    size,
     parent: droppableContext.item,
-  }), [id, type, nodeRect, droppableContext.item]);
+    payload,
+  }), [id, type, payload, size, droppableContext.item]);
 
   const [collectedProps, connectDrag, connectPreview] = useDrag({
     begin: () => {
@@ -44,24 +53,32 @@ const Draggable = ({
 
   useEffect(
     () => {
-      // Регистрируем компонент для отрисовки превью.
-      dndContext.draggableComponents.set(id, children);
-      // Скрываем коробочное превью react-dnd.
-      connectPreview(getEmptyImage(), { captureDraggingState: false });
+      if (previewComponent) {
+        // Регистрируем компонент для отрисовки превью.
+        dndContext.dragPreviewComponents.set(id, previewComponent);
+        // Скрываем коробочное превью react-dnd.
+        connectPreview(getEmptyImage(), { captureDraggingState: false });
+      }
     },
     []
   );
 
   return children({
+    item,
     setRef: (node) => {
       ref.current = node;
+
+      if (useHandle) {
+        connectPreview(node);
+      } else {
+        connectDrag(node);
+      }
+    },
+    setHandleRef: (node) => {
       connectDrag(node);
     },
-    componentRect: nodeRect,
     style: collectedProps.isDragging ? { opacity: 0 } : {},
     ...collectedProps,
-    // Всегда false, true придет из DragLayer'a
-    isDragging: false,
   });
 };
 

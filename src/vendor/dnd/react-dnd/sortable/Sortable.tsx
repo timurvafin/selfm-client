@@ -44,21 +44,21 @@ const Sortable = ({ children, id, type, onItemDrop, accept }: SortableProps) => 
   );
 
   const context = useMemo<ISortableContext>(() => ({
-    registerNode: (id, rect) => {
-      store.registerNode(id, rect);
+    registerNode: (id, size) => {
+      store.registerNode(id, size);
       return () => store.unregisterNode(id);
     },
     getItemStyle: (id) => getItemStyle(store.getPositionDelta(id), dragSource),
   }), [store, dragSource]);
 
   const lastTimeRef = useRef(0);
-  const onHover = (item: any, mouseOffset) => {
+  const onHover = (item: DraggableItem, mouseOffset) => {
     const sortableItem = store.getItem(item.id);
     const position = findDropPosition(store.getItems(), mouseOffset.y, item.id);
 
     // Если элемента нет в сторе, значит этот элемент перемещен из чужого списка. Добавлем его.
     if (!sortableItem) {
-      return store.addItem(item.id, position, item.nodeRect);
+      return store.addItem(item.id, position, item.size);
     }
 
     const sortablePosition = store.getItemPosition(item.id);

@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import EventRouter from './EventRouter';
 
 
@@ -9,10 +9,17 @@ export type XYCoords = {
   y: number;
 }
 
+export type Size = {
+  width: number;
+  height: number;
+}
+
 export type DraggableItem = {
   id: ID;
   type: string;
   parent: DroppableItem;
+  size: Size;
+  payload?: any;
 };
 
 export type DroppableItem = {
@@ -22,15 +29,23 @@ export type DroppableItem = {
 
 export type SetRef = (node: HTMLDivElement) => void;
 
-export interface DraggableContentProps {
-  setRef: SetRef;
-  style?: object;
-  dropTarget?: DroppableItem;
-  isDragging: boolean;
-  canDrag: boolean;
-  componentRect: ClientRect;
+export interface DragPreviewProps {
+  item: DraggableItem;
+  currentComponentPosition: XYCoords;
   startComponentPosition: XYCoords;
   startMousePosition: XYCoords;
+  dropTarget?: DroppableItem;
+  componentSize: Size;
+  wrapperStyle: object;
+}
+
+export interface DraggableContentProps {
+  item: DraggableItem;
+  setRef: SetRef;
+  setHandleRef: SetRef;
+  style?: object;
+  isDragging: boolean;
+  canDrag: boolean;
 }
 
 export type DraggableRenderer = (props: DraggableContentProps) => ReactElement
@@ -38,8 +53,11 @@ export type DraggableRenderer = (props: DraggableContentProps) => ReactElement
 export interface DraggableProps {
   id: ID;
   type: string;
+  payload?: any;
   children: DraggableRenderer;
   canDrag?: boolean | (() => boolean);
+  useHandle?: boolean;
+  previewComponent?: React.FC<DragPreviewProps>;
 }
 
 export type DraggableEventHandler = (draggable: DraggableItem) => void;
@@ -62,10 +80,9 @@ export interface DroppableProps {
   onHover?: DroppableHoverHandler;
   onEnter?: DraggableEventHandler;
   onLeave?: DraggableEventHandler;
+  onDrop?: DraggableEventHandler;
   onBeginDrag?: DraggableEventHandler;
   onEndDrag?: DraggableEventHandler;
-  onDrop?: DraggableEventHandler;
-  // canDrop?: () => boolean;
   children: DroppableRenderer;
 }
 
@@ -75,5 +92,5 @@ export interface DroppableContextShape {
 
 export interface IDNDContext {
   eventRouter: EventRouter;
-  draggableComponents: Map<string, DraggableRenderer>;
+  dragPreviewComponents: Map<string, React.FC<DragPreviewProps>>;
 }
