@@ -1,26 +1,33 @@
 import { Map } from 'immutable';
+import moment from 'moment';
 import { createSelector } from 'reselect';
 import { Shortcut, WorkspaceTypes } from '../../common/constants';
 import { ID } from '../../common/types';
 import { isUndefined } from '../../common/utils/common';
 import { EntitiesMap } from '../common';
 import { ModelsState } from '../index';
-import { TaskEntity } from './index';
 import { WorkspaceEntity } from '../workspace';
+import { TaskEntity } from './index';
 
 
 const shortcutTaskPredicates = {
   [Shortcut.INBOX]: (task: TaskEntity) => !task.startTime && !task.startTimeTag && !task.parentId && !task.completed,
   [Shortcut.TODAY]: (task: TaskEntity) => {
-    // TODO:impl change logic
-    if (!task.startTime) {
+    const todayStart = moment().startOf('day').valueOf();
+    const todayEnd = moment().endOf('day').valueOf();
+
+    const startTime = task.startTime;
+
+    // if it's future task
+    if (!startTime || startTime > todayEnd) {
       return false;
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0);
+    if (startTime > todayStart) {
+      return true;
+    }
 
-    return task.startTime - today.getTime()  < 3600 * 24 * 1000;
+    return !task.completed;
   },
   [Shortcut.PLANS]: (task: TaskEntity) => !!task.startTime,
   [Shortcut.ANYTIME]: (task: TaskEntity) => task.startTimeTag === 'anytime',
@@ -48,7 +55,7 @@ export const byWorkspace = createSelector(
 
       return false;
     });
-  }
+  },
 );
 
 export const siblings = createSelector(
@@ -60,5 +67,5 @@ export const siblings = createSelector(
     const sectionMatched = isUndefined(sectionId) || entity.sectionId == sectionId;
 
     return parentMatched || sectionMatched;
-  })
+  }),
 );
