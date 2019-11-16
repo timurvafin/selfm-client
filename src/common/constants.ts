@@ -36,6 +36,7 @@ export const SHORTCUT_CAPTIONS = {
 
 export enum UIComponentType {
   TASK = 'task',
+  TASK_TODO = 'task-todo',
   PROJECT = 'project',
   TASK_SECTION = 'task-section',
   TASK_GROUP = 'task-group',

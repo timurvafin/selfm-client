@@ -1,117 +1,29 @@
 import cs from 'classnames';
-import { KeyCode } from 'common/constants';
 import { ID } from 'common/types';
-import TextField from 'components/Textfield';
+import { isEmpty } from 'common/utils/collection';
 import { taskActions, TodoEntity } from 'models/task';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { isEmpty } from '../../../../common/utils/collection';
+import asSortable from './asSortable';
+import TodoItem from './TodoItem';
 
 import styles from './todolist.scss';
+import useTodoFocus from './useTodoFocus';
+import useTodoHotkeys from './useTodoHotkeys';
 
 
-const TodoCheckbox = ({ value, onChange, accent }) => {
-  const [isActive, setIsActive] = useState(false);
-  const cls = cs(styles.checkbox, {
-    [styles.checked]: value,
-    [styles.active]: isActive,
-    [styles.accent]: accent,
-  });
-
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className={cls}
-      onMouseDown={() => setIsActive(true)}
-      onMouseUp={() => {
-        onChange(!value);
-        setIsActive(false);
-      }}
-    >
-      <circle
-        className={styles.outerCircle}
-      />
-      <circle
-        className={styles.innerCircle}
-      />
-    </svg>
-  );
-};
-
-const TodoItem = ({
-  onRemove,
-  accent,
-  onKeyDown,
-  onUpdate,
-  todo,
-  onFocus,
-  autoFocus,
-}) => {
-  const { caption, completed } = todo;
-
-  const cls = cs(styles.todo, {
-    [styles.todoDone]: completed,
-  });
-
-  return (
-    <div className={cls}>
-      <TodoCheckbox
-        accent={accent}
-        value={completed}
-        onChange={completed => onUpdate({ completed })}
-      />
-
-      <TextField
-        autoFocus={autoFocus}
-        className={styles.todo__caption}
-        onChange={caption => onUpdate({ caption })}
-        onKeyDown={onKeyDown}
-        onFocus={onFocus}
-        onBlur={(e) => {
-          if (!e.target.value) {
-            onRemove(false);
-          }
-        }}
-        value={caption}
-      />
-    </div>
-  );
-};
-
-interface Props {
-  autoFocus: boolean;
+export interface TodoListProps {
   parentId: ID;
   todoList: Array<TodoEntity>;
+  onChange: (todoList: Array<TodoEntity>) => void;
 }
 
-const useFocusedPosition = () => {
-  const [focusedPosition, setFocusedPosition] = useState(null);
+interface SortableProps {
+  moveItem: (fromPosition: number, toPosition: number) => void;
+  isSortingActive: boolean;
+}
 
-  return {
-    focusedPosition,
-    focusNext: (position) => {
-      setFocusedPosition(position + 1);
-    },
-    focusPrev: (position) => {
-      if (position > 0) {
-        setFocusedPosition(position - 1);
-      }
-    },
-    focusPosition: (position) => {
-      setFocusedPosition(position);
-    },
-  };
-};
-
-const TodoList = ({ todoList, parentId }: Props) => {
-  const dispatch = useDispatch();
-  const {
-    focusedPosition,
-    focusNext,
-    focusPrev,
-    focusPosition,
-  } = useFocusedPosition();
-
+const useAccent = (todoList) => {
   const accentTodoUid = useMemo(() => {
     if (isEmpty(todoList)) {
       return null;
@@ -122,54 +34,37 @@ const TodoList = ({ todoList, parentId }: Props) => {
     return uncompletedTodo && uncompletedTodo.uid;
   }, [todoList]);
 
-  const actions = useMemo(
-    () => ({
-      create: (position) => {
-        dispatch(taskActions.createTodo(parentId, position));
-      },
-      update: (uid, values) => {
-        dispatch(taskActions.updateTodo(parentId, uid, values));
-      },
-      remove: (uid) => {
-        dispatch(taskActions.removeTodo(parentId, uid));
-      },
-    }),
-    [todoList],
-  );
+  return accentTodoUid;
+};
 
-  const keyHandlers = {
-    [KeyCode.BACKSPACE]: (e: KeyboardEvent, uid, index) => {
-      // @ts-ignore
-      if (!e.target.value) {
-        e.preventDefault();
-        actions.remove(uid);
-        focusPrev(index);
-      }
+const TodoList = ({ todoList, isSortingActive, parentId, moveItem }: TodoListProps & SortableProps) => {
+  const dispatch = useDispatch();
+  const {
+    focusedPosition,
+    focusNext,
+    focusPrev,
+    focusPosition,
+  } = useTodoFocus(todoList ? todoList.length - 1 : 0);
+
+  const accentUid = useAccent(todoList);
+
+  const actions = {
+    create: (position) => {
+      dispatch(taskActions.createTodo(parentId, position));
     },
-    [KeyCode.ENTER]: (e: KeyboardEvent, _, index) => {
-      const position = e.shiftKey ? index : index + 1;
-      actions.create(position);
-      focusPosition(position);
-      e.preventDefault();
+    update: (uid, values) => {
+      dispatch(taskActions.updateTodo(parentId, uid, values));
     },
-    [KeyCode.ARROW_UP]: (_, uid, index) => {
-      focusPrev(index);
+    remove: (uid) => {
+      dispatch(taskActions.removeTodo(parentId, uid));
     },
-    [KeyCode.ARROW_DOWN]: (_, uid, index) => {
-      focusNext(index);
-    },
+    moveItem,
+    focusNext,
+    focusPrev,
+    focusPosition,
   };
 
-  const onItemKeyDown = useCallback(
-    (e, uid, index) => {
-      const handler = keyHandlers[e.keyCode];
-
-      if (handler) {
-        return handler(e, uid, index);
-      }
-    },
-    [keyHandlers],
-  );
+  const { onKeyDown, onKeyUp } = useTodoHotkeys(actions, todoList, focusedPosition);
 
   const todoItems = (todoList || []).map((todo, index) => {
     const uid = todo.uid;
@@ -179,12 +74,12 @@ const TodoList = ({ todoList, parentId }: Props) => {
     return (
       <TodoItem
         key={uid}
-        accent={accentTodoUid === uid}
+        index={index}
+        accent={accentUid === uid}
         todo={todo}
-        autoFocus={isFocused}
-        onKeyDown={(e) => onItemKeyDown(e, uid, index)}
+        isFocused={isFocused}
         onFocus={() => {
-          focusPosition(null);
+          focusPosition(index);
         }}
         onUpdate={actions.update.bind(null, uid)}
         onRemove={actions.remove.bind(null, uid)}
@@ -192,11 +87,19 @@ const TodoList = ({ todoList, parentId }: Props) => {
     );
   });
 
+  const cls = cs(styles.list, {
+    [styles.isSortingActive]: isSortingActive,
+  });
+
   return (
-    <div className={styles.list}>
+    <div
+      className={cls}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
+    >
       {todoItems}
     </div>
   );
 };
 
-export default TodoList;
+export default asSortable(TodoList);

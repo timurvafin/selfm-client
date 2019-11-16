@@ -3,8 +3,9 @@ import cs from 'classnames';
 import Action from 'components/Action';
 import TextField from 'components/Textfield';
 import Checkbox from 'components/Checkbox';
+import useOutsideClickHandler from 'common/hooks/useOutsideClickHandler';
+import { TodoEntity } from 'models/task';
 import TodoList from './TodoList/TodoList';
-import { useOutsideClickHandler } from 'common/hooks';
 import { stopPropagation } from 'common/utils/component';
 import { CalendarIcon, ListIcon, TagIcon } from 'components/Icon';
 import Tags from './Tags/Tags';
@@ -25,7 +26,6 @@ const Task = ({ task }: Props) => {
   const actions = useActions(task);
   const [showTags, setShowTags] = useState(!isEmpty(task.tags));
   const [captionInputValue, setCaptionInputValue] = useState(caption);
-  const [isTodosFocused, setIsTodosFocused] = useState(false);
 
   useEffect(
     () => {
@@ -122,9 +122,9 @@ const Task = ({ task }: Props) => {
 
       <div className={cs(styles.row, styles.rowDetails)}>
         <TodoList
-          autoFocus={isTodosFocused}
           parentId={task.id}
           todoList={task.todoList}
+          onChange={(todoList: Array<TodoEntity>) => actions.update({ todoList })}
         />
       </div>
 
@@ -146,7 +146,6 @@ const Task = ({ task }: Props) => {
             title="Calendar"
             action={() => {
               actions.createTodo();
-              setIsTodosFocused(true);
             }}
           />
           { !showTags && (

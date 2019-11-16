@@ -1,10 +1,13 @@
-import React, { HTMLProps, useCallback, useEffect, useRef, useState } from 'react';
+import React, { HTMLProps, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import cs from 'classnames';
 import TextArea from 'react-textarea-autosize';
 import { KeyCode } from 'common/constants';
+import { isFocused, isFunction } from '../../common/utils/common';
 
 import styles from './textfield.scss';
 
+
+type SetRef = (node: HTMLElement) => void;
 
 // @ts-ignore
 export interface Props extends HTMLProps<HTMLInputElement> {
@@ -19,6 +22,7 @@ export interface Props extends HTMLProps<HTMLInputElement> {
   controlled?: boolean;
   transparent?: boolean;
   autosize?: boolean;
+  inputRef?: SetRef | MutableRefObject<any>;
 }
 
 const TextField = ({
@@ -32,14 +36,27 @@ const TextField = ({
   transparent,
   autosize,
   placeholder,
+  inputRef: outerRef,
   ...props
 }: Props) => {
-  const ref = useRef<HTMLInputElement>();
+  const innerRef = useRef<HTMLInputElement>();
+  const setRef = useCallback((node) => {
+    innerRef.current = node;
+
+    if (isFunction(outerRef)) {
+      (outerRef as SetRef)(node);
+    } else if (typeof outerRef === 'object') {
+      (outerRef as MutableRefObject<any>).current = node;
+    }
+  }, []);
+
   useEffect(() => {
     if (autoFocus) {
-      ref.current.focus();
-      // place caret at the input end
-      ref.current.selectionStart = ref.current.selectionEnd = ref.current.value.length;
+      if (!isFocused(innerRef.current)) {
+        innerRef.current.focus();
+        // place caret at the input end
+        innerRef.current.selectionStart = innerRef.current.selectionEnd = innerRef.current.value.length;
+      }
     }
   }, [autoFocus]);
 
@@ -100,11 +117,11 @@ const TextField = ({
           if (!controlled) {
             cancel();
           }
-          setTimeout(() => ref.current.blur());
+          setTimeout(() => innerRef.current.blur());
           props.onCancel && props.onCancel();
           break;
         case KeyCode.ENTER:
-          onEnter && onEnter(e, ref.current);
+          onEnter && onEnter(e, innerRef.current);
           // submit();
           break;
       }
@@ -136,12 +153,12 @@ const TextField = ({
   return multiline ? (
     <TextArea
       {...commonProps}
-      inputRef={ref}
+      inputRef={setRef}
     />
   ) : (
     <input
       {...commonProps}
-      ref={ref}
+      ref={setRef}
       type="text"
     />
   );

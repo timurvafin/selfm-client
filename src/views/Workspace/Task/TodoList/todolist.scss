@@ -1,6 +1,13 @@
 @import "include";
 @import "checkbox";
 
+.list {
+  position: relative;
+  overflow-y: auto;
+  margin-left: -1em;
+  padding-left: 1em;
+}
+
 .todo {
   border-bottom: 1px solid #e0e0e0;
   display: flex;
@@ -12,24 +19,21 @@
   }
 }
 
-.todoDone {
-  .todo__caption {
+.isDone {
+  .captionInput {
     opacity: .5;
     text-decoration: line-through;
   }
 
-  .todo__checkbox {
-    opacity: .5;
+  .checkbox {
   }
 }
 
-.todo__checkbox {
-  @include checkbox($clr: #4F526B, $size: 11px, $border_width: 2px, $border_clr: #8478e8, $round: true);
+.captionInput {
+  &:before {
+    content: '1';
+  }
 
-  margin-right: .4rem;
-}
-
-.todo__caption {
   border: 0;
   background: none;
   color: #666;
@@ -37,49 +41,92 @@
   outline: none;
 }
 
+.strikethroughLine {
+  position: absolute;
+  top: calc(50% - 1px);
+  left: 0;
+  height: 1px;
+  background-color: #666;
+}
+
 .checkbox {
   $size: 24px;
-  $circle_size: 5;
+  $circle_size: 16%;
+  $stroke_width: 6%;
 
   fill: transparent;
   width: $size;
   height: $size;
 
-  .outerCircle, .innerCircle {
+  .checkmark {
+    stroke: rgba(102, 102, 102, 0.29);
+    stroke-width: 7%;
+    visibility: hidden;
+  }
+
+  .circle {
     cx: 50%;
     cy: 50%;
   }
 
-  .outerCircle {
+  .circle {
     r: $circle_size;
-    stroke-width: 1px;
-    stroke: rgba(79, 82, 107, 1);
-    transition: stroke-width .5s;
-  }
-
-  .innerCircle {
-    r: 0;
-    fill: rgba(79, 82, 107, 0.29);
-    stroke: transparent;
-    transition: r .3s;
-    transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+    stroke-width: $stroke_width;
+    stroke: $clr_accent;
   }
 
   &.accent {
-    .outerCircle {
-      stroke-width: 2px;
+    .circle {
     }
   }
 
   &.checked {
-    .innerCircle {
-      r: $circle_size;
+    .checkmark {
+      visibility: visible;
+      stroke-dasharray: 100%;
     }
-  }
 
-  &.active:not(.checked), &:hover:not(.checked) {
-    .innerCircle {
-      r: 1;
+    .circle {
+      display: none;
     }
   }
+}
+
+// dnd
+.draggable {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+
+  &:hover {
+    .dragHandle {
+      opacity: .3;
+    }
+  }
+}
+
+.dragHandle {
+  display: flex;
+  cursor: pointer;
+  position: absolute;
+  left: -1em;
+  opacity: 0;
+  transition: opacity .2s;
+
+  &:hover {
+    opacity: 1 !important;
+  }
+}
+
+.isSortingActive {
+  .dragHandle {
+    display: none;
+  }
+}
+
+.dragging {
+  box-shadow: 0 0 3px #aaa;
+  background-color: #fff;
+  overflow: hidden;
 }

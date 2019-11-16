@@ -1,6 +1,6 @@
 @import 'include';
 
-@mixin checkbox($clr: $clr_accent, $size: 1em, $border_clr: #f2f2f2, $border_width: 2px, $round: false) {
+@mixin checkbox($clr: $clr_accent, $size: 1em, $duration: .2s, $border_clr: #f2f2f2, $border_width: 2px, $round: false) {
   -webkit-appearance: none;
   outline: none;
   position: relative;
@@ -10,7 +10,9 @@
   height: $size;
 
   &:before {
-    transition: all .1s ease-in-out;
+    transition-property: all;
+    transition-timing-function: ease-in-out;
+    transition-duration: $duration;
 
     content: "";
 
