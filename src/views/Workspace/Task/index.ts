@@ -1,6 +1,6 @@
 import Task from './Task';
-import DraggableTask from './DraggableTask';
+import SortableTask from './SortableTask';
 
 
-export { DraggableTask };
+export { SortableTask };
 export default Task;

@@ -31,8 +31,9 @@ const SortableTaskList = ({ onTaskDrop, id, ...props }: Props & { id: string; on
           <TasksList
             droppable
             {...props}
-          />
-          {placeholder}
+          >
+            {placeholder}
+          </TasksList>
         </div>
       )}
     </Sortable>

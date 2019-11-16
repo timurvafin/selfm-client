@@ -16,7 +16,7 @@ import styles from './style.scss';
 const ProjectHeader = ({ id }) => {
   const project: ProjectUIEntity = useSelector((state: ModelsState) => projectSelector(state, id));
 
-  return (
+  return project && (
     <div className={styles.groupHeader}>
       <RadialProgressBar
         size={15}
@@ -91,7 +91,7 @@ const BasicWorkspaceBody = ({ code, tasks }) => {
 
 const BasicWorkspace = ({ code }) => (
   <ShortcutWorkspaceLayout code={code}>
-    {({ code, tasks }) => <BasicWorkspaceBody code={code} tasks={tasks} />}
+    {({ tasks }) => <BasicWorkspaceBody code={code} tasks={tasks} />}
   </ShortcutWorkspaceLayout>
 );
 

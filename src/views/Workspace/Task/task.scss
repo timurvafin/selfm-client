@@ -50,12 +50,16 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .checkbox {
-  @include checkbox($clr_accent, .9em, $border_width: 1px, $border_clr: $lgray);
+  @include checkbox($clr: $clr_accent, $size: .9em, $duration: .25s, $border_width: 1px, $border_clr: $lgray);
   margin-right: $task_side_margin;
 }
 
 .caption {
   @include unselectable();
+
+  // font-family: 'Roboto Mono', monospace;
+  // font-family: 'Source Code Pro', monospace;
+  // font-size: 15px;
 
   line-height: 1.4;
   margin-right: 2em;

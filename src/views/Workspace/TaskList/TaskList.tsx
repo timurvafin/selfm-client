@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import cs from 'classnames';
 import { TaskUIEntity } from 'store/selectors';
-import Task, { DraggableTask } from '../Task';
+import Task, { SortableTask } from '../Task';
 import InlineTaskCreationField from './InlineTaskCreationField';
 import styles from './tasks.scss';
 
@@ -11,9 +11,10 @@ export interface Props {
   onTaskCreate?: (caption: string) => void;
   orderBy?: string;
   droppable?: boolean;
+  children?: ReactNode;
 }
 
-const TasksList = ({ tasks, orderBy, droppable, onTaskCreate }: Props) => {
+const TasksList = ({ tasks, orderBy, droppable, onTaskCreate, children }: Props) => {
   const cls = cs(styles.list, {
   });
 
@@ -21,7 +22,7 @@ const TasksList = ({ tasks, orderBy, droppable, onTaskCreate }: Props) => {
     tasks = tasks.sort((a, b) => a[orderBy] - b[orderBy]);
   }
 
-  const TaskComponent = droppable ? DraggableTask : Task;
+  const TaskComponent = droppable ? SortableTask : Task;
 
   return (
     <div className={cls}>
@@ -31,7 +32,7 @@ const TasksList = ({ tasks, orderBy, droppable, onTaskCreate }: Props) => {
           task={task}
         />
       ))}
-
+      { children }
       { onTaskCreate && <InlineTaskCreationField onCreate={onTaskCreate} /> }
     </div>
   );

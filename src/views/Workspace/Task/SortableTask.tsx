@@ -1,15 +1,20 @@
 import { UIComponentType } from 'common/constants';
 import React from 'react';
-import { DraggableContentProps } from 'vendor/dnd/react-dnd';
+import { DragPreviewProps } from 'vendor/dnd/react-dnd';
 import { SortableElement } from 'vendor/dnd/react-dnd/sortable';
 import Task, { Props } from './Task';
 import * as styles from './task.scss';
 import { PointerEventsProperty, PositionProperty } from 'csstype';
 
 
-const getPreviewStyle = ({ componentRect, startMousePosition, startComponentPosition, dropTarget }: Partial<DraggableContentProps>) => {
+const getPreviewStyle = ({
+  componentSize,
+  startMousePosition,
+  startComponentPosition,
+  dropTarget,
+}: DragPreviewProps) => {
   const delta = [startMousePosition.x - startComponentPosition.x, startMousePosition.y - startComponentPosition.y];
-  const transformOrigin = [100 * delta[0] / componentRect.width, 100 * delta[1] / componentRect.height];
+  const transformOrigin = [100 * delta[0] / componentSize.width, 100 * delta[1] / componentSize.height];
 
   return {
     transformOrigin: `${transformOrigin[0]}% ${transformOrigin[1]}% 0`,
@@ -25,42 +30,39 @@ const getPreviewStyle = ({ componentRect, startMousePosition, startComponentPosi
   };
 };
 
-const DragPreview = (props: Partial<DraggableContentProps>) => {
+const DragPreview = (props: DragPreviewProps) => {
   const style = getPreviewStyle(props);
 
   return (
-    <div
-      style={style}
-      className={styles['drag-preview']}
-    />
+    <div style={props.wrapperStyle}>
+      <div
+        style={style}
+        className={styles['drag-preview']}
+      />
+    </div>
   );
 };
 
-const DraggableTask = (props: Props) => (
+const SortableTask = (props: Props) => (
   <SortableElement
     id={props.task.id}
     type={UIComponentType.TASK}
     canDrag={!props.task.isOpen}
+    previewComponent={DragPreview}
   >
     {({
       setRef,
       style,
-      isDragging,
-      ...rest
     }) => (
-      isDragging ? (
-        <DragPreview {...rest} />
-      ) : (
-        <div
-          ref={setRef}
-          style={style}
-          className={styles.taskOuter}
-        >
-          <Task {...props} />
-        </div>
-      )
+      <div
+        ref={setRef}
+        style={style}
+        className={styles.taskOuter}
+      >
+        <Task {...props} />
+      </div>
     )}
   </SortableElement>
 );
 
-export default DraggableTask;
+export default SortableTask;

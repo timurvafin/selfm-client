@@ -27,6 +27,16 @@ export const workspaceId = (workspace: WorkspaceEntity) => {
   }
 
   return `${workspace.type}-${workspace.code}`;
-}
+};
 
 export const isUndefined = arg => arg === undefined;
+
+export const isFunction = (source) => {
+  return source && {}.toString.call(source) === '[object Function]';
+};
+
+export const isFocused = (node: HTMLElement) => document.activeElement === node;
+
+export const delay = async (ms) => new Promise(resolve => {
+  setTimeout(resolve, ms);
+});
