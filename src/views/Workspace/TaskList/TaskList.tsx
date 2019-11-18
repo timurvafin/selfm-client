@@ -12,9 +12,10 @@ export interface Props {
   orderBy?: string;
   droppable?: boolean;
   children?: ReactNode;
+  getBottomLabel?: (task: TaskUIEntity) => ReactNode;
 }
 
-const TasksList = ({ tasks, orderBy, droppable, onTaskCreate, children }: Props) => {
+const TasksList = ({ tasks, orderBy, droppable, onTaskCreate, children, getBottomLabel }: Props) => {
   const cls = cs(styles.list, {
   });
 
@@ -30,6 +31,7 @@ const TasksList = ({ tasks, orderBy, droppable, onTaskCreate, children }: Props)
         <TaskComponent
           key={task.id}
           task={task}
+          getBottomLabel={getBottomLabel}
         />
       ))}
       { children }

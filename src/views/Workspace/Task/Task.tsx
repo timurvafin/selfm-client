@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useCallback, useEffect, useState } from 'react';
+import React, { MutableRefObject, ReactNode, useCallback, useEffect, useState } from 'react';
 import cs from 'classnames';
 import Action from 'components/Action';
 import TextField from 'components/Textfield';
@@ -18,9 +18,10 @@ import useActions from './useActions';
 
 export interface Props {
   task: TaskUIEntity;
+  getBottomLabel?: (task: TaskUIEntity) => ReactNode;
 }
 
-const Task = ({ task }: Props) => {
+const Task = ({ task, getBottomLabel }: Props) => {
   const { completed, notes, isOpen, isSelected, caption, isNew } = task;
 
   const actions = useActions(task);
@@ -57,6 +58,8 @@ const Task = ({ task }: Props) => {
       actions.setSelected(true);
     }
   };
+
+  const bottomLabel = getBottomLabel && getBottomLabel(task);
 
   return (
     <div
@@ -95,7 +98,10 @@ const Task = ({ task }: Props) => {
             }}
           />
         ) : (
-          <div className={styles['caption']}>{caption}</div>
+          <div className={styles.captionWrap}>
+            <div className={styles['caption']}>{caption}</div>
+            { bottomLabel && <div className={styles.bottomLabel}>{bottomLabel}</div> }
+          </div>
         )}
       </div>
 

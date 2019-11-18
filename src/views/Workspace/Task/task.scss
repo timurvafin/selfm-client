@@ -66,6 +66,11 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
   font-weight: 500;
 }
 
+.bottomLabel {
+  color: $clr_lvl3;
+  font-size: 90%;
+}
+
 .notes {
   display: none;
 
@@ -100,10 +105,13 @@ $transition_timing_func: cubic-bezier(0.23, 1, 0.32, 1);
 /* -------------- 2.2 TASK STATES -------------- */
 
 .taskCompleted {
+  .captionWrap {
+    opacity: $completed_task_opacity;
+  }
+
   .caption {
     // @include strikethrough();
     text-decoration: line-through;
-    opacity: $completed_task_opacity;
     font-weight: normal;
   }
 }

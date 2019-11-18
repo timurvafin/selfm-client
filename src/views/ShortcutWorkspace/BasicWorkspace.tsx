@@ -6,7 +6,7 @@ import { taskActions } from 'models/task';
 import { SHORTCUT_WORKSPACES } from '../../common/constants';
 import { ID } from '../../common/types';
 import RadialProgressBar from '../../components/RadialProgressBar';
-import { projectSelector, ProjectUIEntity } from '../../store/selectors';
+import { projectSelector, ProjectUIEntity, TaskUIEntity } from '../../store/selectors';
 import { DropResult } from '../../vendor/dnd/react-dnd/sortable';
 import { SortableTaskList } from '../Workspace';
 import ShortcutWorkspaceLayout from './ShortcutWorkspaceLayout';
@@ -79,6 +79,7 @@ const BasicWorkspaceBody = ({ code, tasks }) => {
           <SortableTaskList
             id={`task-group-${parentId}`}
             tasks={groups[parentId]}
+            getBottomLabel={task => task.sectionCaption}
             onTaskDrop={(taskId, dropResult) => onTaskDrop(taskId, parentId, dropResult)}
             orderBy={'order2'}
             onTaskCreate={caption => createTask(parentId, caption)}

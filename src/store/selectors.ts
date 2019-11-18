@@ -20,6 +20,8 @@ export interface ProjectUIEntity extends ProjectEntity, BaseTaskUIEntity {
 }
 
 export interface TaskUIEntity extends TaskEntity, BaseTaskUIEntity {
+  parentCaption?: string;
+  sectionCaption?: string;
 }
 
 const calculateProgress = (entity: Completable, children: List<Completable>) => {
@@ -41,26 +43,36 @@ export const projectOpenIdSelector = (state: ModelsState): ID => {
   return project ? openId : null;
 };
 
+const projectCaptionsSelector = (state: ModelsState) => {
+  return state.projects.entities.map(entity => entity.caption);
+};
+
+const taskSectionCaptionsSelector = (state: ModelsState) => {
+  return state.sections.entities.map(entity => entity.caption);
+};
+
 // by workspace & selected tag
 export const tasksSelector = createSelector(
   taskSelectors.byWorkspace,
   workspaceSelectors.openTaskId,
   workspaceSelectors.selectedTaskId,
   workspaceSelectors.selectedTag,
-  (taskEntities: EntitiesMap<TaskEntity>, openTaskId, selectedTaskId, selectedTag): EntitiesArray<TaskUIEntity> => {
+  projectCaptionsSelector,
+  taskSectionCaptionsSelector,
+  (taskEntities: EntitiesMap<TaskEntity>, openTaskId, selectedTaskId, selectedTag, projectCaptions, sectionCaptions): EntitiesArray<TaskUIEntity> => {
     let entities = taskEntities;
 
     if (selectedTag) {
       entities = entities.filter((task: TaskEntity) => task.tags && task.tags.includes(selectedTag));
     }
 
-    // entities = entities.sort((a, b) => a.order - b.order);
-
     const uiEntities = entities.map(task => ({
       ...task,
       isOpen: task.id === openTaskId,
       isSelected: task.id === selectedTaskId,
       progress: calculateProgress(task, List(task.todoList)),
+      parentCaption: projectCaptions.get(task.parentId),
+      sectionCaption: sectionCaptions.get(task.sectionId),
     }));
 
     return [...uiEntities.values()];
