@@ -24,16 +24,14 @@ const TaskSections = ({ workspace }: Props) => {
 
   return (
     <div>
-      { !isEmpty(woSection) && (
-        <div className={styles.sectionWrapper}>
-          <TasksSection
-            key={'empty'}
-            id={null}
-            index={0}
-            tasks={woSection}
-          />
-        </div>
-      )}
+      <div className={styles.sectionWrapper}>
+        <TasksSection
+          key={'empty'}
+          id={null}
+          index={0}
+          tasks={woSection}
+        />
+      </div>
 
       {sections.map((section, index) => {
         const sectionTasks = tasks.filter(task => task.sectionId == section.id);

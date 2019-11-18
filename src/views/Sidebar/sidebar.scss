@@ -77,8 +77,6 @@
   padding: .4em;
   border-radius: 3px;
   border: 2px solid transparent;
-
-  @include overflow-dots();
 }
 
 .link__icon {
@@ -89,6 +87,7 @@
 
 .link__caption {
   flex: 1;
+  @include overflow-dots();
 }
 
 .link__count {
