@@ -64,7 +64,7 @@ const TodoList = ({ todoList, isSortingActive, parentId, moveItem }: TodoListPro
     focusPosition,
   };
 
-  const { onKeyDown, onKeyUp } = useTodoHotkeys(actions, todoList, focusedPosition);
+  const onKeyDown = useTodoHotkeys(actions, todoList, focusedPosition);
 
   const todoItems = (todoList || []).map((todo, index) => {
     const uid = todo.uid;
@@ -95,7 +95,6 @@ const TodoList = ({ todoList, isSortingActive, parentId, moveItem }: TodoListPro
     <div
       className={cls}
       onKeyDown={onKeyDown}
-      onKeyUp={onKeyUp}
     >
       {todoItems}
     </div>

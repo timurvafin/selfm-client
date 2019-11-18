@@ -1,4 +1,5 @@
 import useHotkeys, { Hotkeys } from 'common/hooks/useHotkeys';
+import React from 'react';
 
 
 const useTodoHotkeys = (actions, todoList, focusedPosition) => {
@@ -11,7 +12,8 @@ const useTodoHotkeys = (actions, todoList, focusedPosition) => {
       actions.create(focusedPosition);
       actions.focusPosition(focusedPosition);
     },
-    [Hotkeys.BACKSPACE]: (e) => {
+    [Hotkeys.BACKSPACE]: (e: React.KeyboardEvent<any>) => {
+      // @ts-ignore
       const isEmpty = !e.target.value;
 
       if (isEmpty) {

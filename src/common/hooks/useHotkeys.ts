@@ -1,8 +1,8 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback } from 'react';
 
 
 // To disable "preventsDefault" - return false from handler
-type KeyHandler = (e: React.KeyboardEvent<any>) => boolean | undefined;
+type KeyHandler = (e: React.KeyboardEvent<any>) => boolean | void;
 
 type HotkeysSpec = {
   [keysString: string]: KeyHandler;
@@ -11,47 +11,47 @@ type HotkeysSpec = {
 const DELIMETER = '+';
 
 export enum Hotkeys {
-  ENTER = 'enter',
-  SHIFT_ENTER = 'shift + enter',
-  CTRL_ENTER = 'ctrl + enter',
-  SPACE = 'space',
-  ESCAPE = 'escape',
-  BACKSPACE = 'backspace',
-  DOWN = 'down',
-  UP = 'up',
-  NEXT = 'tab',
-  PREV = 'shift + tab',
-  MOVE_UP = 'ctrl + shift + up',
-  MOVE_DOWN = 'ctrl + shift + down',
-  SELECT_ALL = 'ctrl + a',
-  SELECTION_DOWN = 'shift + down',
-  SELECTION_UP = 'shift + up',
-  SELECT_TO_START = 'ctrl + shift + home',
-  SELECT_TO_END = 'ctrl + shift + end',
+  ENTER = 'Enter',
+  SHIFT_ENTER = 'Shift + Enter',
+  CTRL_ENTER = 'Ctrl + Enter',
+  SPACE = 'Space',
+  ESCAPE = 'Escape',
+  BACKSPACE = 'Backspace',
+  DOWN = 'Down',
+  UP = 'Up',
+  NEXT = 'Tab',
+  PREV = 'Shift + Tab',
+  MOVE_UP = 'Ctrl + Shift + Up',
+  MOVE_DOWN = 'Ctrl + Shift + Down',
+  SELECT_ALL = 'Ctrl + A',
+  SELECTION_DOWN = 'Shift + Down',
+  SELECTION_UP = 'Shift + Up',
+  SELECT_TO_START = 'Ctrl + Shift + Home',
+  SELECT_TO_END = 'Ctrl + Shift + End',
 }
 
 const SPECIAL_CODES = {
-  backspace: 8,
-  tab: 9,
-  clear: 12,
-  enter: 13,
-  return: 13,
-  esc: 27,
-  escape: 27,
-  space: 32,
-  left: 37,
-  up: 38,
-  right: 39,
-  down: 40,
-  del: 46,
-  delete: 46,
-  ins: 45,
-  insert: 45,
-  home: 36,
-  end: 35,
-  pageup: 33,
-  pagedown: 34,
-  capslock: 20,
+  Backspace: 8,
+  Tab: 9,
+  Clear: 12,
+  Enter: 13,
+  Return: 13,
+  Esc: 27,
+  Escape: 27,
+  Space: 32,
+  Left: 37,
+  Up: 38,
+  Right: 39,
+  Down: 40,
+  Del: 46,
+  Delete: 46,
+  Ins: 45,
+  Insert: 45,
+  Home: 36,
+  End: 35,
+  Pageup: 33,
+  Pagedown: 34,
+  Capslock: 20,
   '⇪': 20,
   ',': 188,
   '.': 190,
@@ -69,24 +69,24 @@ const SPECIAL_CODES = {
 const MODIFIER_CODES = {
   // shiftKey
   '⇧': 16,
-  shift: 16,
+  Shift: 16,
   // altKey
   '⌥': 18,
-  alt: 18,
-  option: 18,
+  Alt: 18,
+  Option: 18,
   // ctrlKey
   '⌃': 17,
-  ctrl: 17,
-  control: 17,
+  Ctrl: 17,
+  Control: 17,
   // metaKey
   '⌘': 91,
-  cmd: 91,
-  command: 91,
+  Cmd: 91,
+  Command: 91,
 };
 
 const getKeyCode = keyString =>
-  SPECIAL_CODES[keyString.toLowerCase()] ||
-  MODIFIER_CODES[keyString.toLowerCase()] ||
+  SPECIAL_CODES[keyString] ||
+  MODIFIER_CODES[keyString] ||
   keyString.toUpperCase().charCodeAt(0);
 
 const splitAndTrim = (string, delimeter) => string.split(delimeter).map(str => str.trim());
@@ -101,6 +101,24 @@ const makeKeyCodeList = keysString => {
   });
 };
 
+const getKeyCombinationCodes = (e: React.KeyboardEvent<any>) => {
+  const pressedKeys = [e.keyCode];
+  const modifierKeys = Object.keys(MODIFIER_CODES);
+
+  modifierKeys.forEach(key => {
+    if (e.getModifierState(key)) {
+      pressedKeys.push(MODIFIER_CODES[key]);
+    }
+  });
+
+  return pressedKeys;
+};
+
+/**
+ * Works only with combinations: Multiple modifiers + any key (Ctrl + Shift + A, Shift + Down).
+ * Doesn't work with multiple chars (A + B)
+ * @param spec
+ */
 const useHotkeys = (spec: HotkeysSpec) => {
   const handlers = [];
 
@@ -114,11 +132,9 @@ const useHotkeys = (spec: HotkeysSpec) => {
 
   handlers.sort((a, b) => b.keys.length - a.keys.length);
 
-  const pressedKeys = useRef({});
-  const isPressed = (keyCode) => !!pressedKeys.current[keyCode];
-
   const onKeyDown = useCallback((e: React.KeyboardEvent<any>) => {
-    pressedKeys.current[e.keyCode] = true;
+    const combinationCodes = getKeyCombinationCodes(e);
+    const isPressed = (keyCode) => combinationCodes.includes(keyCode);
 
     for (let i = 0; i < handlers.length; i++) {
       const { keys, handler } = handlers[i];
@@ -135,11 +151,7 @@ const useHotkeys = (spec: HotkeysSpec) => {
     }
   }, [spec]);
 
-  const onKeyUp = useCallback((e: React.KeyboardEvent<any>) => {
-    pressedKeys.current[e.keyCode] = false;
-  }, [spec]);
-
-  return { onKeyDown, onKeyUp };
+  return onKeyDown;
 };
 
 export default useHotkeys;
